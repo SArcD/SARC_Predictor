@@ -1,9 +1,8 @@
 seaborn
-pandas == 1.5.3
-numpy == 1.24.0
-matplotlib==3.4.0
-matplotlib_venn
+pandas
+numpy
 matplotlib
+matplotlib_venn
 altair
 altair_catplot
 xlsxwriter
@@ -19,4 +18,3 @@ pingouin
 skope-rules
 plotly
 pillow
-pydotplus
