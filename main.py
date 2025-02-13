@@ -1353,22 +1353,20 @@ if pestañas == "Predicción de Sarcopenia":
             # Actualizar el diseño para el tamaño y estilo de las fuentes
             fig.update_layout(
                 title_text=f'Comparación entre cluster de "Sarcopenia Grave" y el resto de los pacientes - {column}',
-                title_font=dict(size=20, color="black", family="Arial"),  # Título en negritas y tamaño ajustado
+                title_font=dict(size=20, family="Arial"),  # Título en negritas y tamaño ajustado
                 xaxis_title="DataFrames",
                 yaxis_title=column,
                 showlegend=False,
                 xaxis=dict(
                     tickfont=dict(
                         size=14,
-                        color="black",
                         family="Arial"
                     )
                 ),
                 yaxis=dict(
-                    title_font=dict(size=18, color="black", family="Arial"),
+                    title_font=dict(size=18, family="Arial"),
                     tickfont=dict(
                         size=12,
-                        color="black",
                         family="Arial"
                     )
                 )
