@@ -119,9 +119,9 @@ if pestañas == "Predicción de Sarcopenia":
 
     # Definir la ruta del archivo en función de la selección
     if selected_year == "2022":
-        file_path = "Base 2022 Santiago Arceo.xls"
+        file_path = "Base 2022 Santiago Arceo.xlsx"
     else:
-        file_path = "Base 2019 Santiago Arceo.xls"
+        file_path = "Base 2019 Santiago Arceo.xlsx"
 
     # Intento de cargar el archivo de Excel usando `xlrd` para archivos `.xls`
     try:
