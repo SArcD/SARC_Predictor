@@ -19,3 +19,4 @@ skope-rules
 plotly
 pillow
 xlrd
+networkx
