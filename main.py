@@ -127,7 +127,7 @@ if pestañas == "Predicción de Sarcopenia":
     try:
         #df = pd.read_excel("archivo.xlsx", engine="openpyxl")  # Para archivos .xlsx
 
-        datos = pd.read_excel(file_path, engine="openpyxl")  # Rellenar NaN con espacios
+        datos = pd.read_excel(file_path)  # Rellenar NaN con espacios
         st.write(f"Datos de la base {selected_year} cargados con éxito:")
         st.dataframe(datos)
 
