@@ -1593,16 +1593,16 @@ if pestañas == "Predicción de Sarcopenia":
             # Actualizar el diseño para hacer las etiquetas más grandes y en negritas
             fig.update_layout(
                 title_text=f'Comparación de Clusters - {column}',
-                title_font=dict(size=18, color="black", family="Arial"),
+                title_font=dict(size=18, family="Arial"),
                 xaxis_title=" ",
                 yaxis_title=column,
                 xaxis=dict(
-                    title_font=dict(size=16, color="black", family="Arial"),
-                    tickfont=dict(size=14, color="black", family="Arial")
+                    title_font=dict(size=16, family="Arial"),
+                    tickfont=dict(size=14, family="Arial")
                 ),
                 yaxis=dict(
-                    title_font=dict(size=16, color="black", family="Arial"),
-                    tickfont=dict(size=14, color="black", family="Arial")
+                    title_font=dict(size=16, family="Arial"),
+                    tickfont=dict(size=14, family="Arial")
                 ),
                 showlegend=True
             )
