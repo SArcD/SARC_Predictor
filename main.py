@@ -1604,7 +1604,7 @@ if pestañas == "Predicción de Sarcopenia":
                     title_font=dict(size=16, color="black", family="Arial"),
                     tickfont=dict(size=14, color="black", family="Arial")
                 ),
-                showlegend=False
+                showlegend=True
             )
 
             # Mostrar el gráfico en Streamlit
