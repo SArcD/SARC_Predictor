@@ -113,6 +113,8 @@ if pestañas == "Presentación":
 
 #######
 if pestañas == "Predicción de Sarcopenia":
+    st.subheader("Carga de los datos")
+    
     st.markdown("""
     En el siguiente menú puede elegir entre las bases de datos disponibles
     
@@ -134,128 +136,128 @@ if pestañas == "Predicción de Sarcopenia":
         st.write(f"Datos de la base {selected_year} cargados con éxito:")
         st.dataframe(datos)
 
-        st.subheader("Diccionario de variables")
-        # Diccionario de significados completo basado en el cuadernillo
-        significados = {
-        'folio_paciente': 'Folio asignado a cada paciente',
-        'edad_am': 'Años cumplidos al momento de la entrevista',
-        'sexo': 'Sexo del paciente (1: Masculino, 2: Femenino)',
-        'nacio_en_mexico': 'Indicador de si nació en México (0: No, 1: Sí)',
-        'P20': 'Realiza alguna actividad laboral (0: No, 1: Sí)',
-        'P21': 'Ocupación actual del paciente',
-        'P35_3': '¿Fuma cigarros actualmente? (0: No, 1: Sí)',
-        'P35_4': 'Frecuencia de fumar (1: Diario, 2: No todos los días)',
-        'P35_5_1': 'Cantidad de cigarros que fuma por día',
-        'P36': '¿Actualmente toma bebidas alcohólicas? (0: No, 1: Sí, 2: Nunca ha tomado)',
-        'P36_1': 'Frecuencia semanal de consumo de bebidas alcohólicas en los últimos tres meses',
-        'P44_3': 'Diagnóstico de VIH (0: No, 1: Sí)',
-        'P44_3_1': 'Años desde el diagnóstico de VIH',
-        'P44_3_2': 'Recibió tratamiento para VIH (0: No, 1: Sí)',
-        'P44_5': 'Diagnóstico de anemia por deficiencia (0: No, 1: Sí)',
-        'P44_7': 'Diagnóstico de arritmia cardiaca (0: No, 1: Sí)',
-        'P44_8': 'Diagnóstico de artritis reumatoide (0: No, 1: Sí)',
-        'P44_9': 'Diagnóstico de cáncer metastásico (0: No, 1: Sí)',
-        'P44_11': 'Diagnóstico de depresión (0: No, 1: Sí)',
-        'P44_12': 'Diagnóstico de diabetes complicada (0: No, 1: Sí)',
-        'P44_13': 'Diagnóstico de diabetes sin complicación (0: No, 1: Sí)',
-        'P44_14': 'Diagnóstico de enfermedad cerebrovascular (0: No, 1: Sí)',
-        'P44_20': 'Diagnóstico de hipertensión complicada (0: No, 1: Sí)',
-        'P44_21': 'Diagnóstico de hipertensión sin complicación (0: No, 1: Sí)',
-        'P44_24': 'Diagnóstico de insuficiencia renal (0: No, 1: Sí)',
-        'P44_27': 'Diagnóstico de obesidad (0: No, 1: Sí)',
-        'P44_31': 'Pérdida de peso (0: No, 1: Sí)',
-        'P55_4_1': 'Capacidad para caminar en terreno plano (1: Sin dificultad, 5: No puede por otras causas)',
-        'P55_4_2': 'Capacidad para levantarse de una silla sin apoyo de las manos (1: Sin dificultad, 5: No puede por otras causas)',
-        'P55_4_3': 'Capacidad para sentarse y levantarse del sanitario (1: Sin dificultad, 5: No puede por otras causas)',
-        'P55_4_4': 'Capacidad para sacar ropa del ropero y cajones (1: Sin dificultad, 5: No puede por otras causas)',
-        'TOTAL_RUIS': 'Total de síntomas reportados en el índice de comorbilidad',
-        'NIVELES_INCONTINENCIA': 'Nivel de incontinencia del paciente',
-        'P57': '¿Ha sufrido alguna caída en el último año? (0: No, 1: Sí)',
-        'P57_1': 'Número de caídas en el último año (1: 1 vez, 6: Más de 5 veces)',
-        'Evaluacion_Global_30pto_Mini_nutritional': 'Evaluación global de estado nutricional (puntaje sobre 30)',
-        'Katz_suma': 'Suma de la escala Katz para la limitación funcional',
-        'Barthel_sum2': 'Puntuación total en la escala de Barthel',
-        'P112_1': 'Evaluación del equilibrio en el SPPB (1: Excelente, 5: Deficiente)',
-        'Observaciones_SPPB': 'Observaciones generales sobre el equilibrio en el SPPB',
-        'P113': 'Fuerza de presión medida (kg)',
-        'P113_1': 'Fuerza de presión medida en la mano dominante',
-        'P117_1': 'Medida de la circunferencia de la pantorrilla - 1',
-        'P117_2': 'Medida de la circunferencia de la pantorrilla - 2',
-        'P117_3': 'Medida de la circunferencia de la pantorrilla - 3',
-        'P118_1': 'Medida de la circunferencia de muslo - 1',
-        'P118_2': 'Medida de la circunferencia de muslo - 2',
-        'P118_3': 'Medida de la circunferencia de muslo - 3',
-        'P119_1': 'Medida de la circunferencia de brazo - 1',
-        'P119_2': 'Medida de la circunferencia de brazo - 2',
-        'P119_3': 'Medida de la circunferencia de brazo - 3',
-        'P120_1': 'Medida de la circunferencia de cadera - 1',
-        'P120_2': 'Medida de la circunferencia de cadera - 2',
-        'P120_3': 'Medida de la circunferencia de cadera - 3',
-        'P121_1': 'Medida de la circunferencia de cintura - 1',
-        'P121_2': 'Medida de la circunferencia de cintura - 2',
-        'P121_3': 'Medida de la circunferencia de cintura - 3',
-        'P122_1': 'Medida de la circunferencia de tórax - 1',
-        'P122_2': 'Medida de la circunferencia de tórax - 2',
-        'P122_3': 'Medida de la circunferencia de tórax - 3',
-        'P123_1': 'Medida de la circunferencia de cuello - 1',
-        'P123_2': 'Medida de la circunferencia de cuello - 2',
-        'P123_3': 'Medida de la circunferencia de cuello - 3',
-        'P124_1': 'Medida de la circunferencia de muñeca - 1',
-        'P124_2': 'Medida de la circunferencia de muñeca - 2',
-        'P124_3': 'Medida de la circunferencia de muñeca - 3',
-        'INICIA_Circunferencias': 'Indicador de inicio de mediciones de circunferencias',
-        'INICIA_Pliegues': 'Indicador de inicio de mediciones de pliegues cutáneos',
-        'P125_1': 'Medida del pliegue cutáneo bicipital - 1',
-        'P125_2': 'Medida del pliegue cutáneo bicipital - 2',
-        'P125_3': 'Medida del pliegue cutáneo bicipital - 3',
-        'P126_1': 'Medida del pliegue cutáneo tricipital - 1',
-        'P126_2': 'Medida del pliegue cutáneo tricipital - 2',
-        'P126_3': 'Medida del pliegue cutáneo tricipital - 3',
-        'P127_1': 'Medida del pliegue subescapular - 1',
-        'P127_2': 'Medida del pliegue subescapular - 2',
-        'P127_3': 'Medida del pliegue subescapular - 3',
-        'P128_1': 'Medida del pliegue de la pantorrilla - 1',
-        'P128_2': 'Medida del pliegue de la pantorrilla - 2',
-        'P128_3': 'Medida del pliegue de la pantorrilla - 3',
-        'P129_1': 'Medida de la longitud talón-rodilla - 1',
-        'P129_2': 'Medida de la longitud talón-rodilla - 2',
-        'P129_3': 'Medida de la longitud talón-rodilla - 3',
-        'P130_1': 'Medida de la longitud de brazada - 1',
-        'P130_2': 'Medida de la longitud de brazada - 2',
-        'P130_3': 'Medida de la longitud de brazada - 3',
-        'obsevaciones': 'Observaciones adicionales'
-        }
+        with st.expander("Diccionario de variables"):
+            # Diccionario de significados completo basado en el cuadernillo
+            significados = {
+            'folio_paciente': 'Folio asignado a cada paciente',
+            'edad_am': 'Años cumplidos al momento de la entrevista',
+            'sexo': 'Sexo del paciente (1: Masculino, 2: Femenino)',
+            'nacio_en_mexico': 'Indicador de si nació en México (0: No, 1: Sí)',
+            'P20': 'Realiza alguna actividad laboral (0: No, 1: Sí)',
+            'P21': 'Ocupación actual del paciente',
+            'P35_3': '¿Fuma cigarros actualmente? (0: No, 1: Sí)',
+            'P35_4': 'Frecuencia de fumar (1: Diario, 2: No todos los días)',
+            'P35_5_1': 'Cantidad de cigarros que fuma por día',
+            'P36': '¿Actualmente toma bebidas alcohólicas? (0: No, 1: Sí, 2: Nunca ha tomado)',
+            'P36_1': 'Frecuencia semanal de consumo de bebidas alcohólicas en los últimos tres meses',
+            'P44_3': 'Diagnóstico de VIH (0: No, 1: Sí)',
+            'P44_3_1': 'Años desde el diagnóstico de VIH',
+            'P44_3_2': 'Recibió tratamiento para VIH (0: No, 1: Sí)',
+            'P44_5': 'Diagnóstico de anemia por deficiencia (0: No, 1: Sí)',
+            'P44_7': 'Diagnóstico de arritmia cardiaca (0: No, 1: Sí)',
+            'P44_8': 'Diagnóstico de artritis reumatoide (0: No, 1: Sí)',
+            'P44_9': 'Diagnóstico de cáncer metastásico (0: No, 1: Sí)',
+            'P44_11': 'Diagnóstico de depresión (0: No, 1: Sí)',
+            'P44_12': 'Diagnóstico de diabetes complicada (0: No, 1: Sí)',
+            'P44_13': 'Diagnóstico de diabetes sin complicación (0: No, 1: Sí)',
+            'P44_14': 'Diagnóstico de enfermedad cerebrovascular (0: No, 1: Sí)',
+            'P44_20': 'Diagnóstico de hipertensión complicada (0: No, 1: Sí)',
+            'P44_21': 'Diagnóstico de hipertensión sin complicación (0: No, 1: Sí)',
+            'P44_24': 'Diagnóstico de insuficiencia renal (0: No, 1: Sí)',
+            'P44_27': 'Diagnóstico de obesidad (0: No, 1: Sí)',
+            'P44_31': 'Pérdida de peso (0: No, 1: Sí)',
+            'P55_4_1': 'Capacidad para caminar en terreno plano (1: Sin dificultad, 5: No puede por otras causas)',
+            'P55_4_2': 'Capacidad para levantarse de una silla sin apoyo de las manos (1: Sin dificultad, 5: No puede por otras causas)',
+            'P55_4_3': 'Capacidad para sentarse y levantarse del sanitario (1: Sin dificultad, 5: No puede por otras causas)',
+            'P55_4_4': 'Capacidad para sacar ropa del ropero y cajones (1: Sin dificultad, 5: No puede por otras causas)',
+            'TOTAL_RUIS': 'Total de síntomas reportados en el índice de comorbilidad',
+            'NIVELES_INCONTINENCIA': 'Nivel de incontinencia del paciente',
+            'P57': '¿Ha sufrido alguna caída en el último año? (0: No, 1: Sí)',
+            'P57_1': 'Número de caídas en el último año (1: 1 vez, 6: Más de 5 veces)',
+            'Evaluacion_Global_30pto_Mini_nutritional': 'Evaluación global de estado nutricional (puntaje sobre 30)',
+            'Katz_suma': 'Suma de la escala Katz para la limitación funcional',
+            'Barthel_sum2': 'Puntuación total en la escala de Barthel',
+            'P112_1': 'Evaluación del equilibrio en el SPPB (1: Excelente, 5: Deficiente)',
+            'Observaciones_SPPB': 'Observaciones generales sobre el equilibrio en el SPPB',
+            'P113': 'Fuerza de presión medida (kg)',
+            'P113_1': 'Fuerza de presión medida en la mano dominante',
+            'P117_1': 'Medida de la circunferencia de la pantorrilla - 1',
+            'P117_2': 'Medida de la circunferencia de la pantorrilla - 2',
+            'P117_3': 'Medida de la circunferencia de la pantorrilla - 3',
+            'P118_1': 'Medida de la circunferencia de muslo - 1',
+            'P118_2': 'Medida de la circunferencia de muslo - 2',
+            'P118_3': 'Medida de la circunferencia de muslo - 3',
+            'P119_1': 'Medida de la circunferencia de brazo - 1',
+            'P119_2': 'Medida de la circunferencia de brazo - 2',
+            'P119_3': 'Medida de la circunferencia de brazo - 3',
+            'P120_1': 'Medida de la circunferencia de cadera - 1',
+            'P120_2': 'Medida de la circunferencia de cadera - 2',
+            'P120_3': 'Medida de la circunferencia de cadera - 3',
+            'P121_1': 'Medida de la circunferencia de cintura - 1',
+            'P121_2': 'Medida de la circunferencia de cintura - 2',
+            'P121_3': 'Medida de la circunferencia de cintura - 3',
+            'P122_1': 'Medida de la circunferencia de tórax - 1',
+            'P122_2': 'Medida de la circunferencia de tórax - 2',
+            'P122_3': 'Medida de la circunferencia de tórax - 3',
+            'P123_1': 'Medida de la circunferencia de cuello - 1',
+            'P123_2': 'Medida de la circunferencia de cuello - 2',
+            'P123_3': 'Medida de la circunferencia de cuello - 3',
+            'P124_1': 'Medida de la circunferencia de muñeca - 1',
+            'P124_2': 'Medida de la circunferencia de muñeca - 2',
+            'P124_3': 'Medida de la circunferencia de muñeca - 3',
+            'INICIA_Circunferencias': 'Indicador de inicio de mediciones de circunferencias',
+            'INICIA_Pliegues': 'Indicador de inicio de mediciones de pliegues cutáneos',
+            'P125_1': 'Medida del pliegue cutáneo bicipital - 1',
+            'P125_2': 'Medida del pliegue cutáneo bicipital - 2',
+            'P125_3': 'Medida del pliegue cutáneo bicipital - 3',
+            'P126_1': 'Medida del pliegue cutáneo tricipital - 1',
+            'P126_2': 'Medida del pliegue cutáneo tricipital - 2',
+            'P126_3': 'Medida del pliegue cutáneo tricipital - 3',
+            'P127_1': 'Medida del pliegue subescapular - 1',
+            'P127_2': 'Medida del pliegue subescapular - 2',
+            'P127_3': 'Medida del pliegue subescapular - 3',
+            'P128_1': 'Medida del pliegue de la pantorrilla - 1',
+            'P128_2': 'Medida del pliegue de la pantorrilla - 2',
+            'P128_3': 'Medida del pliegue de la pantorrilla - 3',
+            'P129_1': 'Medida de la longitud talón-rodilla - 1',
+            'P129_2': 'Medida de la longitud talón-rodilla - 2',
+            'P129_3': 'Medida de la longitud talón-rodilla - 3',
+            'P130_1': 'Medida de la longitud de brazada - 1',
+            'P130_2': 'Medida de la longitud de brazada - 2',
+            'P130_3': 'Medida de la longitud de brazada - 3',
+            'obsevaciones': 'Observaciones adicionales'
+            }
 
-        # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
-        with st.expander("Ver diccionario completo"):
-            for col, desc in significados.items():
-                st.write(f"**{col}**: {desc}")
+            # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
+            with st.expander("Ver diccionario completo"):
+                for col, desc in significados.items():
+                    st.write(f"**{col}**: {desc}")
     
-        # Caja de entrada para búsqueda
-        st.write("### Buscador de variables")
-        buscar = st.text_input("Escribe una o más variables separadas por comas")
+            # Caja de entrada para búsqueda
+            st.write("### Buscador de variables")
+            buscar = st.text_input("Escribe una o más variables separadas por comas")
 
-        # Estado persistente del DataFrame de resultados
-        if 'resultados' not in st.session_state:
-            st.session_state['resultados'] = pd.DataFrame(columns=['Variable', 'Significado'])
+            # Estado persistente del DataFrame de resultados
+            if 'resultados' not in st.session_state:
+                st.session_state['resultados'] = pd.DataFrame(columns=['Variable', 'Significado'])
 
-        # Procesar y mostrar resultados de la búsqueda
-        if buscar:
-            # Separar las variables ingresadas por comas y quitar espacios
-            variables = [var.strip() for var in buscar.split(',')]
+            # Procesar y mostrar resultados de la búsqueda
+            if buscar:
+                # Separar las variables ingresadas por comas y quitar espacios
+                variables = [var.strip() for var in buscar.split(',')]
     
-            # Agregar cada variable buscada y su significado al DataFrame de resultados
-            nuevos_resultados = []
-            for var in variables:
-                significado = significados.get(var, "Variable no encontrada")
-                nuevos_resultados.append({'Variable': var, 'Significado': significado})
+                # Agregar cada variable buscada y su significado al DataFrame de resultados
+                nuevos_resultados = []
+                for var in variables:
+                    significado = significados.get(var, "Variable no encontrada")
+                    nuevos_resultados.append({'Variable': var, 'Significado': significado})
     
-            # Actualizar el DataFrame en el estado persistente
-            st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
+                # Actualizar el DataFrame en el estado persistente
+                st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
 
-        # Mostrar el DataFrame de resultados acumulados
-        st.write("### Resultados de búsqueda")
-        st.dataframe(st.session_state['resultados'], use_container_width=True)
+            # Mostrar el DataFrame de resultados acumulados
+            st.write("### Resultados de búsqueda")
+            st.dataframe(st.session_state['resultados'], use_container_width=True)
 
 
         #######################################################################################################################
