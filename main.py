@@ -229,9 +229,9 @@ if pestañas == "Predicción de Sarcopenia":
             }
 
         # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
-        with st.expander("Ver diccionario completo"):
-            for col, desc in significados.items():
-                st.write(f"**{col}**: {desc}")
+       # with st.expander("Ver diccionario completo"):
+       #     for col, desc in significados.items():
+       #         st.write(f"**{col}**: {desc}")
     
         # Caja de entrada para búsqueda
         st.write("### Buscador de variables")
@@ -255,6 +255,12 @@ if pestañas == "Predicción de Sarcopenia":
             # Actualizar el DataFrame en el estado persistente
             st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
 
+        # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
+        with st.expander("Ver diccionario completo"):
+            for col, desc in significados.items():
+                st.write(f"**{col}**: {desc}")
+    
+        
         # Mostrar el DataFrame de resultados acumulados
         st.write("### Resultados de búsqueda")
         st.dataframe(st.session_state['resultados'], use_container_width=True)
