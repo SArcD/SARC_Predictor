@@ -113,9 +113,12 @@ if pestañas == "Presentación":
 
 #######
 if pestañas == "Predicción de Sarcopenia":
-
+    st.markdown("""
+    En el siguiente menú puede elegir entre las bases de datos disponibles
+    
+    """)
     # Seleccionar el año de la base de datos
-    selected_year = st.selectbox("Selecciona la base de datos:", ["2019", "2022"])
+    selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
 
     # Definir la ruta del archivo en función de la selección
     if selected_year == "2022":
