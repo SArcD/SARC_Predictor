@@ -228,36 +228,36 @@ if pestañas == "Predicción de Sarcopenia":
             'obsevaciones': 'Observaciones adicionales'
             }
 
-            # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
-            with st.expander("Ver diccionario completo"):
-                for col, desc in significados.items():
-                    st.write(f"**{col}**: {desc}")
+        # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
+        with st.expander("Ver diccionario completo"):
+            for col, desc in significados.items():
+                st.write(f"**{col}**: {desc}")
     
-            # Caja de entrada para búsqueda
-            st.write("### Buscador de variables")
-            buscar = st.text_input("Escribe una o más variables separadas por comas")
+        # Caja de entrada para búsqueda
+        st.write("### Buscador de variables")
+        buscar = st.text_input("Escribe una o más variables separadas por comas")
 
-            # Estado persistente del DataFrame de resultados
-            if 'resultados' not in st.session_state:
-                st.session_state['resultados'] = pd.DataFrame(columns=['Variable', 'Significado'])
+        # Estado persistente del DataFrame de resultados
+        if 'resultados' not in st.session_state:
+            st.session_state['resultados'] = pd.DataFrame(columns=['Variable', 'Significado'])
 
-            # Procesar y mostrar resultados de la búsqueda
-            if buscar:
-                # Separar las variables ingresadas por comas y quitar espacios
-                variables = [var.strip() for var in buscar.split(',')]
+        # Procesar y mostrar resultados de la búsqueda
+        if buscar:
+            # Separar las variables ingresadas por comas y quitar espacios
+            variables = [var.strip() for var in buscar.split(',')]
     
-                # Agregar cada variable buscada y su significado al DataFrame de resultados
-                nuevos_resultados = []
-                for var in variables:
-                    significado = significados.get(var, "Variable no encontrada")
-                    nuevos_resultados.append({'Variable': var, 'Significado': significado})
+            # Agregar cada variable buscada y su significado al DataFrame de resultados
+            nuevos_resultados = []
+            for var in variables:
+                significado = significados.get(var, "Variable no encontrada")
+                nuevos_resultados.append({'Variable': var, 'Significado': significado})
     
-                # Actualizar el DataFrame en el estado persistente
-                st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
+            # Actualizar el DataFrame en el estado persistente
+            st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
 
-            # Mostrar el DataFrame de resultados acumulados
-            st.write("### Resultados de búsqueda")
-            st.dataframe(st.session_state['resultados'], use_container_width=True)
+        # Mostrar el DataFrame de resultados acumulados
+        st.write("### Resultados de búsqueda")
+        st.dataframe(st.session_state['resultados'], use_container_width=True)
 
 
         #######################################################################################################################
