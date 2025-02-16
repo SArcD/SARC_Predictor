@@ -1087,20 +1087,218 @@ if pestañas == "Predicción de Sarcopenia":
                 # Mostrar el gráfico en Streamlit
                 st.plotly_chart(fig)
 
-            # Calcular el percentil 40 global de 'IMME'
-            percentile_40_IMME = df_combined_2['IMME'].quantile(0.40)
+                # Calcular el percentil 40 global de 'IMME'
+                percentile_40_IMME = df_combined_2['IMME'].quantile(0.40)
+
+                # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
+                df_filtered_2 = pd.DataFrame()
+                percentages_deleted = {}
+
+                for cluster in df_filtered['Cluster'].unique():
+                    # Filtrar el DataFrame por cada cluster
+                    cluster_data = df_filtered[df_filtered['Cluster'] == cluster]
+                    # Mantener solo las filas con 'IMME' menor o igual al percentil 40 global
+                    filtered_cluster_data = cluster_data[cluster_data['IMME'] <= percentile_40_IMME]
+                    # Agregar las filas filtradas al nuevo DataFrame
+                    df_filtered_2 = pd.concat([df_filtered_2, filtered_cluster_data])
+                    # Calcular el porcentaje de filas eliminadas en cada cluster
+                    percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
+                    percentages_deleted[cluster] = percentage_deleted
+
+                # Convertir los porcentajes a un DataFrame para visualizar
+                percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
+
+                # Mostrar el DataFrame con los datos filtrados
+                st.write("### DataFrame Filtrado por Cluster con 'IMME' <= Percentil 40")
+                st.dataframe(df_filtered_2)
+
+                # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por cluster
+                fig, ax = plt.subplots(figsize=(10, 6))
+                ax.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
+                ax.set_xlabel('Cluster')
+                ax.set_ylabel('Porcentaje de Filas Eliminadas')
+                ax.set_title('Porcentaje de Filas Eliminadas por Cluster (IMME <= Percentil 40% Global)')
+
+                # Mostrar el gráfico de barras en Streamlit
+                st.pyplot(fig)
+
+
+                # Filtrar el DataFrame combinado para obtener pacientes no en df_filtered_2
+                df_combined_2_filtered = df_combined_2[~df_combined_2['folio_paciente'].isin(df_filtered_2['folio_paciente'])]
+
+                # Filtrar las columnas numéricas seleccionadas en ambos DataFrames
+                numeric_columns_filtered_2 = df_filtered_2[selected_columns_renamed]
+                numeric_columns_combined_2 = df_combined_2[selected_columns_renamed]
+
+                # Crear un gráfico de caja para cada parámetro comparando df_filtered_2 y df_combined_2_filtered
+                for column in numeric_columns_filtered_2.columns:
+                    # Calcular los quintiles en df_combined_2
+                    quintile_1 = numeric_columns_combined_2[column].quantile(0.20)
+                    quintile_2 = numeric_columns_combined_2[column].quantile(0.40)
+                    quintile_3 = numeric_columns_combined_2[column].quantile(0.60)
+                    quintile_4 = numeric_columns_combined_2[column].quantile(0.80)
+
+                    # Crear la figura para el gráfico de caja
+                    fig = go.Figure()
+
+                    # Agregar gráfico de caja para los datos de df_filtered_2
+                    fig.add_trace(go.Box(
+                        y=numeric_columns_filtered_2[column],
+                        boxpoints='all',
+                        notched=True,
+                        name='Sarcopenia',
+                        marker=dict(color='blue')
+                    ))
+
+                    # Agregar gráfico de caja para los datos de df_combined_2_filtered
+                    fig.add_trace(go.Box(
+                    y=df_combined_2_filtered[column],
+                    boxpoints='all',
+                    notched=True,
+                    name='Resto de los datos',
+                    marker=dict(color='green')
+                ))
+
+                # Agregar líneas horizontales para los quintiles calculados en df_combined_2
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_1, y1=quintile_1,
+                      line=dict(color="blue", width=2, dash="dash"),
+                      xref="paper", yref="y")
+
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_2, y1=quintile_2,
+                      line=dict(color="green", width=2, dash="dash"),
+                      xref="paper", yref="y")
+
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_3, y1=quintile_3,
+                      line=dict(color="orange", width=2, dash="dash"),
+                      xref="paper", yref="y")
+
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_4, y1=quintile_4,
+                      line=dict(color="red", width=2, dash="dash"),
+                      xref="paper", yref="y")
+
+                # Actualizar el diseño del gráfico
+                fig.update_layout(
+                title_text=f'Comparación entre Sarcopenia y Resto - {column}',
+                xaxis_title="DataFrames",
+                yaxis_title=column,
+                showlegend=False
+                )
+
+                # Mostrar el gráfico en Streamlit
+                st.plotly_chart(fig)
+
+            ##############################  Marcha  ##############################################33
+
+            import pandas as pd
+            import numpy as np
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.cluster import AgglomerativeClustering
+
+            # Suponiendo que df_filtered_2 ya está definido
+            selected_columns = ['Marcha']
+
+            # Filtrar el DataFrame para incluir solo las columnas seleccionadas y eliminar valores faltantes
+            numeric_data_2 = df_filtered_2[selected_columns].dropna()
+
+            # Verificar el número de muestras
+            n_samples = len(numeric_data_2)
+
+            if n_samples < 2:
+                st.warning("Número insuficiente de muestras para realizar clustering. Se asignará un único cluster a todos los datos.")
+                df_filtered_2['Cluster'] = 0  # Asignar a todos la misma etiqueta de cluster
+            else:
+                # Definir el número de clusters adecuado, respetando el rango permitido
+                n_clusters = min(4, max(2, n_samples - 1))
+
+                # Normalizar los datos
+                scaler = StandardScaler()
+                normalized_data_2 = scaler.fit_transform(numeric_data_2)
+
+                # Aplicar Agglomerative Clustering
+                clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
+                labels_2019 = clustering.fit_predict(normalized_data_2)
+
+                # Agregar las etiquetas al DataFrame original filtrado
+                df_filtered_2 = df_filtered_2.loc[numeric_data_2.index]  # Alinear índices
+                df_filtered_2['Cluster'] = labels_2019
+
+            df_filtered_2  # Mostrar las primeras filas del DataFrame resultante
+
+
+            from matplotlib import pyplot as plt
+            import plotly.graph_objects as go
+            from plotly.subplots import make_subplots
+
+            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
+            numeric_columns_2 = df_filtered_2[selected_columns_renamed + ['Cluster']]
+
+            # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
+            for column in selected_columns_renamed:
+                # Obtener los datos de cada cluster para el parámetro actual
+                cluster_data = [df_filtered_2[df_filtered_2['Cluster'] == cluster][column] for cluster in df_filtered_2['Cluster'].unique()]
+
+                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
+                quintile_1 = df_filtered_2[column].quantile(0.20)
+                quintile_2 = df_filtered_2[column].quantile(0.40)
+                quintile_3 = df_filtered_2[column].quantile(0.60)
+                quintile_4 = df_filtered_2[column].quantile(0.80)
+
+                # Crear una nueva figura para el gráfico de caja
+                fig = go.Figure()
+
+                # Agregar el gráfico de caja para cada cluster
+                for j, cluster_series in enumerate(cluster_data):
+                    fig.add_trace(go.Box(y=cluster_series, boxpoints='all', notched=True, name=f'Cluster {j}'))
+
+                # Agregar líneas horizontales para los quintiles
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_1, y1=quintile_1,
+                      line=dict(color="blue", width=2, dash="dash"),
+                      xref="paper", yref="y")  # Línea del primer quintil (Q1 = 20%)
+
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_2, y1=quintile_2,
+                      line=dict(color="green", width=2, dash="dash"),
+                      xref="paper", yref="y")  # Línea del segundo quintil (Q2 = 40%)
+
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_3, y1=quintile_3,
+                      line=dict(color="orange", width=2, dash="dash"),
+                      xref="paper", yref="y")  # Línea de la mediana (Q3 = 60%)
+
+                fig.add_shape(type="line",
+                      x0=0, x1=1, y0=quintile_4, y1=quintile_4,
+                      line=dict(color="red", width=2, dash="dash"),
+                      xref="paper", yref="y")  # Línea del cuarto quintil (Q4 = 80%)
+
+                # Actualizar el diseño del gráfico
+                fig.update_layout(
+                    title_text=f'Comparación de Clusters - {column}',
+                    xaxis_title="Clusters",
+                    yaxis_title=column,
+                    showlegend=False
+                )
+
+                # Mostrar el gráfico en Streamlit
+                st.plotly_chart(fig)
+
 
             # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
-            df_filtered_2 = pd.DataFrame()
+            df_filtered_3 = pd.DataFrame()
             percentages_deleted = {}
 
-            for cluster in df_filtered['Cluster'].unique():
+            for cluster in df_filtered_2['Cluster'].unique():
                 # Filtrar el DataFrame por cada cluster
-                cluster_data = df_filtered[df_filtered['Cluster'] == cluster]
-                # Mantener solo las filas con 'IMME' menor o igual al percentil 40 global
-                filtered_cluster_data = cluster_data[cluster_data['IMME'] <= percentile_40_IMME]
+                cluster_data = df_filtered_2[df_filtered_2['Cluster'] == cluster]
+                # Mantener solo las filas con 'Marcha' menor a 0.8 m/s
+                filtered_cluster_data = cluster_data[cluster_data['Marcha'] < 0.8]
+
                 # Agregar las filas filtradas al nuevo DataFrame
-                df_filtered_2 = pd.concat([df_filtered_2, filtered_cluster_data])
+                df_filtered_3 = pd.concat([df_filtered_3, filtered_cluster_data])
                 # Calcular el porcentaje de filas eliminadas en cada cluster
                 percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
                 percentages_deleted[cluster] = percentage_deleted
@@ -1109,339 +1307,141 @@ if pestañas == "Predicción de Sarcopenia":
             percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
 
             # Mostrar el DataFrame con los datos filtrados
-            st.write("### DataFrame Filtrado por Cluster con 'IMME' <= Percentil 40")
-            st.dataframe(df_filtered_2)
+            st.write("### DataFrame Filtrado por Cluster con 'Marcha' < 0.8 m/s")
+            st.dataframe(df_filtered_3)
 
             # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por cluster
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
             ax.set_xlabel('Cluster')
             ax.set_ylabel('Porcentaje de Filas Eliminadas')
-            ax.set_title('Porcentaje de Filas Eliminadas por Cluster (IMME <= Percentil 40% Global)')
+            ax.set_title('Porcentaje de Filas Eliminadas por Cluster (Marcha < 0.8 m/s)')
 
             # Mostrar el gráfico de barras en Streamlit
             st.pyplot(fig)
 
+            ###
 
-        # Filtrar el DataFrame combinado para obtener pacientes no en df_filtered_2
-        df_combined_2_filtered = df_combined_2[~df_combined_2['folio_paciente'].isin(df_filtered_2['folio_paciente'])]
+            # Filtrar las columnas numéricas seleccionadas en ambos DataFrames
+            numeric_columns_filtered_3 = df_filtered_3[selected_columns_renamed]
+            numeric_columns_combined_2 = df_combined_2[selected_columns_renamed]
 
-        # Filtrar las columnas numéricas seleccionadas en ambos DataFrames
-        numeric_columns_filtered_2 = df_filtered_2[selected_columns_renamed]
-        numeric_columns_combined_2 = df_combined_2[selected_columns_renamed]
+            # Crear un gráfico de caja para cada parámetro comparando df_filtered_3 y df_combined_2_filtered
+            for column in selected_columns_renamed:
+                # Calcular los quintiles en df_combined_2
+                quintile_1 = numeric_columns_combined_2[column].quantile(0.20)
+                quintile_2 = numeric_columns_combined_2[column].quantile(0.40)
+                quintile_3 = numeric_columns_combined_2[column].quantile(0.60)
+                quintile_4 = numeric_columns_combined_2[column].quantile(0.80)
 
-        # Crear un gráfico de caja para cada parámetro comparando df_filtered_2 y df_combined_2_filtered
-        for column in numeric_columns_filtered_2.columns:
-            # Calcular los quintiles en df_combined_2
-            quintile_1 = numeric_columns_combined_2[column].quantile(0.20)
-            quintile_2 = numeric_columns_combined_2[column].quantile(0.40)
-            quintile_3 = numeric_columns_combined_2[column].quantile(0.60)
-            quintile_4 = numeric_columns_combined_2[column].quantile(0.80)
+                # Crear la figura para el gráfico de caja
+                fig = go.Figure()
 
-            # Crear la figura para el gráfico de caja
-            fig = go.Figure()
+                # Agregar gráfico de caja para los datos de df_filtered_3
+                fig.add_trace(go.Box(
+                    y=numeric_columns_filtered_3[column],
+                    boxpoints='all',
+                    notched=True,
+                    name='Sarcopenia',
+                    marker=dict(color='blue')
+                ))
 
-            # Agregar gráfico de caja para los datos de df_filtered_2
-            fig.add_trace(go.Box(
-                y=numeric_columns_filtered_2[column],
-                boxpoints='all',
-                notched=True,
-                name='Sarcopenia',
-                marker=dict(color='blue')
-            ))
+                # Agregar gráfico de caja para los datos de df_combined_2_filtered
+                fig.add_trace(go.Box(
+                    y=df_combined_2_filtered[column],
+                    boxpoints='all',
+                    notched=True,
+                    name='Resto de los datos',
+                    marker=dict(color='green')
+                ))
 
-            # Agregar gráfico de caja para los datos de df_combined_2_filtered
-            fig.add_trace(go.Box(
-                y=df_combined_2_filtered[column],
-                boxpoints='all',
-                notched=True,
-                name='Resto de los datos',
-                marker=dict(color='green')
-            ))
-
-            # Agregar líneas horizontales para los quintiles calculados en df_combined_2
-            fig.add_shape(type="line",
+                # Agregar líneas horizontales para los quintiles calculados en df_combined_2
+                fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_1, y1=quintile_1,
                       line=dict(color="blue", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-            fig.add_shape(type="line",
+                fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_2, y1=quintile_2,
                       line=dict(color="green", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-            fig.add_shape(type="line",
+                fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_3, y1=quintile_3,
                       line=dict(color="orange", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-            fig.add_shape(type="line",
+                fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_4, y1=quintile_4,
                       line=dict(color="red", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-            # Actualizar el diseño del gráfico
-            fig.update_layout(
-            title_text=f'Comparación entre Sarcopenia y Resto - {column}',
-            xaxis_title="DataFrames",
-            yaxis_title=column,
-            showlegend=False
-            )
-
-            # Mostrar el gráfico en Streamlit
-            st.plotly_chart(fig)
-
-    ##############################  Marcha  ##############################################33
-
-        import pandas as pd
-        import numpy as np
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.cluster import AgglomerativeClustering
-
-        # Suponiendo que df_filtered_2 ya está definido
-        selected_columns = ['Marcha']
-
-        # Filtrar el DataFrame para incluir solo las columnas seleccionadas y eliminar valores faltantes
-        numeric_data_2 = df_filtered_2[selected_columns].dropna()
-
-        # Verificar el número de muestras
-        n_samples = len(numeric_data_2)
-
-        if n_samples < 2:
-            st.warning("Número insuficiente de muestras para realizar clustering. Se asignará un único cluster a todos los datos.")
-            df_filtered_2['Cluster'] = 0  # Asignar a todos la misma etiqueta de cluster
-        else:
-            # Definir el número de clusters adecuado, respetando el rango permitido
-            n_clusters = min(4, max(2, n_samples - 1))
-
-            # Normalizar los datos
-            scaler = StandardScaler()
-            normalized_data_2 = scaler.fit_transform(numeric_data_2)
-
-            # Aplicar Agglomerative Clustering
-            clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
-            labels_2019 = clustering.fit_predict(normalized_data_2)
-
-            # Agregar las etiquetas al DataFrame original filtrado
-            df_filtered_2 = df_filtered_2.loc[numeric_data_2.index]  # Alinear índices
-            df_filtered_2['Cluster'] = labels_2019
-
-        df_filtered_2  # Mostrar las primeras filas del DataFrame resultante
-
-
-        from matplotlib import pyplot as plt
-        import plotly.graph_objects as go
-        from plotly.subplots import make_subplots
-
-        # Filtrar el DataFrame para incluir solo las columnas seleccionadas
-        numeric_columns_2 = df_filtered_2[selected_columns_renamed + ['Cluster']]
-
-        # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
-        for column in selected_columns_renamed:
-            # Obtener los datos de cada cluster para el parámetro actual
-            cluster_data = [df_filtered_2[df_filtered_2['Cluster'] == cluster][column] for cluster in df_filtered_2['Cluster'].unique()]
-
-            # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
-            quintile_1 = df_filtered_2[column].quantile(0.20)
-            quintile_2 = df_filtered_2[column].quantile(0.40)
-            quintile_3 = df_filtered_2[column].quantile(0.60)
-            quintile_4 = df_filtered_2[column].quantile(0.80)
-
-            # Crear una nueva figura para el gráfico de caja
-            fig = go.Figure()
-
-            # Agregar el gráfico de caja para cada cluster
-            for j, cluster_series in enumerate(cluster_data):
-                fig.add_trace(go.Box(y=cluster_series, boxpoints='all', notched=True, name=f'Cluster {j}'))
-
-            # Agregar líneas horizontales para los quintiles
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_1, y1=quintile_1,
-                      line=dict(color="blue", width=2, dash="dash"),
-                      xref="paper", yref="y")  # Línea del primer quintil (Q1 = 20%)
-
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_2, y1=quintile_2,
-                      line=dict(color="green", width=2, dash="dash"),
-                      xref="paper", yref="y")  # Línea del segundo quintil (Q2 = 40%)
-
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_3, y1=quintile_3,
-                      line=dict(color="orange", width=2, dash="dash"),
-                      xref="paper", yref="y")  # Línea de la mediana (Q3 = 60%)
-
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_4, y1=quintile_4,
-                      line=dict(color="red", width=2, dash="dash"),
-                      xref="paper", yref="y")  # Línea del cuarto quintil (Q4 = 80%)
-
-            # Actualizar el diseño del gráfico
-            fig.update_layout(
-                title_text=f'Comparación de Clusters - {column}',
-                xaxis_title="Clusters",
-                yaxis_title=column,
-                showlegend=False
-            )
-
-            # Mostrar el gráfico en Streamlit
-            st.plotly_chart(fig)
-
-
-        # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
-        df_filtered_3 = pd.DataFrame()
-        percentages_deleted = {}
-
-        for cluster in df_filtered_2['Cluster'].unique():
-            # Filtrar el DataFrame por cada cluster
-            cluster_data = df_filtered_2[df_filtered_2['Cluster'] == cluster]
-            # Mantener solo las filas con 'Marcha' menor a 0.8 m/s
-            filtered_cluster_data = cluster_data[cluster_data['Marcha'] < 0.8]
-
-            # Agregar las filas filtradas al nuevo DataFrame
-            df_filtered_3 = pd.concat([df_filtered_3, filtered_cluster_data])
-            # Calcular el porcentaje de filas eliminadas en cada cluster
-            percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
-            percentages_deleted[cluster] = percentage_deleted
-
-        # Convertir los porcentajes a un DataFrame para visualizar
-        percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
-
-        # Mostrar el DataFrame con los datos filtrados
-        st.write("### DataFrame Filtrado por Cluster con 'Marcha' < 0.8 m/s")
-        st.dataframe(df_filtered_3)
-
-        # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por cluster
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
-        ax.set_xlabel('Cluster')
-        ax.set_ylabel('Porcentaje de Filas Eliminadas')
-        ax.set_title('Porcentaje de Filas Eliminadas por Cluster (Marcha < 0.8 m/s)')
-
-        # Mostrar el gráfico de barras en Streamlit
-        st.pyplot(fig)
-
-    ###
-
-        # Filtrar las columnas numéricas seleccionadas en ambos DataFrames
-        numeric_columns_filtered_3 = df_filtered_3[selected_columns_renamed]
-        numeric_columns_combined_2 = df_combined_2[selected_columns_renamed]
-
-        # Crear un gráfico de caja para cada parámetro comparando df_filtered_3 y df_combined_2_filtered
-        for column in selected_columns_renamed:
-            # Calcular los quintiles en df_combined_2
-            quintile_1 = numeric_columns_combined_2[column].quantile(0.20)
-            quintile_2 = numeric_columns_combined_2[column].quantile(0.40)
-            quintile_3 = numeric_columns_combined_2[column].quantile(0.60)
-            quintile_4 = numeric_columns_combined_2[column].quantile(0.80)
-
-            # Crear la figura para el gráfico de caja
-            fig = go.Figure()
-
-            # Agregar gráfico de caja para los datos de df_filtered_3
-            fig.add_trace(go.Box(
-                y=numeric_columns_filtered_3[column],
-                boxpoints='all',
-                notched=True,
-                name='Sarcopenia',
-                marker=dict(color='blue')
-            ))
-
-            # Agregar gráfico de caja para los datos de df_combined_2_filtered
-            fig.add_trace(go.Box(
-                y=df_combined_2_filtered[column],
-                boxpoints='all',
-                notched=True,
-                name='Resto de los datos',
-                marker=dict(color='green')
-            ))
-
-            # Agregar líneas horizontales para los quintiles calculados en df_combined_2
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_1, y1=quintile_1,
-                      line=dict(color="blue", width=2, dash="dash"),
-                      xref="paper", yref="y")
-
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_2, y1=quintile_2,
-                      line=dict(color="green", width=2, dash="dash"),
-                      xref="paper", yref="y")
-
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_3, y1=quintile_3,
-                      line=dict(color="orange", width=2, dash="dash"),
-                      xref="paper", yref="y")
-
-            fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_4, y1=quintile_4,
-                      line=dict(color="red", width=2, dash="dash"),
-                      xref="paper", yref="y")
-
-            # Actualizar el diseño para el tamaño y estilo de las fuentes
-            fig.update_layout(
-                title_text=f'Comparación entre cluster de "Sarcopenia Grave" y el resto de los pacientes - {column}',
-                title_font=dict(size=20, family="Arial"),  # Título en negritas y tamaño ajustado
-                xaxis_title="DataFrames",
-                yaxis_title=column,
-                showlegend=False,
-                xaxis=dict(
-                    tickfont=dict(
-                        size=14,
-                        family="Arial"
-                    )
-                ),
-                yaxis=dict(
-                    title_font=dict(size=18, family="Arial"),
-                    tickfont=dict(
-                        size=12,
-                        family="Arial"
+                # Actualizar el diseño para el tamaño y estilo de las fuentes
+                fig.update_layout(
+                    title_text=f'Comparación entre cluster de "Sarcopenia Grave" y el resto de los pacientes - {column}',
+                    title_font=dict(size=20, family="Arial"),  # Título en negritas y tamaño ajustado
+                    xaxis_title="DataFrames",
+                    yaxis_title=column,
+                    showlegend=False,
+                    xaxis=dict(
+                        tickfont=dict(
+                            size=14,
+                            family="Arial"
+                        )
+                    ),
+                    yaxis=dict(
+                        title_font=dict(size=18, family="Arial"),
+                        tickfont=dict(
+                            size=12,
+                            family="Arial"
+                        )
                     )
                 )
-            )
 
-            # Mostrar el gráfico en Streamlit
-            st.plotly_chart(fig)
+                # Mostrar el gráfico en Streamlit
+                st.plotly_chart(fig)
 
 
-        from matplotlib_venn import venn3
-        import matplotlib.pyplot as plt
+            from matplotlib_venn import venn3
+            import matplotlib.pyplot as plt
 
-        # Crear conjuntos de folios de cada DataFrame
-        folios_df_filtered_3 = set(df_filtered_3['folio_paciente'].tolist())  # Sarcopenia Severa
-        folios_df_filtered_2 = set(df_filtered_2['folio_paciente'].tolist())  # Sarcopenia
-        folios_df_combined_2 = set(df_combined_2['folio_paciente'].tolist())  # Muestra Completa
+            # Crear conjuntos de folios de cada DataFrame
+            folios_df_filtered_3 = set(df_filtered_3['folio_paciente'].tolist())  # Sarcopenia Severa
+            folios_df_filtered_2 = set(df_filtered_2['folio_paciente'].tolist())  # Sarcopenia
+            folios_df_combined_2 = set(df_combined_2['folio_paciente'].tolist())  # Muestra Completa
 
-        # Crear el diagrama de Venn para los tres conjuntos con colores personalizados
-        plt.figure(figsize=(10, 8))
-        venn = venn3([folios_df_filtered_3, folios_df_filtered_2, folios_df_combined_2],
+            # Crear el diagrama de Venn para los tres conjuntos con colores personalizados
+            plt.figure(figsize=(10, 8))
+            venn = venn3([folios_df_filtered_3, folios_df_filtered_2, folios_df_combined_2],
                      set_labels=('Sarcopenia Severa', 'Sarcopenia', 'Muestra Completa'))
 
-        # Aplicar los colores personalizados asegurando que "Sarcopenia Severa" sea rojo
-        if venn.get_patch_by_id('100'):
-            venn.get_patch_by_id('100').set_color('red')      # Solo Sarcopenia Severa
-        if venn.get_patch_by_id('010'):
-            venn.get_patch_by_id('010').set_color('orange')   # Solo Sarcopenia
-        if venn.get_patch_by_id('001'):
-            venn.get_patch_by_id('001').set_color('green')    # Solo Muestra Completa
+            # Aplicar los colores personalizados asegurando que "Sarcopenia Severa" sea rojo
+            if venn.get_patch_by_id('100'):
+                venn.get_patch_by_id('100').set_color('red')      # Solo Sarcopenia Severa
+            if venn.get_patch_by_id('010'):
+                venn.get_patch_by_id('010').set_color('orange')   # Solo Sarcopenia
+            if venn.get_patch_by_id('001'):
+                venn.get_patch_by_id('001').set_color('green')    # Solo Muestra Completa
 
-        # Asignar colores a las intersecciones
-        if venn.get_patch_by_id('110'):
-            venn.get_patch_by_id('110').set_color('red')      # Sarcopenia Severa dentro de Sarcopenia
-        if venn.get_patch_by_id('011'):
-            venn.get_patch_by_id('011').set_color('orange')   # Sarcopenia dentro de Muestra Completa
-        if venn.get_patch_by_id('111'):
-            venn.get_patch_by_id('111').set_color('red')      # Sarcopenia Severa dentro de Sarcopenia y Muestra Completa
+            # Asignar colores a las intersecciones
+            if venn.get_patch_by_id('110'):
+                venn.get_patch_by_id('110').set_color('red')      # Sarcopenia Severa dentro de Sarcopenia
+            if venn.get_patch_by_id('011'):
+                venn.get_patch_by_id('011').set_color('orange')   # Sarcopenia dentro de Muestra Completa
+            if venn.get_patch_by_id('111'):
+                venn.get_patch_by_id('111').set_color('red')      # Sarcopenia Severa dentro de Sarcopenia y Muestra Completa
 
-        # Ajustar transparencia para todas las áreas
-        for patch_id in ['100', '010', '001', '110', '011', '111']:
-            if venn.get_patch_by_id(patch_id):
-                venn.get_patch_by_id(patch_id).set_alpha(0.6)
+            # Ajustar transparencia para todas las áreas
+            for patch_id in ['100', '010', '001', '110', '011', '111']:
+                if venn.get_patch_by_id(patch_id):
+                    venn.get_patch_by_id(patch_id).set_alpha(0.6)
 
-        # Título del gráfico
-        plt.title('Proporción de pacientes: Sarcopenia Severa y Sarcopenia (Muestra: "Hombres", IMMS-2019)')
+            # Título del gráfico
+            plt.title('Proporción de pacientes: Sarcopenia Severa y Sarcopenia (Muestra: "Hombres", IMMS-2019)')
 
-        # Mostrar el gráfico de Venn en Streamlit
-        st.pyplot(plt)
-####################################
+            # Mostrar el gráfico de Venn en Streamlit
+            st.pyplot(plt)
+        ####################################
 
         import matplotlib.pyplot as plt
         from sklearn.preprocessing import StandardScaler
