@@ -138,7 +138,7 @@ if pestañas == "Predicción de Sarcopenia":
 
         st.write("Diccionario de variables")
             # Diccionario de significados completo basado en el cuadernillo
-            significados = {
+        significados = {
             'folio_paciente': 'Folio asignado a cada paciente',
             'edad_am': 'Años cumplidos al momento de la entrevista',
             'sexo': 'Sexo del paciente (1: Masculino, 2: Femenino)',
