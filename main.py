@@ -1152,41 +1152,41 @@ if pestañas == "Predicción de Sarcopenia":
 
                     # Agregar gráfico de caja para los datos de df_combined_2_filtered
                     fig.add_trace(go.Box(
-                    y=df_combined_2_filtered[column],
-                    boxpoints='all',
-                    notched=True,
-                    name='Resto de los datos',
-                    marker=dict(color='green')
-                ))
+                        y=df_combined_2_filtered[column],
+                        boxpoints='all',
+                        notched=True,
+                        name='Resto de los datos',
+                        marker=dict(color='green')
+                    ))
 
-                # Agregar líneas horizontales para los quintiles calculados en df_combined_2
-                fig.add_shape(type="line",
+                    # Agregar líneas horizontales para los quintiles calculados en df_combined_2
+                    fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_1, y1=quintile_1,
                       line=dict(color="blue", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-                fig.add_shape(type="line",
+                    fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_2, y1=quintile_2,
                       line=dict(color="green", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-                fig.add_shape(type="line",
+                    fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_3, y1=quintile_3,
                       line=dict(color="orange", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-                fig.add_shape(type="line",
+                    fig.add_shape(type="line",
                       x0=0, x1=1, y0=quintile_4, y1=quintile_4,
                       line=dict(color="red", width=2, dash="dash"),
                       xref="paper", yref="y")
 
-                # Actualizar el diseño del gráfico
-                fig.update_layout(
-                title_text=f'Comparación entre Sarcopenia y Resto - {column}',
-                xaxis_title="DataFrames",
-                yaxis_title=column,
-                showlegend=False
-                )
+                    # Actualizar el diseño del gráfico
+                    fig.update_layout(
+                        title_text=f'Comparación entre Sarcopenia y Resto - {column}',
+                        xaxis_title="DataFrames",
+                        yaxis_title=column,
+                        showlegend=False
+                        )
 
                 # Mostrar el gráfico en Streamlit
                 st.plotly_chart(fig)
