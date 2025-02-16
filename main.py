@@ -136,7 +136,7 @@ if pestañas == "Predicción de Sarcopenia":
         st.write(f"Datos de la base {selected_year} cargados con éxito:")
         st.dataframe(datos)
 
-        with st.expander("Diccionario de variables"):
+        with st.expander("**Diccionario de variables**"):
             # Diccionario de significados completo basado en el cuadernillo
             significados = {
             'folio_paciente': 'Folio asignado a cada paciente',
