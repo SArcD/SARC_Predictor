@@ -516,8 +516,8 @@ if pestañas == "Predicción de Sarcopenia":
     ###
 
         # Mostrar el DataFrame filtrado
-        st.write("### DataFrame Filtrado")
-        st.dataframe(df_combined_2, use_container_width=True)
+        #st.write("### DataFrame Filtrado")
+        #st.dataframe(df_combined_2, use_container_width=True)
 
     #####
         columns_to_standardize = df_combined_2.columns[4:]  # Selecting columns from the 4th column onwards
