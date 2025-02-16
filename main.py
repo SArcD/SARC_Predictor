@@ -232,7 +232,23 @@ if pestañas == "Predicción de Sarcopenia":
        # with st.expander("Ver diccionario completo"):
        #     for col, desc in significados.items():
        #         st.write(f"**{col}**: {desc}")
-    
+
+    import streamlit as st
+
+    # Título del diccionario
+    title = "Diccionario de variables"
+    st.write(f"## {title}")
+
+
+    # Crear el menú desplegable
+    variable_seleccionada = st.selectbox("Seleccione una variable para ver su significado:", list(significados.keys()))
+
+    # Mostrar la descripción de la variable seleccionada
+    st.write(f"**{variable_seleccionada}:** {significados[variable_seleccionada]}")
+
+
+
+        
         # Caja de entrada para búsqueda
         st.write("### Buscador de variables")
         buscar = st.text_input("Escribe una o más variables separadas por comas")
