@@ -234,8 +234,8 @@ if pestañas == "Predicción de Sarcopenia":
        #         st.write(f"**{col}**: {desc}")
 
         # Título del diccionario
-        title = "Diccionario de variables"
-        st.write(f"## {title}")
+        #title = "Diccionario de variables"
+        #st.write(f"## {title}")
 
 
         # Crear el menú desplegable
@@ -271,8 +271,8 @@ if pestañas == "Predicción de Sarcopenia":
 
         # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
         #with st.expander("Ver diccionario completo"):
-        for col, desc in significados.items():
-            st.write(f"**{col}**: {desc}")
+        #for col, desc in significados.items():
+        #    st.write(f"**{col}**: {desc}")
     
         
         # Mostrar el DataFrame de resultados acumulados
