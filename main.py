@@ -248,8 +248,8 @@ if pestañas == "Predicción de Sarcopenia":
 
         
             # Caja de entrada para búsqueda
-            st.write("### Buscador de variables")
-            buscar = st.text_input("Escribe una o más variables separadas por comas")
+            #st.write("### Buscador de variables")
+            buscar = st.text_input("Escribe una o más variables separadas por comas, las variables se mostrarán junto a su significado en la tabla de abajo")
 
             # Estado persistente del DataFrame de resultados
             if 'resultados' not in st.session_state:
