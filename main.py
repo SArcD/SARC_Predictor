@@ -406,53 +406,53 @@ if pestañas == "Predicción de Sarcopenia":
 
     ##############################################################################
     
-        df=datos[['P117_1','P117_2','P117_3','P118_1','P118_2','P118_3','P119_1','P119_2','P119_3','P120_1','P120_2','P120_3','P121_1','P121_2','P121_3','P122_1','P122_2','P122_3','P123_1','P123_2','P123_3','P124_1','P124_2','P124_3','P125_1','P125_2','P125_3','P126_1','P126_2','P126_3','P127_1','P127_2','P127_3','P128_1','P128_2','P128_3','P129_1','P129_2','P129_3','P130_1','P130_2','P130_3']]
+            df=datos[['P117_1','P117_2','P117_3','P118_1','P118_2','P118_3','P119_1','P119_2','P119_3','P120_1','P120_2','P120_3','P121_1','P121_2','P121_3','P122_1','P122_2','P122_3','P123_1','P123_2','P123_3','P124_1','P124_2','P124_3','P125_1','P125_2','P125_3','P126_1','P126_2','P126_3','P127_1','P127_2','P127_3','P128_1','P128_2','P128_3','P129_1','P129_2','P129_3','P130_1','P130_2','P130_3']]
 
-        # Corrigiendo la advertencia al agrupar columnas
-        df_grouped = df.T.groupby(lambda x: x.split('_')[0]).mean().T
-        # Calculando el IMC: Peso / (Altura^2)
-        df_grouped['IMC'] = df_grouped['P117'] / ((df_grouped['P118']*0.01) ** 2)
+            # Corrigiendo la advertencia al agrupar columnas
+            df_grouped = df.T.groupby(lambda x: x.split('_')[0]).mean().T
+            # Calculando el IMC: Peso / (Altura^2)
+            df_grouped['IMC'] = df_grouped['P117'] / ((df_grouped['P118']*0.01) ** 2)
 
-        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
-        df_2=datos[['P113_1', 'P113_3', 'P113_5']]
-        df_2['P113_iz'] = datos[['P113_1', 'P113_3', 'P113_5']].mean(axis=1)
-        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
-        df_2 = df_2.drop(columns=['P113_1', 'P113_3', 'P113_5'])
+            # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+            df_2=datos[['P113_1', 'P113_3', 'P113_5']]
+            df_2['P113_iz'] = datos[['P113_1', 'P113_3', 'P113_5']].mean(axis=1)
+            # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+            df_2 = df_2.drop(columns=['P113_1', 'P113_3', 'P113_5'])
 
-        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
-        df_3=datos[['P113_2', 'P113_4', 'P113_6']]
-        df_3['P113_der'] = datos[['P113_2', 'P113_4', 'P113_6']].mean(axis=1)
-        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
-        df_3 = df_3.drop(columns=['P113_2', 'P113_4', 'P113_6'])
+            # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+            df_3=datos[['P113_2', 'P113_4', 'P113_6']]
+            df_3['P113_der'] = datos[['P113_2', 'P113_4', 'P113_6']].mean(axis=1)
+            # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+            df_3 = df_3.drop(columns=['P113_2', 'P113_4', 'P113_6'])
 
-        df_3b = pd.concat([df_2,df_3], axis=1)
-        df_3b['P113']=(df_2['P113_iz']+df_3['P113_der'])/2
-        df_3b = df_3b.drop(columns=['P113_iz', 'P113_der'])
+            df_3b = pd.concat([df_2,df_3], axis=1)
+            df_3b['P113']=(df_2['P113_iz']+df_3['P113_der'])/2
+            df_3b = df_3b.drop(columns=['P113_iz', 'P113_der'])
 
-        # Seleccionar las columnas y eliminar los valores que sean 0 antes de calcular el promedio
-        df_4 = datos[['P112_4_1', 'P112_4_2']].replace(0, np.nan).dropna()
-        # Calcular el promedio
-        df_4['P112'] = df_4.mean(axis=1)
-        # Verificar los valores únicos en P112 para asegurarse de que no sean todos iguales
-        unique_values = df_4['P112'].unique()
+            # Seleccionar las columnas y eliminar los valores que sean 0 antes de calcular el promedio
+            df_4 = datos[['P112_4_1', 'P112_4_2']].replace(0, np.nan).dropna()
+            # Calcular el promedio
+            df_4['P112'] = df_4.mean(axis=1)
+            # Verificar los valores únicos en P112 para asegurarse de que no sean todos iguales
+            unique_values = df_4['P112'].unique()
 
-        df_4['P112_vel'] = 4 / df_4['P112']
-        df_4 = df_4.drop(columns=['P112_4_1', 'P112_4_2', 'P112'])
+            df_4['P112_vel'] = 4 / df_4['P112']
+            df_4 = df_4.drop(columns=['P112_4_1', 'P112_4_2', 'P112'])
 
-        df_datos=datos[['folio_paciente','edad_am','sexo','nacio_en_mexico', 'P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12', 'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']]
+            df_datos=datos[['folio_paciente','edad_am','sexo','nacio_en_mexico', 'P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12', 'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']]
 
-        # Concatenating df_grouped with df_r to create a single DataFrame
-        df_combined = pd.concat([df_datos, df_grouped, df_3b, df_4], axis=1)
-        #df_combined = st.dataframe(df_combined, use_container_width=True)
-        df_combined.describe()
+            # Concatenating df_grouped with df_r to create a single DataFrame
+            df_combined = pd.concat([df_datos, df_grouped, df_3b, df_4], axis=1)
+            #df_combined = st.dataframe(df_combined, use_container_width=True)
+            df_combined.describe()
 
 
-        # Filtrar las filas con NaN
-        df_filtered = df_combined.dropna()
+            # Filtrar las filas con NaN
+            df_filtered = df_combined.dropna()
 
-        # Mostrar un resumen del DataFrame resultante
-        df_summary = df_filtered.describe()
-        df_summary = st.dataframe(df_summary, use_container_width=True)
+            # Mostrar un resumen del DataFrame resultante
+            df_summary = df_filtered.describe()
+            df_summary = st.dataframe(df_summary, use_container_width=True)
 
 
         ####################$$$$$$$$$$$$$$$$$$$$$########################
