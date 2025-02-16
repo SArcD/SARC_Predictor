@@ -136,7 +136,7 @@ if pestañas == "Predicción de Sarcopenia":
         st.write(f"Datos de la base {selected_year} cargados con éxito:")
         st.dataframe(datos)
 
-        with st.expander("Diccionario de variables"):
+        st.write("Diccionario de variables")
             # Diccionario de significados completo basado en el cuadernillo
             significados = {
             'folio_paciente': 'Folio asignado a cada paciente',
@@ -256,9 +256,9 @@ if pestañas == "Predicción de Sarcopenia":
             st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
 
         # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
-        with st.expander("Ver diccionario completo"):
-            for col, desc in significados.items():
-                st.write(f"**{col}**: {desc}")
+        #with st.expander("Ver diccionario completo"):
+        for col, desc in significados.items():
+            st.write(f"**{col}**: {desc}")
     
         
         # Mostrar el DataFrame de resultados acumulados
