@@ -262,7 +262,7 @@ if pestañas == "Predicción de Sarcopenia":
     
         
         # Mostrar el DataFrame de resultados acumulados
-        st.write("### Resultados de búsqueda")
+        st.write("## Resultados de búsqueda")
         st.dataframe(st.session_state['resultados'], use_container_width=True)
 
 
