@@ -136,9 +136,9 @@ if pestañas == "Predicción de Sarcopenia":
         st.write(f"Datos de la base {selected_year} cargados con éxito:")
         st.dataframe(datos)
 
-        st.write("Diccionario de variables")
+        with st.expander("Diccionario de variables"):
             # Diccionario de significados completo basado en el cuadernillo
-        significados = {
+            significados = {
             'folio_paciente': 'Folio asignado a cada paciente',
             'edad_am': 'Años cumplidos al momento de la entrevista',
             'sexo': 'Sexo del paciente (1: Masculino, 2: Femenino)',
@@ -238,36 +238,36 @@ if pestañas == "Predicción de Sarcopenia":
         #st.write(f"## {title}")
 
 
-        # Crear el menú desplegable
-        variable_seleccionada = st.selectbox("Seleccione una variable para ver su significado:", list(significados.keys()))
+            # Crear el menú desplegable
+            variable_seleccionada = st.selectbox("Seleccione una variable para ver su significado:", list(significados.keys()))
 
-        # Mostrar la descripción de la variable seleccionada
-        st.write(f"**{variable_seleccionada}:** {significados[variable_seleccionada]}")
+            # Mostrar la descripción de la variable seleccionada
+            st.write(f"**{variable_seleccionada}:** {significados[variable_seleccionada]}")
 
 
 
         
-        # Caja de entrada para búsqueda
-        st.write("### Buscador de variables")
-        buscar = st.text_input("Escribe una o más variables separadas por comas")
+            # Caja de entrada para búsqueda
+            st.write("### Buscador de variables")
+            buscar = st.text_input("Escribe una o más variables separadas por comas")
 
-        # Estado persistente del DataFrame de resultados
-        if 'resultados' not in st.session_state:
-            st.session_state['resultados'] = pd.DataFrame(columns=['Variable', 'Significado'])
+            # Estado persistente del DataFrame de resultados
+            if 'resultados' not in st.session_state:
+                st.session_state['resultados'] = pd.DataFrame(columns=['Variable', 'Significado'])
 
-        # Procesar y mostrar resultados de la búsqueda
-        if buscar:
-            # Separar las variables ingresadas por comas y quitar espacios
-            variables = [var.strip() for var in buscar.split(',')]
+            # Procesar y mostrar resultados de la búsqueda
+            if buscar:
+                # Separar las variables ingresadas por comas y quitar espacios
+                variables = [var.strip() for var in buscar.split(',')]
     
-            # Agregar cada variable buscada y su significado al DataFrame de resultados
-            nuevos_resultados = []
-            for var in variables:
-                significado = significados.get(var, "Variable no encontrada")
-                nuevos_resultados.append({'Variable': var, 'Significado': significado})
+                # Agregar cada variable buscada y su significado al DataFrame de resultados
+                nuevos_resultados = []
+                for var in variables:
+                    significado = significados.get(var, "Variable no encontrada")
+                    nuevos_resultados.append({'Variable': var, 'Significado': significado})
     
-            # Actualizar el DataFrame en el estado persistente
-            st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
+                # Actualizar el DataFrame en el estado persistente
+                st.session_state['resultados'] = pd.concat([st.session_state['resultados'], pd.DataFrame(nuevos_resultados)], ignore_index=True).drop_duplicates()
 
         # Mostrar el diccionario completo en un recuadro con barra de desplazamiento
         #with st.expander("Ver diccionario completo"):
@@ -275,9 +275,9 @@ if pestañas == "Predicción de Sarcopenia":
         #    st.write(f"**{col}**: {desc}")
     
         
-        # Mostrar el DataFrame de resultados acumulados
-        st.write("Resultados de búsqueda")
-        st.dataframe(st.session_state['resultados'], use_container_width=True)
+            # Mostrar el DataFrame de resultados acumulados
+            st.write("Resultados de búsqueda")
+            st.dataframe(st.session_state['resultados'], use_container_width=True)
 
 
         #######################################################################################################################
