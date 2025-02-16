@@ -269,6 +269,7 @@ if pestañas == "Predicción de Sarcopenia":
         #######################################################################################################################
         st.subheader("Descripción de los datos")
         st.write("Distribución de pacientes por sexo en la edición de 2019")
+        st.write("El siguiente grafico muestra la distribución de participantes de acuerdo al sexo.")
         # Reemplazar valores numéricos en la columna 'sexo' con etiquetas 'Hombre' y 'Mujer'
         datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
 
