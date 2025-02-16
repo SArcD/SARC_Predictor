@@ -1443,196 +1443,197 @@ if pestañas == "Predicción de Sarcopenia":
             st.pyplot(plt)
         ####################################
 
-        import matplotlib.pyplot as plt
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.decomposition import PCA
-        from sklearn.cluster import AgglomerativeClustering
-        from scipy.spatial.distance import pdist, squareform
-        from sklearn.metrics import silhouette_score
+        with st.expander("Clusters"):
+            import matplotlib.pyplot as plt
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.decomposition import PCA
+            from sklearn.cluster import AgglomerativeClustering
+            from scipy.spatial.distance import pdist, squareform
+            from sklearn.metrics import silhouette_score
 
 
-        # Seleccionar las columnas y normalizar los datos
-        selected_columns = ['Fuerza', 'Marcha', 'IMME']
-        numeric_data_2 = df_combined_2[selected_columns].dropna()
-        scaler = StandardScaler()
-        normalized_data_2 = scaler.fit_transform(numeric_data_2)
+            # Seleccionar las columnas y normalizar los datos
+            selected_columns = ['Fuerza', 'Marcha', 'IMME']
+            numeric_data_2 = df_combined_2[selected_columns].dropna()
+            scaler = StandardScaler()
+            normalized_data_2 = scaler.fit_transform(numeric_data_2)
 
-        # Aplicar PCA para reducir la dimensionalidad
-        pca = PCA(n_components=3)  # Puedes ajustar el número de componentes según sea necesario
-        pca_data = pca.fit_transform(normalized_data_2)
+            # Aplicar PCA para reducir la dimensionalidad
+            pca = PCA(n_components=3)  # Puedes ajustar el número de componentes según sea necesario
+            pca_data = pca.fit_transform(normalized_data_2)
 
-        # Calcular la matriz de distancias
-        distance_matrix = squareform(pdist(pca_data))
+            # Calcular la matriz de distancias
+            distance_matrix = squareform(pdist(pca_data))
 
-        # Aplicar Agglomerative Clustering
-        avg_distances = []
-        silhouettes = []
-        K = range(2, 15)
-        for k in K:
-            clustering = AgglomerativeClustering(n_clusters=k, linkage='ward')
-            labels = clustering.fit_predict(pca_data)
+            # Aplicar Agglomerative Clustering
+            avg_distances = []
+            silhouettes = []
+            K = range(2, 15)
+            for k in K:
+                clustering = AgglomerativeClustering(n_clusters=k, linkage='ward')
+                labels = clustering.fit_predict(pca_data)
 
-            # Calcular la distancia intra-cluster
-            intra_cluster_distances = []
-            for cluster in range(k):
-                cluster_points = distance_matrix[np.ix_(labels == cluster, labels == cluster)]
-                intra_cluster_distances.append(np.mean(cluster_points))
+                # Calcular la distancia intra-cluster
+                intra_cluster_distances = []
+                for cluster in range(k):
+                    cluster_points = distance_matrix[np.ix_(labels == cluster, labels == cluster)]
+                    intra_cluster_distances.append(np.mean(cluster_points))
 
-            avg_distances.append(np.mean(intra_cluster_distances))
+                avg_distances.append(np.mean(intra_cluster_distances))
 
-            # Calcular el Silhouette Score
-            silhouette_avg = silhouette_score(pca_data, labels)
-            silhouettes.append(silhouette_avg)
+                # Calcular el Silhouette Score
+                silhouette_avg = silhouette_score(pca_data, labels)
+                silhouettes.append(silhouette_avg)
 
-        #  Graficar el método del codo
-        st.header("Método del codo para Clustering jerárquico aglomerativo")
-        fig1, ax1 = plt.subplots(figsize=(8, 6))
-        ax1.plot(K, avg_distances, 'bo-')
-        ax1.set_xlabel('Número de clusters (k)')
-        ax1.set_ylabel('Distancia intra-cluster promedio')
-        ax1.set_title('Método del codo para Clustering jerárquico aglomerativo')
-        st.pyplot(fig1)
+            #  Graficar el método del codo
+            st.header("Método del codo para Clustering jerárquico aglomerativo")
+            fig1, ax1 = plt.subplots(figsize=(8, 6))
+            ax1.plot(K, avg_distances, 'bo-')
+            ax1.set_xlabel('Número de clusters (k)')
+            ax1.set_ylabel('Distancia intra-cluster promedio')
+            ax1.set_title('Método del codo para Clustering jerárquico aglomerativo')
+            st.pyplot(fig1)
 
-        # Graficar el Silhouette Score
-        st.header("Silhouette Score para Clustering jerárquico aglomerativo")
-        fig2, ax2 = plt.subplots(figsize=(8, 6))
-        ax2.plot(K, silhouettes, 'go-')
-        ax2.set_xlabel('Número de clusters (k)')
-        ax2.set_ylabel('Score de silueta')
-        ax2.set_title('Silhouette Score para Clustering jerárquico aglomerativo')
-        st.pyplot(fig2)
+            # Graficar el Silhouette Score
+            st.header("Silhouette Score para Clustering jerárquico aglomerativo")
+            fig2, ax2 = plt.subplots(figsize=(8, 6))
+            ax2.plot(K, silhouettes, 'go-')
+            ax2.set_xlabel('Número de clusters (k)')
+            ax2.set_ylabel('Score de silueta')
+            ax2.set_title('Silhouette Score para Clustering jerárquico aglomerativo')
+            st.pyplot(fig2)
 
-        #df_combined_2=df_combined_2.dropna()
+            #df_combined_2=df_combined_2.dropna()
 
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.cluster import AgglomerativeClustering
+            import streamlit as st
+            import pandas as pd
+            import numpy as np
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.cluster import AgglomerativeClustering
 
-        df_combined_2=df_combined_copy
+            df_combined_2=df_combined_copy
 
-        selected_columns=['P113','P112_vel','IMME']
+            selected_columns=['P113','P112_vel','IMME']
 
-        # Seleccionar las columnas específicas para clustering
-        numeric_data_2 = df_combined_2[selected_columns]
+            # Seleccionar las columnas específicas para clustering
+            numeric_data_2 = df_combined_2[selected_columns]
 
-        # Título y descripción en Streamlit
-        st.title("Clustering jerárquico aglomerativo")
-        st.write("Esta aplicación permite aplicar clustering jerárquico aglomerativo a datos seleccionados y definir el número de clusters.")
+            # Título y descripción en Streamlit
+            st.title("Clustering jerárquico aglomerativo")
+            st.write("Esta aplicación permite aplicar clustering jerárquico aglomerativo a datos seleccionados y definir el número de clusters.")
 
-        # Caja para definir el número de clusters
-        n_clusters = st.sidebar.number_input("Número de clusters", min_value=2, max_value=10, value=4, step=1)
+            # Caja para definir el número de clusters
+            n_clusters = st.sidebar.number_input("Número de clusters", min_value=2, max_value=10, value=4, step=1)
 
-        # Normalizar los datos
-        scaler = StandardScaler()
-        normalized_data_2 = scaler.fit_transform(numeric_data_2)
+            # Normalizar los datos
+            scaler = StandardScaler()
+            normalized_data_2 = scaler.fit_transform(numeric_data_2)
 
-        # Aplicar Agglomerative Clustering
-        clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
-        labels_2019 = clustering.fit_predict(normalized_data_2)
+            # Aplicar Agglomerative Clustering
+            clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward')
+            labels_2019 = clustering.fit_predict(normalized_data_2)
 
-        # Agregar las etiquetas al DataFrame original filtrado
-        df_combined_2['Cluster'] = labels_2019
+            # Agregar las etiquetas al DataFrame original filtrado
+            df_combined_2['Cluster'] = labels_2019
 
-        # Mostrar las primeras filas del DataFrame resultante
-        st.write("Resultados del clustering:")
-        st.dataframe(df_combined_2)
+            # Mostrar las primeras filas del DataFrame resultante
+            st.write("Resultados del clustering:")
+            st.dataframe(df_combined_2)
 
-        # Agregar un mensaje sobre el número de clusters usados
-        st.write(f"Clustering realizado con **{n_clusters}** clusters.")
+            # Agregar un mensaje sobre el número de clusters usados
+            st.write(f"Clustering realizado con **{n_clusters}** clusters.")
 
-        ####################################
+            ####################################
 
-        import streamlit as st
-        import plotly.graph_objects as go
+            import streamlit as st
+            import plotly.graph_objects as go
 
-        # Renombrar las columnas
-        df_combined_2 = df_combined_2.rename(columns={
-            'P112_vel': 'Marcha',
-            'P113': 'Fuerza',
-            'P125': 'P. Tricipital',
-            'P128': 'P. Pantorrilla',
-            'IMC': 'IMC',
-            'P127': 'Biceps',
-            'P126': 'P. subescapular',
-            'P121': 'Cintura',
-            'P123': 'Muslo',
-            'P120': 'Brazo',
-            'P122': 'Cadera',
-            'P124': 'Pantorrilla',
-            'P117': 'Peso'
-        })
+            # Renombrar las columnas
+            df_combined_2 = df_combined_2.rename(columns={
+                'P112_vel': 'Marcha',
+                'P113': 'Fuerza',
+                'P125': 'P. Tricipital',
+                'P128': 'P. Pantorrilla',
+                'IMC': 'IMC',
+                'P127': 'Biceps',
+                'P126': 'P. subescapular',
+                'P121': 'Cintura',
+                'P123': 'Muslo',
+                'P120': 'Brazo',
+                'P122': 'Cadera',
+                'P124': 'Pantorrilla',
+                'P117': 'Peso'
+            })
 
-        # Seleccionar las columnas específicas con los nuevos nombres
-        selected_columns_renamed = [
-            'Marcha', 'Fuerza', 'P. Tricipital', 'P. Pantorrilla',
-            'IMC', 'Biceps', 'P. subescapular', 'Cintura', 'Muslo', 'Brazo', 'Cadera', 'Pantorrilla', 'Peso', 'IMME'
-        ]
+            # Seleccionar las columnas específicas con los nuevos nombres
+            selected_columns_renamed = [
+                'Marcha', 'Fuerza', 'P. Tricipital', 'P. Pantorrilla',
+                'IMC', 'Biceps', 'P. subescapular', 'Cintura', 'Muslo', 'Brazo', 'Cadera', 'Pantorrilla', 'Peso', 'IMME'
+            ]
 
-        # Filtrar el DataFrame para incluir solo las columnas seleccionadas
-        numeric_columns_2 = df_combined_2[selected_columns_renamed]
+            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
+            numeric_columns_2 = df_combined_2[selected_columns_renamed]
 
-        st.title("Comparación de Clusters por Parámetro")
+            st.title("Comparación de Clusters por Parámetro")
 
-        # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
-        for column in numeric_columns_2.columns:
-            # Obtener los datos de cada cluster para el parámetro actual
-            cluster_data = [df_combined_2[df_combined_2['Cluster'] == cluster][column] for cluster in range(8)]
+            # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
+            for column in numeric_columns_2.columns:
+                # Obtener los datos de cada cluster para el parámetro actual
+                cluster_data = [df_combined_2[df_combined_2['Cluster'] == cluster][column] for cluster in range(8)]
 
-            # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
-            quintile_1 = df_combined_2[column].quantile(0.20)
-            quintile_2 = df_combined_2[column].quantile(0.40)
-            quintile_3 = df_combined_2[column].quantile(0.60)
-            quintile_4 = df_combined_2[column].quantile(0.80)
+                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
+                quintile_1 = df_combined_2[column].quantile(0.20)
+                quintile_2 = df_combined_2[column].quantile(0.40)
+                quintile_3 = df_combined_2[column].quantile(0.60)
+                quintile_4 = df_combined_2[column].quantile(0.80)
 
-            # Crear una nueva figura para el gráfico de caja
-            fig = go.Figure()
+                # Crear una nueva figura para el gráfico de caja
+                fig = go.Figure()
 
-            # Agregar el gráfico de caja para cada cluster
-            for j in range(6):
-                fig.add_trace(go.Box(y=cluster_data[j], boxpoints='all', notched=True, name=f'Cluster {j}'))
+                # Agregar el gráfico de caja para cada cluster
+                for j in range(6):
+                    fig.add_trace(go.Box(y=cluster_data[j], boxpoints='all', notched=True, name=f'Cluster {j}'))
 
-            # Agregar líneas horizontales para los quintiles
-            fig.add_shape(type="line",
+                # Agregar líneas horizontales para los quintiles
+                fig.add_shape(type="line",
                         x0=0, x1=1, y0=quintile_1, y1=quintile_1,
                         line=dict(color="blue", width=2, dash="dash"),
                         xref="paper", yref="y")
 
-            fig.add_shape(type="line",
+                fig.add_shape(type="line",
                         x0=0, x1=1, y0=quintile_2, y1=quintile_2,
                         line=dict(color="green", width=2, dash="dash"),
                         xref="paper", yref="y")
 
-            fig.add_shape(type="line",
+                fig.add_shape(type="line",
                         x0=0, x1=1, y0=quintile_3, y1=quintile_3,
                         line=dict(color="orange", width=2, dash="dash"),
                         xref="paper", yref="y")
 
-            fig.add_shape(type="line",
+                fig.add_shape(type="line",
                         x0=0, x1=1, y0=quintile_4, y1=quintile_4,
                         line=dict(color="red", width=2, dash="dash"),
                         xref="paper", yref="y")
 
-            # Actualizar el diseño para hacer las etiquetas más grandes y en negritas
-            fig.update_layout(
-                title_text=f'Comparación de Clusters - {column}',
-                title_font=dict(size=18, family="Arial"),
-                xaxis_title=" ",
-                yaxis_title=column,
-                xaxis=dict(
-                    title_font=dict(size=16, family="Arial"),
-                    tickfont=dict(size=14, family="Arial")
-                ),
-                yaxis=dict(
-                    title_font=dict(size=16, family="Arial"),
-                    tickfont=dict(size=14, family="Arial")
-                ),
-                showlegend=True
-            )
+                # Actualizar el diseño para hacer las etiquetas más grandes y en negritas
+                fig.update_layout(
+                    title_text=f'Comparación de Clusters - {column}',
+                    title_font=dict(size=18, family="Arial"),
+                    xaxis_title=" ",
+                    yaxis_title=column,
+                    xaxis=dict(
+                        title_font=dict(size=16, family="Arial"),
+                        tickfont=dict(size=14, family="Arial")
+                    ),
+                    yaxis=dict(
+                        title_font=dict(size=16, family="Arial"),
+                        tickfont=dict(size=14, family="Arial")
+                    ),
+                    showlegend=True
+                )
 
-            # Mostrar el gráfico en Streamlit
-            st.plotly_chart(fig)
+                # Mostrar el gráfico en Streamlit
+                st.plotly_chart(fig)
 
 
 
