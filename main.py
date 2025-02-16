@@ -281,121 +281,121 @@ if pestañas == "Predicción de Sarcopenia":
 
 
         #######################################################################################################################
-        st.subheader("Descripción de los datos")
-        st.write("Distribución de pacientes por sexo en la edición de 2019")
-        st.write("El siguiente grafico muestra la distribución de participantes de acuerdo al sexo.")
-        # Reemplazar valores numéricos en la columna 'sexo' con etiquetas 'Hombre' y 'Mujer'
-        datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
+        with st.expander("Descripción de los datos"):
+            st.write("Distribución de pacientes por sexo en la edición de 2019")
+            st.write("El siguiente grafico muestra la distribución de participantes de acuerdo al sexo.")
+            # Reemplazar valores numéricos en la columna 'sexo' con etiquetas 'Hombre' y 'Mujer'
+            datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
 
-        # Generar gráfico de pastel para la columna 'sexo'
-        sexo_counts = datos['sexo'].value_counts()
+            # Generar gráfico de pastel para la columna 'sexo'
+            sexo_counts = datos['sexo'].value_counts()
 
-        # Crear la figura para el gráfico de pastel
-        fig, ax = plt.subplots(figsize=(6, 6))
-        ax.pie(sexo_counts, labels=sexo_counts.index, autopct='%1.1f%%', startangle=90, colors=['skyblue', 'lightpink'])
-        ax.set_title('Proporción de Hombres vs Mujeres')
-        ax.axis('equal')  # Asegura que el gráfico sea un círculo
+            # Crear la figura para el gráfico de pastel
+            fig, ax = plt.subplots(figsize=(6, 6))
+            ax.pie(sexo_counts, labels=sexo_counts.index, autopct='%1.1f%%', startangle=90, colors=['skyblue', 'lightpink'])
+            ax.set_title('Proporción de Hombres vs Mujeres')
+            ax.axis('equal')  # Asegura que el gráfico sea un círculo
 
-        # Mostrar el gráfico de pastel en Streamlit
-        st.pyplot(fig)
+            # Mostrar el gráfico de pastel en Streamlit
+            st.pyplot(fig)
 
-        # Menú desplegable para seleccionar la visualización del gráfico de comorbilidades
-        seleccion = st.selectbox("Selecciona la muestra para visualizar el gráfico de comorbilidades", 
+            # Menú desplegable para seleccionar la visualización del gráfico de comorbilidades
+            seleccion = st.selectbox("Selecciona la muestra para visualizar el gráfico de comorbilidades", 
                              options=["Muestra completa", "Hombres", "Mujeres"])
 
-        # Filtrar el DataFrame según la selección del usuario
-        if seleccion == "Hombres":
-            datos_filtrados = datos[datos['sexo'] == 'Hombre']
-        elif seleccion == "Mujeres":
-            datos_filtrados = datos[datos['sexo'] == 'Mujer']
-        else:
-            datos_filtrados = datos
+            # Filtrar el DataFrame según la selección del usuario
+            if seleccion == "Hombres":
+                datos_filtrados = datos[datos['sexo'] == 'Hombre']
+            elif seleccion == "Mujeres":
+                datos_filtrados = datos[datos['sexo'] == 'Mujer']
+            else:
+                datos_filtrados = datos
 
-        # Total de pacientes en la muestra seleccionada
-        total_pacientes = len(datos_filtrados)
+            # Total de pacientes en la muestra seleccionada
+            total_pacientes = len(datos_filtrados)
 
-###################import pandas as pd
-        columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
+        ###################import pandas as pd
+            columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
                             'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']
-        comorbidities_labels = ['VIH', 'Anemia', 'Arritmia', 'Artritis Reumatoide', 'Cáncer', 'Depresión', 'Diabetes Complicada',
+            comorbidities_labels = ['VIH', 'Anemia', 'Arritmia', 'Artritis Reumatoide', 'Cáncer', 'Depresión', 'Diabetes Complicada',
                                 'Diabetes Leve', 'Enfermedad Cerebro Vascular', 'Hipertensión Complicada', 'Hipertensión Sin Complicación',
                                 'Insuficiencia Renal', 'Obesidad', 'Pérdida de Peso']
 
-        # Crear un diccionario de mapeo entre las columnas y las etiquetas
-        comorbidity_mapping = dict(zip(columns_to_check, comorbidities_labels))
+            # Crear un diccionario de mapeo entre las columnas y las etiquetas
+            comorbidity_mapping = dict(zip(columns_to_check, comorbidities_labels))
 
-        # Validar que las columnas existan en el DataFrame
-        columns_to_check = [col for col in columns_to_check if col in datos_filtrados.columns]
+            # Validar que las columnas existan en el DataFrame
+            columns_to_check = [col for col in columns_to_check if col in datos_filtrados.columns]
 
-        # Convertir las columnas de comorbilidades a valores numéricos (0 o 1) y llenar valores faltantes con 0
-        datos_filtrados[columns_to_check] = datos_filtrados[columns_to_check].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+            # Convertir las columnas de comorbilidades a valores numéricos (0 o 1) y llenar valores faltantes con 0
+            datos_filtrados[columns_to_check] = datos_filtrados[columns_to_check].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
 
-        # Barra 1: Pacientes con y sin comorbilidades
-        datos_filtrados['Sin Comorbilidades'] = (datos_filtrados[columns_to_check].sum(axis=1) == 0).astype(int)
-        pacientes_sin_comorbilidades = datos_filtrados['Sin Comorbilidades'].sum()
-        pacientes_con_comorbilidades = len(datos_filtrados) - pacientes_sin_comorbilidades
-        total_barra1 = len(datos_filtrados)
+            # Barra 1: Pacientes con y sin comorbilidades
+            datos_filtrados['Sin Comorbilidades'] = (datos_filtrados[columns_to_check].sum(axis=1) == 0).astype(int)
+            pacientes_sin_comorbilidades = datos_filtrados['Sin Comorbilidades'].sum()
+            pacientes_con_comorbilidades = len(datos_filtrados) - pacientes_sin_comorbilidades
+            total_barra1 = len(datos_filtrados)
 
-        # Normalizar las proporciones para la barra 1
-        sin_comorbilidades_percent = pacientes_sin_comorbilidades / total_barra1
-        con_comorbilidades_percent = pacientes_con_comorbilidades / total_barra1
+            # Normalizar las proporciones para la barra 1
+            sin_comorbilidades_percent = pacientes_sin_comorbilidades / total_barra1
+            con_comorbilidades_percent = pacientes_con_comorbilidades / total_barra1
 
-        # Barra 2 y 3: Comorbilidades mayores y menores al 1%
-        comorbidities_counts = datos_filtrados[columns_to_check].sum()
-        comorbidities_percentages = (comorbidities_counts / len(datos_filtrados)) * 100
+            # Barra 2 y 3: Comorbilidades mayores y menores al 1%
+            comorbidities_counts = datos_filtrados[columns_to_check].sum()
+            comorbidities_percentages = (comorbidities_counts / len(datos_filtrados)) * 100
 
-        major_comorbidities = comorbidities_percentages[comorbidities_percentages > 1].sort_values(ascending=False)
-        minor_comorbidities = comorbidities_percentages[comorbidities_percentages <= 1].sort_values(ascending=False)
+            major_comorbidities = comorbidities_percentages[comorbidities_percentages > 1].sort_values(ascending=False)
+            minor_comorbidities = comorbidities_percentages[comorbidities_percentages <= 1].sort_values(ascending=False)
 
-        # Normalizar las alturas de las barras (a nivel interno, para mostrar apiladas)
-        major_normalized = major_comorbidities / major_comorbidities.sum()
-        minor_normalized = minor_comorbidities / minor_comorbidities.sum()
+            # Normalizar las alturas de las barras (a nivel interno, para mostrar apiladas)
+            major_normalized = major_comorbidities / major_comorbidities.sum()
+            minor_normalized = minor_comorbidities / minor_comorbidities.sum()
 
-        # Pacientes en cada barra (barra 2 y 3)
-        total_major = datos_filtrados[major_comorbidities.index].sum(axis=1).astype(bool).sum()
-        total_minor = datos_filtrados[minor_comorbidities.index].sum(axis=1).astype(bool).sum()
+            # Pacientes en cada barra (barra 2 y 3)
+            total_major = datos_filtrados[major_comorbidities.index].sum(axis=1).astype(bool).sum()
+            total_minor = datos_filtrados[minor_comorbidities.index].sum(axis=1).astype(bool).sum()
 
-        # Etiquetas y valores normalizados
-        major_labels = [comorbidity_mapping.get(col, col) for col in major_comorbidities.index]
-        minor_labels = [comorbidity_mapping.get(col, col) for col in minor_comorbidities.index]
+            # Etiquetas y valores normalizados
+            major_labels = [comorbidity_mapping.get(col, col) for col in major_comorbidities.index]
+            minor_labels = [comorbidity_mapping.get(col, col) for col in minor_comorbidities.index]
 
-        # Crear gráfico de barras apiladas
-        fig, ax = plt.subplots(figsize=(12, 8))
-        x = np.arange(3)  # Tres barras: Pacientes, Mayores al 1%, Menores al 1%
-        width = 0.6  # Ancho de las barras
+            # Crear gráfico de barras apiladas
+            fig, ax = plt.subplots(figsize=(12, 8))
+            x = np.arange(3)  # Tres barras: Pacientes, Mayores al 1%, Menores al 1%
+            width = 0.6  # Ancho de las barras
 
-        # Barra 1: Pacientes con y sin comorbilidades (Normalizado)
-        ax.bar(x[0], sin_comorbilidades_percent, width, label='Sin Comorbilidades', color='lightblue')
-        ax.text(x[0], sin_comorbilidades_percent / 2, f'{sin_comorbilidades_percent * 100:.1f}%', ha='center', va='center', fontsize=10)
-        ax.bar(x[0], con_comorbilidades_percent, width, bottom=sin_comorbilidades_percent, label='Con Comorbilidades', color='steelblue')
-        ax.text(x[0], sin_comorbilidades_percent + con_comorbilidades_percent / 2, f'{con_comorbilidades_percent * 100:.1f}%', ha='center', va='center', fontsize=10)
-        ax.text(x[0], 1.05, f'Total: {total_barra1}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+            # Barra 1: Pacientes con y sin comorbilidades (Normalizado)
+            ax.bar(x[0], sin_comorbilidades_percent, width, label='Sin Comorbilidades', color='lightblue')
+            ax.text(x[0], sin_comorbilidades_percent / 2, f'{sin_comorbilidades_percent * 100:.1f}%', ha='center', va='center', fontsize=10)
+            ax.bar(x[0], con_comorbilidades_percent, width, bottom=sin_comorbilidades_percent, label='Con Comorbilidades', color='steelblue')
+            ax.text(x[0], sin_comorbilidades_percent + con_comorbilidades_percent / 2, f'{con_comorbilidades_percent * 100:.1f}%', ha='center', va='center', fontsize=10)
+            ax.text(x[0], 1.05, f'Total: {total_barra1}', ha='center', va='bottom', fontsize=10, fontweight='bold')
 
-        # Barra 2: Comorbilidades mayores al 1% (Ordenado y Relativo al Total)
-        bottom_major = 0
-        for label, value, actual_percent in zip(major_labels, major_normalized.values, major_comorbidities.values):
-            ax.bar(x[1], value, width, bottom=bottom_major, label=label)
-            ax.text(x[1], bottom_major + value / 2, f'{actual_percent:.1f}%', ha='center', va='center', fontsize=10)
-            bottom_major += value
-        ax.text(x[1], 1.05, f'Total: {total_major}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+            # Barra 2: Comorbilidades mayores al 1% (Ordenado y Relativo al Total)
+            bottom_major = 0
+            for label, value, actual_percent in zip(major_labels, major_normalized.values, major_comorbidities.values):
+                ax.bar(x[1], value, width, bottom=bottom_major, label=label)
+                ax.text(x[1], bottom_major + value / 2, f'{actual_percent:.1f}%', ha='center', va='center', fontsize=10)
+                bottom_major += value
+            ax.text(x[1], 1.05, f'Total: {total_major}', ha='center', va='bottom', fontsize=10, fontweight='bold')
 
-        # Barra 3: Comorbilidades menores al 1% (Ordenado y Relativo al Total)
-        bottom_minor = 0
-        for label, value, actual_percent in zip(minor_labels, minor_normalized.values, minor_comorbidities.values):
-            ax.bar(x[2], value, width, bottom=bottom_minor, label=label)
-            ax.text(x[2], bottom_minor + value / 2, f'{actual_percent:.1f}%', ha='center', va='center', fontsize=10)
-            bottom_minor += value
-        ax.text(x[2], 1.05, f'Total: {total_minor}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+            # Barra 3: Comorbilidades menores al 1% (Ordenado y Relativo al Total)
+            bottom_minor = 0
+            for label, value, actual_percent in zip(minor_labels, minor_normalized.values, minor_comorbidities.values):
+                ax.bar(x[2], value, width, bottom=bottom_minor, label=label)
+                ax.text(x[2], bottom_minor + value / 2, f'{actual_percent:.1f}%', ha='center', va='center', fontsize=10)
+                bottom_minor += value
+            ax.text(x[2], 1.05, f'Total: {total_minor}', ha='center', va='bottom', fontsize=10, fontweight='bold')
 
-        # Configurar las etiquetas del gráfico
-        ax.set_xticks(x)
-        ax.set_xticklabels(["Pacientes", "Comorbilidades > 1%", "Comorbilidades <= 1%"])
-        ax.set_ylabel('Altura Normalizada')
-        ax.set_title('Distribución Normalizada de Pacientes y Comorbilidades', pad=20)
-        ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            # Configurar las etiquetas del gráfico
+            ax.set_xticks(x)
+            ax.set_xticklabels(["Pacientes", "Comorbilidades > 1%", "Comorbilidades <= 1%"])
+            ax.set_ylabel('Altura Normalizada')
+            ax.set_title('Distribución Normalizada de Pacientes y Comorbilidades', pad=20)
+            ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 
-        # Mostrar gráfico en Streamlit
-        st.pyplot(fig)
+            # Mostrar gráfico en Streamlit
+            st.pyplot(fig)
 
 
 ###############3
