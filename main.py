@@ -405,7 +405,7 @@ if pestañas == "Predicción de Sarcopenia":
         #st.write(f"Total de pacientes con al menos una comorbilidad menor al 1%: {pacientes_con_menor_comorbilidad}")
 
     ##############################################################################
-    
+
             df=datos[['P117_1','P117_2','P117_3','P118_1','P118_2','P118_3','P119_1','P119_2','P119_3','P120_1','P120_2','P120_3','P121_1','P121_2','P121_3','P122_1','P122_2','P122_3','P123_1','P123_2','P123_3','P124_1','P124_2','P124_3','P125_1','P125_2','P125_3','P126_1','P126_2','P126_3','P127_1','P127_2','P127_3','P128_1','P128_2','P128_3','P129_1','P129_2','P129_3','P130_1','P130_2','P130_3']]
 
             # Corrigiendo la advertencia al agrupar columnas
@@ -456,224 +456,225 @@ if pestañas == "Predicción de Sarcopenia":
 
 
         ####################$$$$$$$$$$$$$$$$$$$$$########################
-    
-        # Definir las columnas de comorbilidades y etiquetas
-        columns_to_check = [
-        'P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
-        'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31'
-        ]
-        comorbidities_labels = [
-        'VIH', 'Anemia', 'Arritmia', 'Artritis Reumatoide', 'Cáncer', 'Depresión',
-        'Diabetes Complicada', 'Diabetes Leve', 'Enfermedad Cerebro Vascular',
-        'Hipertensión Complicada', 'Hipertensión Sin Complicación',
-        'Insuficiencia Renal', 'Obesidad', 'Pérdida de Peso'
-        ]
+         with st.expander("Simplificar variables"):
 
-        # Crear un diccionario para enlazar columnas con etiquetas
-        comorbidities_dict = dict(zip(columns_to_check, comorbidities_labels))
+            # Definir las columnas de comorbilidades y etiquetas
+            columns_to_check = [
+            'P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
+            'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31'
+            ]
+            comorbidities_labels = [
+            'VIH', 'Anemia', 'Arritmia', 'Artritis Reumatoide', 'Cáncer', 'Depresión',
+            'Diabetes Complicada', 'Diabetes Leve', 'Enfermedad Cerebro Vascular',
+            'Hipertensión Complicada', 'Hipertensión Sin Complicación',
+            'Insuficiencia Renal', 'Obesidad', 'Pérdida de Peso'
+            ]
 
-        # Crear menú desplegable para seleccionar comorbilidades
-        selected_comorbidities = st.multiselect(
-        "Selecciona cuáles comorbilidades considerar dentro de la muestra:",
-        options=["Ninguna"] + comorbidities_labels,
-        default="Ninguna"
-        )
+            # Crear un diccionario para enlazar columnas con etiquetas
+            comorbidities_dict = dict(zip(columns_to_check, comorbidities_labels))
 
-        # Filtrar el DataFrame
-        if "Ninguna" in selected_comorbidities:
-            df_combined_sc = df_combined[(df_combined[columns_to_check] == 0).all(axis=1)]
-        else:
-            # Obtener las columnas seleccionadas de acuerdo con las etiquetas
-            selected_columns = [col for col, label in comorbidities_dict.items() if label in selected_comorbidities]
-            df_combined_sc = df_combined[(df_combined[selected_columns] == 1).any(axis=1)]
+            # Crear menú desplegable para seleccionar comorbilidades
+            selected_comorbidities = st.multiselect(
+            "Selecciona cuáles comorbilidades considerar dentro de la muestra:",
+            options=["Ninguna"] + comorbidities_labels,
+            default="Ninguna"
+            )
+
+            # Filtrar el DataFrame
+            if "Ninguna" in selected_comorbidities:
+                df_combined_sc = df_combined[(df_combined[columns_to_check] == 0).all(axis=1)]
+            else:
+                # Obtener las columnas seleccionadas de acuerdo con las etiquetas
+                selected_columns = [col for col, label in comorbidities_dict.items() if label in selected_comorbidities]
+                df_combined_sc = df_combined[(df_combined[selected_columns] == 1).any(axis=1)]
 
         
-        ########################$$$$$$$$$$#################################3
+            ########################$$$$$$$$$$#################################3
     
-        # Mostrar el DataFrame resultante
-        df_combined_sc
+            # Mostrar el DataFrame resultante
+            df_combined_sc
 
-        df_combined=df_combined_sc[['folio_paciente', 'edad_am', 'sexo', 'nacio_en_mexico', 'P117',
-        'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124', 'P125', 'P126',
-        'P127', 'P128', 'P129', 'P130', 'IMC', 'P113', 'P112_vel']]
+            df_combined=df_combined_sc[['folio_paciente', 'edad_am', 'sexo', 'nacio_en_mexico', 'P117',
+            'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124', 'P125', 'P126',
+            'P127', 'P128', 'P129', 'P130', 'IMC', 'P113', 'P112_vel']]
     
 
-        # Medicion de varianza
-        df_combined_2 = df_combined[df_combined['sexo'] == "Hombre"]
-
-    #####
-        # Suponiendo que 'df_combined' ya está definido
-
-        # Crear un menú desplegable para seleccionar el filtro
-        opcion = st.selectbox("Selecciona el género a mostrar", ["Muestra completa", "Hombre", "Mujer"])
-
-        # Filtrar el DataFrame según la selección
-        if opcion == "Hombre":
+            # Medicion de varianza
             df_combined_2 = df_combined[df_combined['sexo'] == "Hombre"]
-        elif opcion == "Mujer":
-            df_combined_2 = df_combined[df_combined['sexo'] == "Mujer"]
-        else:
-            df_combined_2 = df_combined  # Muestra completa sin filtrar
+
+        #####
+            # Suponiendo que 'df_combined' ya está definido
+
+            # Crear un menú desplegable para seleccionar el filtro
+            opcion = st.selectbox("Selecciona el género a mostrar", ["Muestra completa", "Hombre", "Mujer"])
+
+            # Filtrar el DataFrame según la selección
+            if opcion == "Hombre":
+                df_combined_2 = df_combined[df_combined['sexo'] == "Hombre"]
+            elif opcion == "Mujer":
+                df_combined_2 = df_combined[df_combined['sexo'] == "Mujer"]
+            else:
+                df_combined_2 = df_combined  # Muestra completa sin filtrar
+            ###
+
+            # Caja de input para definir el rango de edad
+            edad_min = st.number_input("Edad mínima", min_value=0, max_value=120, value=60, step=1)
+            edad_max = st.number_input("Edad máxima", min_value=0, max_value=120, value=80, step=1)
+
+            # Filtrar por rango de edad
+            df_combined_2 = df_combined_2[(df_combined_2['edad_am'] >= edad_min) & (df_combined_2['edad_am'] <= edad_max)]
+
+            # Mostrar el DataFrame filtrado final
+            st.write("Filas filtradas del DataFrame según comorbilidades, rango de edad y género seleccionados:")
+            st.dataframe(df_combined_2)
+
         ###
 
-        # Caja de input para definir el rango de edad
-        edad_min = st.number_input("Edad mínima", min_value=0, max_value=120, value=60, step=1)
-        edad_max = st.number_input("Edad máxima", min_value=0, max_value=120, value=80, step=1)
+            # Mostrar el DataFrame filtrado
+            #st.write("### DataFrame Filtrado")
+            #st.dataframe(df_combined_2, use_container_width=True)
 
-        # Filtrar por rango de edad
-        df_combined_2 = df_combined_2[(df_combined_2['edad_am'] >= edad_min) & (df_combined_2['edad_am'] <= edad_max)]
+        #####
+            columns_to_standardize = df_combined_2.columns[4:]  # Selecting columns from the 4th column onwards
 
-        # Mostrar el DataFrame filtrado final
-        st.write("Filas filtradas del DataFrame según comorbilidades, rango de edad y género seleccionados:")
-        st.dataframe(df_combined_2)
+            # Diccionario para renombrar las columnas
+            column_names = {
+            'P112_vel': 'Marcha',
+            'P113': 'Fuerza',
+            'P125': 'P. Tricipital',
+            'P128': 'P. Pantorrilla',
+            'P127': 'P. Biceps',
+            'P126': 'P. Subescapular',
+            'IMC': 'IMC',
+            'P121': 'Cintura',
+            'P123': 'Muslo',
+            'P120': 'Brazo',
+            'P124': 'Pantorrilla',
+            'P117': 'Peso'
+            }
 
-    ###
+            # Calculating variance using the provided method: dividing by the mean and then calculating the variance
+            features = df_combined_2[list(column_names.keys())].rename(columns=column_names)
 
-        # Mostrar el DataFrame filtrado
-        #st.write("### DataFrame Filtrado")
-        #st.dataframe(df_combined_2, use_container_width=True)
+            variances = (features / features.mean()).dropna().var()
 
-    #####
-        columns_to_standardize = df_combined_2.columns[4:]  # Selecting columns from the 4th column onwards
+            variances=variances.sort_values(ascending=False)
+            # Graficar las varianzas como gráfico de barras
+            fig, ax = plt.subplots(figsize=(10, 6))
+            variances.plot(kind='bar', ax=ax)
+            ax.set_title("Varianzas de las Características Estandarizadas")
+            ax.set_xlabel("Características")
+            ax.set_ylabel("Varianza")
+            plt.xticks(rotation=45)
+            plt.tight_layout()
 
-        # Diccionario para renombrar las columnas
-        column_names = {
-        'P112_vel': 'Marcha',
-        'P113': 'Fuerza',
-        'P125': 'P. Tricipital',
-        'P128': 'P. Pantorrilla',
-        'P127': 'P. Biceps',
-        'P126': 'P. Subescapular',
-        'IMC': 'IMC',
-        'P121': 'Cintura',
-        'P123': 'Muslo',
-        'P120': 'Brazo',
-        'P124': 'Pantorrilla',
-        'P117': 'Peso'
-        }
-
-        # Calculating variance using the provided method: dividing by the mean and then calculating the variance
-        features = df_combined_2[list(column_names.keys())].rename(columns=column_names)
-
-        variances = (features / features.mean()).dropna().var()
-
-        variances=variances.sort_values(ascending=False)
-        # Graficar las varianzas como gráfico de barras
-        fig, ax = plt.subplots(figsize=(10, 6))
-        variances.plot(kind='bar', ax=ax)
-        ax.set_title("Varianzas de las Características Estandarizadas")
-        ax.set_xlabel("Características")
-        ax.set_ylabel("Varianza")
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-
-        # Mostrar el gráfico en Streamlit
-        st.pyplot(fig)
+            # Mostrar el gráfico en Streamlit
+            st.pyplot(fig)
 
 
-    ################# Redes de correlación  ################################
+        ################# Redes de correlación  ################################
 
-        from sklearn.feature_selection import VarianceThreshold
+            from sklearn.feature_selection import VarianceThreshold
 
-        # Standardizing the columns from the 4th column onwards in df_combined
-        columns_to_standardize = df_combined_2.columns[4:]  # Selecting columns from the 4th column onwards
+            # Standardizing the columns from the 4th column onwards in df_combined
+            columns_to_standardize = df_combined_2.columns[4:]  # Selecting columns from the 4th column onwards
 
-        # Calculating variance using the provided method: dividing by the mean and then calculating the variance
-        features = df_combined_2[columns_to_standardize]  # Selecting the features to be standardized
-        variances = (features / features.mean()).dropna().var()
+            # Calculating variance using the provided method: dividing by the mean and then calculating the variance
+            features = df_combined_2[columns_to_standardize]  # Selecting the features to be standardized
+            variances = (features / features.mean()).dropna().var()
 
-        # Sorting variances in descending order
-        variances = variances.sort_values(ascending=False)
+            # Sorting variances in descending order
+            variances = variances.sort_values(ascending=False)
 
-        # Applying the variance threshold mask
-        sel = VarianceThreshold(threshold=0.005)
-        sel.fit(features / features.mean())
+            # Applying the variance threshold mask
+            sel = VarianceThreshold(threshold=0.005)
+            sel.fit(features / features.mean())
 
-        # Creating a boolean mask based on the variance
-        mask = variances >= 0.005
+            # Creating a boolean mask based on the variance
+            mask = variances >= 0.005
 
-        # Applying the mask to create a reduced DataFrame
-        df_reduced_2 = features.loc[:, mask]
-        df_reduced_2.to_excel('reduced_df_2.xlsx', index=False)
+            # Applying the mask to create a reduced DataFrame
+            df_reduced_2 = features.loc[:, mask]
+            df_reduced_2.to_excel('reduced_df_2.xlsx', index=False)
 
-        import networkx as nx
+            import networkx as nx
 
-        # Selección de variables y cálculo de la matriz de correlación
-        selected_vars = ['P112_vel', 'P113', 'P117', 'P120', 'P121', 'P122', 'P123', 'P124', 'P125', 'P128', 'P127', 'P126', 'IMC']
-        correlation_matrix = df_reduced_2[selected_vars].corr()
+            # Selección de variables y cálculo de la matriz de correlación
+            selected_vars = ['P112_vel', 'P113', 'P117', 'P120', 'P121', 'P122', 'P123', 'P124', 'P125', 'P128', 'P127', 'P126', 'IMC']
+            correlation_matrix = df_reduced_2[selected_vars].corr()
 
-        # Crear el grafo basado en la matriz de correlación
-        G = nx.Graph()
+            # Crear el grafo basado en la matriz de correlación
+            G = nx.Graph()
 
-        # Agregar nodos y aristas al grafo en función de un umbral de correlación
-        threshold = 0.3  # Umbral para mostrar correlaciones
-        for i, var1 in enumerate(selected_vars):
-            for j, var2 in enumerate(selected_vars):
-                if i < j:  # Evitar duplicar aristas
-                    corr_value = correlation_matrix.iloc[i, j]
-                    if abs(corr_value) > threshold:
-                        G.add_edge(var1, var2, weight=corr_value)
+            # Agregar nodos y aristas al grafo en función de un umbral de correlación
+            threshold = 0.3  # Umbral para mostrar correlaciones
+            for i, var1 in enumerate(selected_vars):
+                for j, var2 in enumerate(selected_vars):
+                    if i < j:  # Evitar duplicar aristas
+                        corr_value = correlation_matrix.iloc[i, j]
+                        if abs(corr_value) > threshold:
+                            G.add_edge(var1, var2, weight=corr_value)
 
-        # Dibujar el grafo de correlación
-        fig, ax = plt.subplots(figsize=(10, 8))
-        pos = nx.spring_layout(G, seed=42)
-        edges = G.edges(data=True)
+            # Dibujar el grafo de correlación
+            fig, ax = plt.subplots(figsize=(10, 8))
+            pos = nx.spring_layout(G, seed=42)
+            edges = G.edges(data=True)
 
-        # Dibujar nodos
-        nx.draw_networkx_nodes(G, pos, ax=ax, node_size=700, node_color="lightblue")
+            # Dibujar nodos
+            nx.draw_networkx_nodes(G, pos, ax=ax, node_size=700, node_color="lightblue")
 
-        # Dibujar aristas con ancho variable basado en la fuerza de correlación
-        nx.draw_networkx_edges(
-            G, pos, ax=ax,
-            edgelist=[(u, v) for u, v, w in edges if w["weight"] > 0],
-            width=[w["weight"] * 5 for u, v, w in edges if w["weight"] > 0],
-            edge_color="blue", alpha=0.7)
-        nx.draw_networkx_edges(
-            G, pos, ax=ax,
-            edgelist=[(u, v) for u, v, w in edges if w["weight"] < 0],
-            width=[-w["weight"] * 5 for u, v, w in edges if w["weight"] < 0],
-            edge_color="red", alpha=0.7
-        )
+            # Dibujar aristas con ancho variable basado en la fuerza de correlación
+            nx.draw_networkx_edges(
+                G, pos, ax=ax,
+                edgelist=[(u, v) for u, v, w in edges if w["weight"] > 0],
+                width=[w["weight"] * 5 for u, v, w in edges if w["weight"] > 0],
+                edge_color="blue", alpha=0.7)
+            nx.draw_networkx_edges(
+                G, pos, ax=ax,
+                edgelist=[(u, v) for u, v, w in edges if w["weight"] < 0],
+                width=[-w["weight"] * 5 for u, v, w in edges if w["weight"] < 0],
+                edge_color="red", alpha=0.7
+            )
 
-        # Dibujar etiquetas de nodos
-        nx.draw_networkx_labels(G, pos, ax=ax, font_size=12, font_family="sans-serif")
+            # Dibujar etiquetas de nodos
+            nx.draw_networkx_labels(G, pos, ax=ax, font_size=12, font_family="sans-serif")
 
-        # Configurar título
-        ax.set_title("Red de Correlación entre Variables Seleccionadas")
+            # Configurar título
+            ax.set_title("Red de Correlación entre Variables Seleccionadas")
 
-        # Mostrar el gráfico en Streamlit
-        st.pyplot(fig)
+            # Mostrar el gráfico en Streamlit
+            st.pyplot(fig)
 
-    ######### mapa de correlación ### #
+        ######### mapa de correlación ### #
 
-        import seaborn as sns
-        from sklearn.preprocessing import MinMaxScaler
+            import seaborn as sns
+            from sklearn.preprocessing import MinMaxScaler
 
 
-        # Seleccionar las columnas para normalización
-        selected_columns = ['P112_vel', 'P113', 'P125', 'P128', 'P127', 'P126', 'IMC', 'P121', 'P123', 'P120', 'P124']
-        numeric_df = df_reduced_2[selected_columns]
+            # Seleccionar las columnas para normalización
+            selected_columns = ['P112_vel', 'P113', 'P125', 'P128', 'P127', 'P126', 'IMC', 'P121', 'P123', 'P120', 'P124']
+            numeric_df = df_reduced_2[selected_columns]
 
-        # Normalizar los datos utilizando Min-Max
-        scaler = MinMaxScaler()
-        normalized_df = scaler.fit_transform(numeric_df)
+            # Normalizar los datos utilizando Min-Max
+            scaler = MinMaxScaler()
+            normalized_df = scaler.fit_transform(numeric_df)
 
-        # Crear un DataFrame con los datos normalizados
-        normalized_df = pd.DataFrame(normalized_df, columns=selected_columns)
+            # Crear un DataFrame con los datos normalizados
+            normalized_df = pd.DataFrame(normalized_df, columns=selected_columns)
 
-        # Calcular la matriz de correlación
-        corr = normalized_df.corr(method='pearson')
+            # Calcular la matriz de correlación
+            corr = normalized_df.corr(method='pearson')
 
-        # Crear una máscara triangular superior para el mapa de calor
-        mask = np.triu(np.ones_like(corr, dtype=bool))
+            # Crear una máscara triangular superior para el mapa de calor
+            mask = np.triu(np.ones_like(corr, dtype=bool))
 
-        # Configurar y mostrar el gráfico de mapa de calor en Streamlit
-        fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
-        cmap = sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
-        sns.heatmap(corr, mask=mask, center=0, cmap=cmap, linewidths=1, annot=True, fmt='.2f', square=True, ax=ax)
+            # Configurar y mostrar el gráfico de mapa de calor en Streamlit
+            fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
+            cmap = sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
+            sns.heatmap(corr, mask=mask, center=0, cmap=cmap, linewidths=1, annot=True, fmt='.2f', square=True, ax=ax)
 
-        # Mostrar el gráfico en Streamlit
-        st.pyplot(fig)
+            # Mostrar el gráfico en Streamlit
+            st.pyplot(fig)
 
         ######################################################
 
