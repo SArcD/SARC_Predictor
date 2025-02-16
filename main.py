@@ -890,8 +890,8 @@ if pestañas == "Predicción de Sarcopenia":
 
                 # Mostrar el gráfico en Streamlit
                 st.plotly_chart(fig)
-
-        ####### eliminar fuerza alta ###
+        with st.expander("**Filtrado de variables**"):
+            ####### eliminar fuerza alta ###
 
             # Calcular el percentil 40 global de 'Fuerza'
             percentile_40_fuerza = df_combined_2['Fuerza'].quantile(0.40)
