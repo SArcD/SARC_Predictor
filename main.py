@@ -456,8 +456,7 @@ if pestañas == "Predicción de Sarcopenia":
 
 
         ####################$$$$$$$$$$$$$$$$$$$$$########################
-         with st.expander("Simplificar variables"):
-
+        with st.expander("Simplificar variables"):
             # Definir las columnas de comorbilidades y etiquetas
             columns_to_check = [
             'P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
