@@ -2034,164 +2034,164 @@ if pestañas == "Predicción de Sarcopenia":
 
 
 ##################################
+        with st.expander("**Puntos de corte**"):
+            import streamlit as st
+            import pandas as pd
+            import numpy as np
+            from sklearn.tree import DecisionTreeClassifier
+            from sklearn.model_selection import train_test_split
 
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        from sklearn.tree import DecisionTreeClassifier
-        from sklearn.model_selection import train_test_split
+            # Definir las columnas predictoras y la variable objetivo
+            selected_columns = ['IMME', 'Marcha', 'Fuerza']
+            X = df_combined_2[selected_columns]
+            y = df_combined_2['Cluster']
 
-        # Definir las columnas predictoras y la variable objetivo
-        selected_columns = ['IMME', 'Marcha', 'Fuerza']
-        X = df_combined_2[selected_columns]
-        y = df_combined_2['Cluster']
+            # Calcular el cluster con la mayor intersección con df_filtered_3
+            set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
+            num_clusters = df_combined_2['Cluster'].nunique()
+            max_similarity = 0
+            best_cluster = None
 
-        # Calcular el cluster con la mayor intersección con df_filtered_3
-        set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
-        num_clusters = df_combined_2['Cluster'].nunique()
-        max_similarity = 0
-        best_cluster = None
-
-        for cluster_num in range(num_clusters):
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
-            intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
+            for cluster_num in range(num_clusters):
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
+                intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
     
-            if intersection_size > max_similarity:
-                max_similarity = intersection_size
-                best_cluster = cluster_num
+                if intersection_size > max_similarity:
+                    max_similarity = intersection_size
+                    best_cluster = cluster_num
 
-        # Mostrar el cluster con mayor similitud
-        st.title("Puntos de Corte para el Cluster con Mayor Intersección")
-        if best_cluster is not None:
-            st.write(f"El cluster con la mayor intersección con el grupo de sarcopenia grave es el Cluster {best_cluster}.")
+            # Mostrar el cluster con mayor similitud
+            st.title("Puntos de Corte para el Cluster con Mayor Intersección")
+            if best_cluster is not None:
+                st.write(f"El cluster con la mayor intersección con el grupo de sarcopenia grave es el Cluster {best_cluster}.")
 
-            # Definir el número de iteraciones para entrenar múltiples modelos
-            n_iterations = st.number_input("Número de iteraciones", min_value=100, max_value=2000, value=1000, step=100)
+                # Definir el número de iteraciones para entrenar múltiples modelos
+                n_iterations = st.number_input("Número de iteraciones", min_value=100, max_value=2000, value=1000, step=100)
 
-            # Crear listas para almacenar los puntos de corte de cada modelo
-            split_points_best_cluster = {col: [] for col in selected_columns}
+                # Crear listas para almacenar los puntos de corte de cada modelo
+                split_points_best_cluster = {col: [] for col in selected_columns}
 
-            # Entrenar el modelo n_iterations veces y recopilar puntos de corte para clasificar en el cluster con mayor intersección
-            for i in range(n_iterations):
-                # Dividir el dataset en conjunto de entrenamiento y prueba
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=i)
+                # Entrenar el modelo n_iterations veces y recopilar puntos de corte para clasificar en el cluster con mayor intersección
+                for i in range(n_iterations):
+                    # Dividir el dataset en conjunto de entrenamiento y prueba
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=i)
 
-                # Crear y entrenar el modelo de árbol de decisión
-                decision_tree = DecisionTreeClassifier(random_state=i, min_samples_split=5, min_samples_leaf=20)
-                decision_tree.fit(X_train, y_train)
+                    # Crear y entrenar el modelo de árbol de decisión
+                    decision_tree = DecisionTreeClassifier(random_state=i, min_samples_split=5, min_samples_leaf=20)
+                    decision_tree.fit(X_train, y_train)
 
-                # Extraer puntos de corte de los nodos que conducen a la clasificación del cluster con mayor intersección
-                tree = decision_tree.tree_
-                for idx, feature in enumerate(tree.feature):
-                    if feature != -2:  # -2 indica que no es un nodo de decisión
-                        variable = selected_columns[feature]
-                        threshold = tree.threshold[idx]
-                        # Considerar solo umbrales que conducen a la clasificación del cluster seleccionado
-                        left_child, right_child = tree.children_left[idx], tree.children_right[idx]
-                        if (tree.value[left_child][0, best_cluster] > 0 or tree.value[right_child][0, best_cluster] > 0):
-                            split_points_best_cluster[variable].append(threshold)
+                    # Extraer puntos de corte de los nodos que conducen a la clasificación del cluster con mayor intersección
+                    tree = decision_tree.tree_
+                    for idx, feature in enumerate(tree.feature):
+                        if feature != -2:  # -2 indica que no es un nodo de decisión
+                            variable = selected_columns[feature]
+                            threshold = tree.threshold[idx]
+                            # Considerar solo umbrales que conducen a la clasificación del cluster seleccionado
+                            left_child, right_child = tree.children_left[idx], tree.children_right[idx]
+                            if (tree.value[left_child][0, best_cluster] > 0 or tree.value[right_child][0, best_cluster] > 0):
+                                split_points_best_cluster[variable].append(threshold)
 
-            # Calcular el promedio de los puntos de corte para clasificar en el cluster con mayor intersección
-            average_split_points = {var: np.mean(points) for var, points in split_points_best_cluster.items() if points}
+                # Calcular el promedio de los puntos de corte para clasificar en el cluster con mayor intersección
+                average_split_points = {var: np.mean(points) for var, points in split_points_best_cluster.items() if points}
     
-            # Mostrar los puntos de corte promedio en Streamlit
-            st.write("Puntos de corte promedio para clasificar en el Cluster con la mayor intersección:")
-            for variable, threshold in average_split_points.items():
-                st.write(f"{variable}: {threshold:.4f}")
+                # Mostrar los puntos de corte promedio en Streamlit
+                st.write("Puntos de corte promedio para clasificar en el Cluster con la mayor intersección:")
+                for variable, threshold in average_split_points.items():
+                    st.write(f"{variable}: {threshold:.4f}")
 
-        # Mostrar el gráfico de importancia de características
-            st.write("Importancia de características del último modelo de árbol de decisión:")
-            feature_importances = decision_tree.feature_importances_
-            plt.figure(figsize=(8, 6))
-            plt.barh(selected_columns, feature_importances, color='skyblue')
-            plt.xlabel("Importancia de la característica")
-            plt.title("Importancia de características del modelo de árbol de decisión")
-            st.pyplot(plt)
+            # Mostrar el gráfico de importancia de características
+                st.write("Importancia de características del último modelo de árbol de decisión:")
+                feature_importances = decision_tree.feature_importances_
+                plt.figure(figsize=(8, 6))
+                plt.barh(selected_columns, feature_importances, color='skyblue')
+                plt.xlabel("Importancia de la característica")
+                plt.title("Importancia de características del modelo de árbol de decisión")
+                st.pyplot(plt)
 
-        else:
-            st.write("No se encontró un cluster con intersecciones significativas con el grupo de sarcopenia grave.")
+            else:
+                st.write("No se encontró un cluster con intersecciones significativas con el grupo de sarcopenia grave.")
 ##########################################################
 
-        import streamlit as st
-        import pandas as pd
-        import numpy as np
-        from sklearn.tree import DecisionTreeClassifier
-        from sklearn.model_selection import train_test_split
+            import streamlit as st
+            import pandas as pd
+            import numpy as np
+            from sklearn.tree import DecisionTreeClassifier
+            from sklearn.model_selection import train_test_split
 
-        # Definir las columnas predictoras y la variable objetivo
-        #selected_columns = ['Pantorrilla', 'IMC', 'Brazo', 'Cintura']
-        selected_columns = st.multiselect("Selecciona las variables predictoras", selected_columns_renamed, default=['Pantorrilla', 'Brazo', 'Cintura', 'IMC'])
+            # Definir las columnas predictoras y la variable objetivo
+            #selected_columns = ['Pantorrilla', 'IMC', 'Brazo', 'Cintura']
+            selected_columns = st.multiselect("Selecciona las variables predictoras", selected_columns_renamed, default=['Pantorrilla', 'Brazo', 'Cintura', 'IMC'])
 
         
-        X = df_combined_2[selected_columns]
-        y = df_combined_2['Cluster']
+            X = df_combined_2[selected_columns]
+            y = df_combined_2['Cluster']
 
-        # Calcular el cluster con la mayor intersección con df_filtered_3
-        set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
-        num_clusters = df_combined_2['Cluster'].nunique()
-        max_similarity = 0
-        best_cluster = None
+            # Calcular el cluster con la mayor intersección con df_filtered_3
+            set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
+            num_clusters = df_combined_2['Cluster'].nunique()
+            max_similarity = 0
+            best_cluster = None
 
-        for cluster_num in range(num_clusters):
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
-            intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
+            for cluster_num in range(num_clusters):
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
+                intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
     
-            if intersection_size > max_similarity:
-                max_similarity = intersection_size
-                best_cluster = cluster_num
+                if intersection_size > max_similarity:
+                    max_similarity = intersection_size
+                    best_cluster = cluster_num
 
-        # Mostrar el cluster con mayor similitud
-        st.title("Puntos de Corte para el Cluster con Mayor Intersección")
-        if best_cluster is not None:
-            st.write(f"El cluster con la mayor intersección con el grupo de sarcopenia grave es el Cluster {best_cluster}.")
+            # Mostrar el cluster con mayor similitud
+            st.title("Puntos de Corte para el Cluster con Mayor Intersección")
+            if best_cluster is not None:
+                st.write(f"El cluster con la mayor intersección con el grupo de sarcopenia grave es el Cluster {best_cluster}.")
 
-            # Definir el número de iteraciones para entrenar múltiples modelos
-            n_iterations = st.number_input("Númro de iteraciones", min_value=100, max_value=2000, value=1000, step=100)
+                # Definir el número de iteraciones para entrenar múltiples modelos
+                n_iterations = st.number_input("Númro de iteraciones", min_value=100, max_value=2000, value=1000, step=100)
 
-            # Crear listas para almacenar los puntos de corte de cada modelo
-            split_points_best_cluster = {col: [] for col in selected_columns}
+                # Crear listas para almacenar los puntos de corte de cada modelo
+                split_points_best_cluster = {col: [] for col in selected_columns}
 
-            # Entrenar el modelo n_iterations veces y recopilar puntos de corte para clasificar en el cluster con mayor intersección
-            for i in range(n_iterations):
-                # Dividir el dataset en conjunto de entrenamiento y prueba
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=i)
+                # Entrenar el modelo n_iterations veces y recopilar puntos de corte para clasificar en el cluster con mayor intersección
+                for i in range(n_iterations):
+                    # Dividir el dataset en conjunto de entrenamiento y prueba
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=i)
 
-                # Crear y entrenar el modelo de árbol de decisión
-                decision_tree = DecisionTreeClassifier(random_state=i, min_samples_split=5, min_samples_leaf=20)
-                decision_tree.fit(X_train, y_train)
+                    # Crear y entrenar el modelo de árbol de decisión
+                    decision_tree = DecisionTreeClassifier(random_state=i, min_samples_split=5, min_samples_leaf=20)
+                    decision_tree.fit(X_train, y_train)
 
-                # Extraer puntos de corte de los nodos que conducen a la clasificación del cluster con mayor intersección
-                tree = decision_tree.tree_
-                for idx, feature in enumerate(tree.feature):
-                    if feature != -2:  # -2 indica que no es un nodo de decisión
-                        variable = selected_columns[feature]
-                        threshold = tree.threshold[idx]
-                        # Considerar solo umbrales que conducen a la clasificación del cluster seleccionado
-                        left_child, right_child = tree.children_left[idx], tree.children_right[idx]
-                        if (tree.value[left_child][0, best_cluster] > 0 or tree.value[right_child][0, best_cluster] > 0):
-                            split_points_best_cluster[variable].append(threshold)
+                    # Extraer puntos de corte de los nodos que conducen a la clasificación del cluster con mayor intersección
+                    tree = decision_tree.tree_
+                    for idx, feature in enumerate(tree.feature):
+                        if feature != -2:  # -2 indica que no es un nodo de decisión
+                            variable = selected_columns[feature]
+                            threshold = tree.threshold[idx]
+                            # Considerar solo umbrales que conducen a la clasificación del cluster seleccionado
+                            left_child, right_child = tree.children_left[idx], tree.children_right[idx]
+                            if (tree.value[left_child][0, best_cluster] > 0 or tree.value[right_child][0, best_cluster] > 0):
+                                split_points_best_cluster[variable].append(threshold)
 
-            # Calcular el promedio de los puntos de corte para clasificar en el cluster con mayor intersección
-            average_split_points = {var: np.mean(points) for var, points in split_points_best_cluster.items() if points}
+                # Calcular el promedio de los puntos de corte para clasificar en el cluster con mayor intersección
+                average_split_points = {var: np.mean(points) for var, points in split_points_best_cluster.items() if points}
     
-            # Mostrar los puntos de corte promedio en Streamlit
-            st.write("Puntos de corte promedio para clasificar en el Cluster con la mayor intersección:")
-            for variable, threshold in average_split_points.items():
-                st.write(f"{variable}: {threshold:.4f}")
+                # Mostrar los puntos de corte promedio en Streamlit
+                st.write("Puntos de corte promedio para clasificar en el Cluster con la mayor intersección:")
+                for variable, threshold in average_split_points.items():
+                    st.write(f"{variable}: {threshold:.4f}")
 
-        # Mostrar el gráfico de importancia de características
-            st.write("Importancia de características del último modelo de árbol de decisión:")
-            feature_importances = decision_tree.feature_importances_
-            plt.figure(figsize=(8, 6))
-            plt.barh(selected_columns, feature_importances, color='skyblue')
-            plt.xlabel("Importancia de la característica")
-            plt.title("Importancia de características del modelo de árbol de decisión")
-            st.pyplot(plt)
+            # Mostrar el gráfico de importancia de características
+                st.write("Importancia de características del último modelo de árbol de decisión:")
+                feature_importances = decision_tree.feature_importances_
+                plt.figure(figsize=(8, 6))
+                plt.barh(selected_columns, feature_importances, color='skyblue')
+                plt.xlabel("Importancia de la característica")
+                plt.title("Importancia de características del modelo de árbol de decisión")
+                st.pyplot(plt)
 
-        else:
-            st.write("No se encontró un cluster con intersecciones significativas con el grupo de sarcopenia grave.")
+            else:
+                st.write("No se encontró un cluster con intersecciones significativas con el grupo de sarcopenia grave.")
 
 ###########
 
