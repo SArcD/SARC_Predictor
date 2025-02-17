@@ -1669,278 +1669,281 @@ if pestañas == "Predicción de Sarcopenia":
                 for comparacion, valores in resultados.items():
                     st.write(f'{comparacion}: t_stat = {valores["t_stat"]:.4f}, p_valor = {valores["p_valor"]:.4f}')
 
-        import streamlit as st
-        from sklearn.metrics import silhouette_score
-        from sklearn.manifold import TSNE
-        from sklearn.decomposition import PCA
-        import matplotlib.pyplot as plt
-        import numpy as np
-        from scipy.stats import gaussian_kde
 
-        # Ajustar el número de componentes de PCA para reducir la dimensionalidad inicial
-        st.title("Análisis de Clustering con t-SNE y PCA")
-        st.write("Este análisis aplica PCA y t-SNE para visualizar clusters en datos reducidos dimensionalmente.")
+        with st.expander("**Análisis de los clusters**"):
+        
+            import streamlit as st
+            from sklearn.metrics import silhouette_score
+            from sklearn.manifold import TSNE
+            from sklearn.decomposition import PCA
+            import matplotlib.pyplot as plt
+            import numpy as np
+            from scipy.stats import gaussian_kde
 
-        # Paso 1: Reducir la dimensionalidad con PCA
-        pca = PCA(n_components=3)  # Reducir a 3 componentes principales
-        pca_data = pca.fit_transform(normalized_data_2)
+            # Ajustar el número de componentes de PCA para reducir la dimensionalidad inicial
+            st.title("Análisis de Clustering con t-SNE y PCA")
+            st.write("Este análisis aplica PCA y t-SNE para visualizar clusters en datos reducidos dimensionalmente.")
 
-        # Paso 2: Aplicar t-SNE sobre los datos de PCA
-        tsne = TSNE(n_components=2, perplexity=30, learning_rate=40, n_iter=300, early_exaggeration=10)
-        tsne_data_2 = tsne.fit_transform(pca_data)
+            # Paso 1: Reducir la dimensionalidad con PCA
+            pca = PCA(n_components=3)  # Reducir a 3 componentes principales
+            pca_data = pca.fit_transform(normalized_data_2)
 
-        # Paso 3: Crear el gráfico de t-SNE ajustado con curvas de densidad de kernel
-        fig, ax = plt.subplots()
-        labels = df_combined_2['Cluster']
-        for cluster in np.unique(labels):
-            indices = np.where(labels == cluster)
-            ax.scatter(tsne_data_2[indices, 0], tsne_data_2[indices, 1], label=f'Cluster {cluster}')
+            # Paso 2: Aplicar t-SNE sobre los datos de PCA
+            tsne = TSNE(n_components=2, perplexity=30, learning_rate=40, n_iter=300, early_exaggeration=10)
+            tsne_data_2 = tsne.fit_transform(pca_data)
+
+            # Paso 3: Crear el gráfico de t-SNE ajustado con curvas de densidad de kernel
+            fig, ax = plt.subplots()
+            labels = df_combined_2['Cluster']
+            for cluster in np.unique(labels):
+                indices = np.where(labels == cluster)
+                ax.scatter(tsne_data_2[indices, 0], tsne_data_2[indices, 1], label=f'Cluster {cluster}')
     
-            # Densidad de kernel
-            kde = gaussian_kde(tsne_data_2[indices].T)
-            x_range = np.linspace(np.min(tsne_data_2[:, 0]) - 1, np.max(tsne_data_2[:, 0]) + 1, 100)
-            y_range = np.linspace(np.min(tsne_data_2[:, 1]) - 1, np.max(tsne_data_2[:, 1]) + 1, 100)
-            xx, yy = np.meshgrid(x_range, y_range)
-            positions = np.vstack([xx.ravel(), yy.ravel()])
-            zz = np.reshape(kde(positions).T, xx.shape)
-            ax.contour(xx, yy, zz, colors='k', alpha=0.5)
+                # Densidad de kernel
+                kde = gaussian_kde(tsne_data_2[indices].T)
+                x_range = np.linspace(np.min(tsne_data_2[:, 0]) - 1, np.max(tsne_data_2[:, 0]) + 1, 100)
+                y_range = np.linspace(np.min(tsne_data_2[:, 1]) - 1, np.max(tsne_data_2[:, 1]) + 1, 100)
+                xx, yy = np.meshgrid(x_range, y_range)
+                positions = np.vstack([xx.ravel(), yy.ravel()])
+                zz = np.reshape(kde(positions).T, xx.shape)
+                ax.contour(xx, yy, zz, colors='k', alpha=0.5)
 
-        # Añadir detalles al gráfico
-        ax.legend()
-        ax.set_title('Gráfico de Dispersión de t-SNE con Curvas de Densidad de Kernel')
+            # Añadir detalles al gráfico
+            ax.legend()
+            ax.set_title('Gráfico de Dispersión de t-SNE con Curvas de Densidad de Kernel')
 
-        # Mostrar el gráfico en Streamlit
-        st.pyplot(fig)
-################################################
+            # Mostrar el gráfico en Streamlit
+            st.pyplot(fig)
+        ################################################
 
-        import streamlit as st
-        import matplotlib.pyplot as plt
-        from matplotlib_venn import venn2
-        import pandas as pd
+            import streamlit as st
+            import matplotlib.pyplot as plt
+            from matplotlib_venn import venn2
+            import pandas as pd
 
-        # Crear conjuntos de folios del DataFrame filtrado
-        set_folios_df_filtered_2 = set(df_filtered_2['folio_paciente'])
+            # Crear conjuntos de folios del DataFrame filtrado
+            set_folios_df_filtered_2 = set(df_filtered_2['folio_paciente'])
 
-        # Crear una caja de entrada para el número de clusters
-#        num_clusters = st.number_input("Número de clusters", min_value=1, max_value=10, value=4, step=1)
+            # Crear una caja de entrada para el número de clusters
+#            num_clusters = st.number_input("Número de clusters", min_value=1, max_value=10, value=4, step=1)
 
-        st.title("Diagramas de Venn por Cluster")
-        st.write("Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y cada cluster.")
+            st.title("Diagramas de Venn por Cluster")
+            st.write("Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y cada cluster.")
 
-        # Crear diagramas de Venn para cada cluster
-        for cluster_num in range(n_clusters):
-            # Crear conjunto de folios para el cluster actual
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
+            # Crear diagramas de Venn para cada cluster
+            for cluster_num in range(n_clusters):
+                # Crear conjunto de folios para el cluster actual
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
     
-            # Crear el diagrama de Venn
-            fig, ax = plt.subplots(figsize=(8, 6))
-            venn2([set_folios_df_filtered_2, set_folios_df_cluster],
+                # Crear el diagrama de Venn
+                fig, ax = plt.subplots(figsize=(8, 6))
+                venn2([set_folios_df_filtered_2, set_folios_df_cluster],
                 set_labels=('Sarcopenia', f'Cluster {cluster_num}'))
-            ax.set_title(f"Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y el Cluster {cluster_num}")
+                ax.set_title(f"Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y el Cluster {cluster_num}")
     
-            # Mostrar el gráfico en Streamlit
-            st.pyplot(fig)
+                # Mostrar el gráfico en Streamlit
+                st.pyplot(fig)
 
 
 
-        # Variable para almacenar el cluster con la mayor intersección
-        max_similarity = 0
-        best_cluster = None
+            # Variable para almacenar el cluster con la mayor intersección
+            max_similarity = 0
+            best_cluster = None
 
-        # Calcular la intersección para cada cluster y encontrar el de mayor similitud
-        for cluster_num in range(n_clusters):
-            # Crear conjunto de folios para el cluster actual
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
+            # Calcular la intersección para cada cluster y encontrar el de mayor similitud
+            for cluster_num in range(n_clusters):
+                # Crear conjunto de folios para el cluster actual
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
     
-            # Calcular el grado de intersección
-            intersection_size = len(set_folios_df_filtered_2.intersection(set_folios_df_cluster))
+                # Calcular el grado de intersección
+                intersection_size = len(set_folios_df_filtered_2.intersection(set_folios_df_cluster))
     
-            # Actualizar el cluster con la mayor intersección
-            if intersection_size > max_similarity:
-                max_similarity = intersection_size
-                best_cluster = cluster_num
+                # Actualizar el cluster con la mayor intersección
+                if intersection_size > max_similarity:
+                    max_similarity = intersection_size
+                    best_cluster = cluster_num
 
-        # Mostrar el cluster con mayor similitud
-        if best_cluster is not None:
-            st.write(f"El cluster con mayor similitud con el grupo de sarcopenia grave es el Cluster {best_cluster} con {max_similarity} elementos en común.")
+            # Mostrar el cluster con mayor similitud
+            if best_cluster is not None:
+                st.write(f"El cluster con mayor similitud con el grupo de sarcopenia grave es el Cluster {best_cluster} con {max_similarity} elementos en común.")
     
-            # Crear el diagrama de Venn para el cluster con mayor intersección
-            fig, ax = plt.subplots(figsize=(8, 6))
-            set_folios_df_best_cluster = set(df_combined_2[df_combined_2['Cluster'] == best_cluster]['folio_paciente'])
-            venn2([set_folios_df_filtered_2, set_folios_df_best_cluster],
-                set_labels=('Sarcopenia', f'Cluster {best_cluster}'))
-            ax.set_title(f"Diagrama de Venn entre Sarcopenia grave y el Cluster {best_cluster}")
+                # Crear el diagrama de Venn para el cluster con mayor intersección
+                fig, ax = plt.subplots(figsize=(8, 6))
+                set_folios_df_best_cluster = set(df_combined_2[df_combined_2['Cluster'] == best_cluster]['folio_paciente'])
+                venn2([set_folios_df_filtered_2, set_folios_df_best_cluster],
+                    set_labels=('Sarcopenia', f'Cluster {best_cluster}'))
+                ax.set_title(f"Diagrama de Venn entre Sarcopenia grave y el Cluster {best_cluster}")
     
-            # Mostrar el gráfico en Streamlit
-            st.pyplot(fig)
-        else:
-            st.write("No se encontraron intersecciones entre los clusters y el grupo de sarcopenia grave.")
+                # Mostrar el gráfico en Streamlit
+                st.pyplot(fig)
+            else:
+                st.write("No se encontraron intersecciones entre los clusters y el grupo de sarcopenia grave.")
 
 
 
 
-################################################
-        import streamlit as st
-        import matplotlib.pyplot as plt
-        from matplotlib_venn import venn2
-        import pandas as pd
+            ################################################
+            import streamlit as st
+            import matplotlib.pyplot as plt
+            from matplotlib_venn import venn2
+            import pandas as pd
 
-        # Crear conjuntos de folios del DataFrame filtrado
-        set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
+            # Crear conjuntos de folios del DataFrame filtrado
+            set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
 
-        # Crear una caja de entrada para el número de clusters
-#        num_clusters = st.number_input("Número de clusters", min_value=1, max_value=10, value=4, step=1)
+            # Crear una caja de entrada para el número de clusters
+#            num_clusters = st.number_input("Número de clusters", min_value=1, max_value=10, value=4, step=1)
 
-        st.title("Diagramas de Venn por Cluster")
-        st.write("Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y cada cluster.")
+            st.title("Diagramas de Venn por Cluster")
+            st.write("Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y cada cluster.")
 
-        # Crear diagramas de Venn para cada cluster
-        for cluster_num in range(n_clusters):
-            # Crear conjunto de folios para el cluster actual
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
+            # Crear diagramas de Venn para cada cluster
+            for cluster_num in range(n_clusters):
+                # Crear conjunto de folios para el cluster actual
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
     
-            # Crear el diagrama de Venn
-            fig, ax = plt.subplots(figsize=(8, 6))
-            venn2([set_folios_df_filtered_3, set_folios_df_cluster],
-                set_labels=('Sarcopenia grave', f'Cluster {cluster_num}'))
-            ax.set_title(f"Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y el Cluster {cluster_num}")
+                # Crear el diagrama de Venn
+                fig, ax = plt.subplots(figsize=(8, 6))
+                venn2([set_folios_df_filtered_3, set_folios_df_cluster],
+                    set_labels=('Sarcopenia grave', f'Cluster {cluster_num}'))
+                ax.set_title(f"Diagrama de Venn entre el grupo de pacientes con sarcopenia grave y el Cluster {cluster_num}")
     
-            # Mostrar el gráfico en Streamlit
-            st.pyplot(fig)
+                # Mostrar el gráfico en Streamlit
+                st.pyplot(fig)
 
 
 
-        # Variable para almacenar el cluster con la mayor intersección
-        max_similarity = 0
-        best_cluster = None
+            # Variable para almacenar el cluster con la mayor intersección
+            max_similarity = 0
+            best_cluster = None
 
-        # Calcular la intersección para cada cluster y encontrar el de mayor similitud
-        for cluster_num in range(n_clusters):
-            # Crear conjunto de folios para el cluster actual
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
+            # Calcular la intersección para cada cluster y encontrar el de mayor similitud
+            for cluster_num in range(n_clusters):
+                # Crear conjunto de folios para el cluster actual
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
     
-            # Calcular el grado de intersección
-            intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
+                # Calcular el grado de intersección
+                intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
     
-            # Actualizar el cluster con la mayor intersección
-            if intersection_size > max_similarity:
-                max_similarity = intersection_size
-                best_cluster = cluster_num
+                # Actualizar el cluster con la mayor intersección
+                if intersection_size > max_similarity:
+                    max_similarity = intersection_size
+                    best_cluster = cluster_num
 
-        # Mostrar el cluster con mayor similitud
-        if best_cluster is not None:
-            st.write(f"El cluster con mayor similitud con el grupo de sarcopenia grave es el Cluster {best_cluster} con {max_similarity} elementos en común.")
+            # Mostrar el cluster con mayor similitud
+            if best_cluster is not None:
+                st.write(f"El cluster con mayor similitud con el grupo de sarcopenia grave es el Cluster {best_cluster} con {max_similarity} elementos en común.")
     
-            # Crear el diagrama de Venn para el cluster con mayor intersección
-            fig, ax = plt.subplots(figsize=(8, 6))
-            set_folios_df_best_cluster = set(df_combined_2[df_combined_2['Cluster'] == best_cluster]['folio_paciente'])
-            venn2([set_folios_df_filtered_3, set_folios_df_best_cluster],
-                set_labels=('Sarcopenia grave', f'Cluster {best_cluster}'))
-            ax.set_title(f"Diagrama de Venn entre Sarcopenia grave y el Cluster {best_cluster}")
+                # Crear el diagrama de Venn para el cluster con mayor intersección
+                fig, ax = plt.subplots(figsize=(8, 6))
+                set_folios_df_best_cluster = set(df_combined_2[df_combined_2['Cluster'] == best_cluster]['folio_paciente'])
+                venn2([set_folios_df_filtered_3, set_folios_df_best_cluster],
+                    set_labels=('Sarcopenia grave', f'Cluster {best_cluster}'))
+                ax.set_title(f"Diagrama de Venn entre Sarcopenia grave y el Cluster {best_cluster}")
     
-            # Mostrar el gráfico en Streamlit
-            st.pyplot(fig)
-        else:
-            st.write("No se encontraron intersecciones entre los clusters y el grupo de sarcopenia grave.")
+                # Mostrar el gráfico en Streamlit
+                st.pyplot(fig)
+            else:
+                st.write("No se encontraron intersecciones entre los clusters y el grupo de sarcopenia grave.")
 
 
-        import streamlit as st
-        import plotly.graph_objects as go
-        import pandas as pd
+            import streamlit as st
+            import plotly.graph_objects as go
+            import pandas as pd
 
-        # Definir las columnas seleccionadas para los gráficos de caja
-        selected_columns_renamed = [
-            'Marcha', 'Fuerza', 'P. Tricipital', 'P. Pantorrilla',
-            'IMC', 'Biceps', 'P. subescapular', 'Cintura', 'Muslo', 'Brazo', 'Cadera', 'Pantorrilla', 'Peso', 'IMME'
-        ]
+            # Definir las columnas seleccionadas para los gráficos de caja
+            selected_columns_renamed = [
+                'Marcha', 'Fuerza', 'P. Tricipital', 'P. Pantorrilla',
+                'IMC', 'Biceps', 'P. subescapular', 'Cintura', 'Muslo', 'Brazo', 'Cadera', 'Pantorrilla', 'Peso', 'IMME'
+            ]
 
-        # Crear conjuntos de folios de df_filtered_2
-        set_folios_df_filtered_2 = set(df_filtered_2['folio_paciente'])
+            # Crear conjuntos de folios de df_filtered_2
+            set_folios_df_filtered_2 = set(df_filtered_2['folio_paciente'])
 
-        # Calcular el cluster con la mayor intersección
-        num_clusters = df_combined_2['Cluster'].nunique()
-        max_similarity = 0
-        best_cluster = None
+            # Calcular el cluster con la mayor intersección
+            num_clusters = df_combined_2['Cluster'].nunique()
+            max_similarity = 0
+            best_cluster = None
 
-        for cluster_num in range(num_clusters):
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
-            intersection_size = len(set_folios_df_filtered_2.intersection(set_folios_df_cluster))
+            for cluster_num in range(num_clusters):
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
+                intersection_size = len(set_folios_df_filtered_2.intersection(set_folios_df_cluster))
     
-            if intersection_size > max_similarity:
-                max_similarity = intersection_size
-                best_cluster = cluster_num
+                if intersection_size > max_similarity:
+                    max_similarity = intersection_size
+                    best_cluster = cluster_num
 
-        # Obtener los datos del cluster con mayor intersección
-        if best_cluster is not None:
-            st.title("Comparación de Gráficos de Caja")
-            st.write(f"Comparación entre la intersección de pacientes con sarcopenia y el Cluster {best_cluster}")
+            # Obtener los datos del cluster con mayor intersección
+            if best_cluster is not None:
+                st.title("Comparación de Gráficos de Caja")
+                st.write(f"Comparación entre la intersección de pacientes con sarcopenia y el Cluster {best_cluster}")
 
-            df_best_cluster = df_combined_2[df_combined_2['Cluster'] == best_cluster]
-            set_folios_df_best_cluster = set(df_best_cluster['folio_paciente'])
-            interseccion_folios = set_folios_df_filtered_2.intersection(set_folios_df_best_cluster)
-            solo_df_best_cluster = set_folios_df_best_cluster - interseccion_folios
+                df_best_cluster = df_combined_2[df_combined_2['Cluster'] == best_cluster]
+                set_folios_df_best_cluster = set(df_best_cluster['folio_paciente'])
+                interseccion_folios = set_folios_df_filtered_2.intersection(set_folios_df_best_cluster)
+                solo_df_best_cluster = set_folios_df_best_cluster - interseccion_folios
 
-            # Filtrar los DataFrames para la intersección y el conjunto sin intersección
-            df_best_cluster_interseccion = df_best_cluster[df_best_cluster['folio_paciente'].isin(interseccion_folios)]
-            df_best_cluster_solo = df_best_cluster[df_best_cluster['folio_paciente'].isin(solo_df_best_cluster)]
+                # Filtrar los DataFrames para la intersección y el conjunto sin intersección
+                df_best_cluster_interseccion = df_best_cluster[df_best_cluster['folio_paciente'].isin(interseccion_folios)]
+                df_best_cluster_solo = df_best_cluster[df_best_cluster['folio_paciente'].isin(solo_df_best_cluster)]
 
-            # Crear gráficos de caja individuales para cada columna
-            for column in selected_columns_renamed:
-                fig = go.Figure()
+                # Crear gráficos de caja individuales para cada columna
+                for column in selected_columns_renamed:
+                    fig = go.Figure()
 
-                # Caja de datos en intersección
-                box_intersection = go.Box(y=df_best_cluster_interseccion[column], name='Intersección con Sarcopenia', boxpoints='all', notched=True, marker=dict(color='blue'))
-                fig.add_trace(box_intersection)
+                    # Caja de datos en intersección
+                    box_intersection = go.Box(y=df_best_cluster_interseccion[column], name='Intersección con Sarcopenia', boxpoints='all', notched=True, marker=dict(color='blue'))
+                    fig.add_trace(box_intersection)
 
-                # Caja de datos sin intersección
-                box_non_intersection = go.Box(y=df_best_cluster_solo[column], name=f'Solo en Cluster {best_cluster}', boxpoints='all', notched=True, marker=dict(color='green'))
-                fig.add_trace(box_non_intersection)
+                    # Caja de datos sin intersección
+                    box_non_intersection = go.Box(y=df_best_cluster_solo[column], name=f'Solo en Cluster {best_cluster}', boxpoints='all', notched=True, marker=dict(color='green'))
+                    fig.add_trace(box_non_intersection)
 
-                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%) en df_best_cluster
-                quintile_1_2 = df_best_cluster[column].quantile(0.20)
-                quintile_2_2 = df_best_cluster[column].quantile(0.40)
-                quintile_3_2 = df_best_cluster[column].quantile(0.60)
-                quintile_4_2 = df_best_cluster[column].quantile(0.80)
+                    # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%) en df_best_cluster
+                    quintile_1_2 = df_best_cluster[column].quantile(0.20)
+                    quintile_2_2 = df_best_cluster[column].quantile(0.40)
+                    quintile_3_2 = df_best_cluster[column].quantile(0.60)
+                    quintile_4_2 = df_best_cluster[column].quantile(0.80)
 
-                # Agregar líneas horizontales para los quintiles
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_1_2, y1=quintile_1_2,
-                      line=dict(color="blue", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    # Agregar líneas horizontales para los quintiles
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_1_2, y1=quintile_1_2,
+                          line=dict(color="blue", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_2_2, y1=quintile_2_2,
-                      line=dict(color="green", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_2_2, y1=quintile_2_2,
+                          line=dict(color="green", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_3_2, y1=quintile_3_2,
-                      line=dict(color="orange", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_3_2, y1=quintile_3_2,
+                          line=dict(color="orange", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_4_2, y1=quintile_4_2,
-                      line=dict(color="red", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_4_2, y1=quintile_4_2,
+                          line=dict(color="red", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                # Actualizar el diseño del gráfico
-                fig.update_layout(
-                    title_text=f'Comparación de Gráfico de Caja - {column}',
-                    xaxis_title="Conjuntos",
-                    yaxis_title=column,
-                    showlegend=True,
-                    height=600,
-                    width=800,
-                    margin=dict(t=50, b=50, l=50, r=50)
-                )
+                    # Actualizar el diseño del gráfico
+                    fig.update_layout(
+                        title_text=f'Comparación de Gráfico de Caja - {column}',
+                        xaxis_title="Conjuntos",
+                        yaxis_title=column,
+                        showlegend=True,
+                        height=600,
+                        width=800,
+                        margin=dict(t=50, b=50, l=50, r=50)
+                    )
 
-                # Mostrar el gráfico individual en Streamlit
-                st.plotly_chart(fig)
+                    # Mostrar el gráfico individual en Streamlit
+                    st.plotly_chart(fig)
 
 
 
