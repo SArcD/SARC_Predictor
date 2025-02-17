@@ -2243,6 +2243,27 @@ if pestañas == "Predicción de Sarcopenia":
             plt.title("Importancia de características del modelo de árbol de decisión")
             st.pyplot(plt)
 
+        ######################
+
+        # Formulario interactivo para diagnóstico
+        st.write("### Diagnóstico de Sarcopenia")
+        st.write("Introduce los valores de las variables predictoras para obtener un diagnóstico basado en el modelo de árbol de decisión:")
+        user_input = {}
+        for variable in selected_columns:
+            user_input[variable] = st.number_input(f"{variable}", min_value=0.0, max_value=100.0, value=50.0, step=0.1)
+
+        # Convertir entrada a DataFrame
+        user_df = pd.DataFrame([user_input])
+
+        # Predecir el cluster del usuario
+        predicted_cluster = decision_tree.predict(user_df)[0]
+        st.write(f"El modelo predice que perteneces al Cluster {predicted_cluster}.")
+
+        # Evaluar si está en el cluster con mayor intersección con sarcopenia
+        if predicted_cluster == best_cluster:
+            st.write("**El modelo sugiere que podrías estar en el grupo con mayor similitud a sarcopenia grave.**")
+        else:
+            st.write("**El modelo no te clasifica en el cluster de mayor riesgo de sarcopenia grave.**")
 
 
 
