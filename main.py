@@ -1946,97 +1946,91 @@ if pestañas == "Predicción de Sarcopenia":
                     st.plotly_chart(fig)
 
 
+            # Crear conjuntos de folios de df_filtered_3
+            set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
 
+            # Calcular el cluster con la mayor intersección
+            num_clusters = df_combined_2['Cluster'].nunique()
+            max_similarity = 0
+            best_cluster = None
 
-
-
-
-
-        # Crear conjuntos de folios de df_filtered_3
-        set_folios_df_filtered_3 = set(df_filtered_3['folio_paciente'])
-
-        # Calcular el cluster con la mayor intersección
-        num_clusters = df_combined_2['Cluster'].nunique()
-        max_similarity = 0
-        best_cluster = None
-
-        for cluster_num in range(num_clusters):
-            cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
-            set_folios_df_cluster = set(cluster_data['folio_paciente'])
-            intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
+            for cluster_num in range(num_clusters):
+                cluster_data = df_combined_2[df_combined_2['Cluster'] == cluster_num]
+                set_folios_df_cluster = set(cluster_data['folio_paciente'])
+                intersection_size = len(set_folios_df_filtered_3.intersection(set_folios_df_cluster))
     
-            if intersection_size > max_similarity:
-                max_similarity = intersection_size
-                best_cluster = cluster_num
+                if intersection_size > max_similarity:
+                    max_similarity = intersection_size
+                    best_cluster = cluster_num
 
-        # Obtener los datos del cluster con mayor intersección
-        if best_cluster is not None:
-            st.title("Comparación de Gráficos de Caja")
-            st.write(f"Comparación entre la intersección de pacientes con sarcopenia grave y el Cluster {best_cluster}")
+            # Obtener los datos del cluster con mayor intersección
+            if best_cluster is not None:
+                st.title("Comparación de Gráficos de Caja")
+                st.write(f"Comparación entre la intersección de pacientes con sarcopenia grave y el Cluster {best_cluster}")
 
-            df_best_cluster = df_combined_2[df_combined_2['Cluster'] == best_cluster]
-            set_folios_df_best_cluster = set(df_best_cluster['folio_paciente'])
-            interseccion_folios = set_folios_df_filtered_3.intersection(set_folios_df_best_cluster)
-            solo_df_best_cluster = set_folios_df_best_cluster - interseccion_folios
+                df_best_cluster = df_combined_2[df_combined_2['Cluster'] == best_cluster]
+                set_folios_df_best_cluster = set(df_best_cluster['folio_paciente'])
+                interseccion_folios = set_folios_df_filtered_3.intersection(set_folios_df_best_cluster)
+                solo_df_best_cluster = set_folios_df_best_cluster - interseccion_folios
 
-            # Filtrar los DataFrames para la intersección y el conjunto sin intersección
-            df_best_cluster_interseccion = df_best_cluster[df_best_cluster['folio_paciente'].isin(interseccion_folios)]
-            df_best_cluster_solo = df_best_cluster[df_best_cluster['folio_paciente'].isin(solo_df_best_cluster)]
+                # Filtrar los DataFrames para la intersección y el conjunto sin intersección
+                df_best_cluster_interseccion = df_best_cluster[df_best_cluster['folio_paciente'].isin(interseccion_folios)]
+                df_best_cluster_solo = df_best_cluster[df_best_cluster['folio_paciente'].isin(solo_df_best_cluster)]
 
-            # Crear gráficos de caja individuales para cada columna
-            for column in selected_columns_renamed:
-                fig = go.Figure()
+                # Crear gráficos de caja individuales para cada columna
+                for column in selected_columns_renamed:
+                    fig = go.Figure()
 
-                # Caja de datos en intersección
-                box_intersection = go.Box(y=df_best_cluster_interseccion[column], name='Intersección con Sarcopenia grave', boxpoints='all', notched=True, marker=dict(color='blue'))
-                fig.add_trace(box_intersection)
+                    # Caja de datos en intersección
+                    box_intersection = go.Box(y=df_best_cluster_interseccion[column], name='Intersección con Sarcopenia grave', boxpoints='all', notched=True, marker=dict(color='blue'))
+                    fig.add_trace(box_intersection)
 
-                # Caja de datos sin intersección
-                box_non_intersection = go.Box(y=df_best_cluster_solo[column], name=f'Solo en Cluster {best_cluster}', boxpoints='all', notched=True, marker=dict(color='green'))
-                fig.add_trace(box_non_intersection)
+                    # Caja de datos sin intersección
+                    box_non_intersection = go.Box(y=df_best_cluster_solo[column], name=f'Solo en Cluster {best_cluster}', boxpoints='all', notched=True, marker=dict(color='green'))
+                    fig.add_trace(box_non_intersection)
 
-                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%) en df_best_cluster
-                quintile_1_2 = df_best_cluster[column].quantile(0.20)
-                quintile_2_2 = df_best_cluster[column].quantile(0.40)
-                quintile_3_2 = df_best_cluster[column].quantile(0.60)
-                quintile_4_2 = df_best_cluster[column].quantile(0.80)
+                    # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%) en df_best_cluster
+                    quintile_1_2 = df_best_cluster[column].quantile(0.20)
+                    quintile_2_2 = df_best_cluster[column].quantile(0.40)
+                    quintile_3_2 = df_best_cluster[column].quantile(0.60)
+                    quintile_4_2 = df_best_cluster[column].quantile(0.80)
 
-                # Agregar líneas horizontales para los quintiles
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_1_2, y1=quintile_1_2,
-                      line=dict(color="blue", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    # Agregar líneas horizontales para los quintiles
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_1_2, y1=quintile_1_2,
+                          line=dict(color="blue", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_2_2, y1=quintile_2_2,
-                      line=dict(color="green", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_2_2, y1=quintile_2_2,
+                          line=dict(color="green", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_3_2, y1=quintile_3_2,
-                      line=dict(color="orange", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_3_2, y1=quintile_3_2,
+                          line=dict(color="orange", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                fig.add_shape(type="line",
-                      x0=0, x1=1, y0=quintile_4_2, y1=quintile_4_2,
-                      line=dict(color="red", width=2, dash="dash"),
-                      xref="paper", yref="y")
+                    fig.add_shape(type="line",
+                          x0=0, x1=1, y0=quintile_4_2, y1=quintile_4_2,
+                          line=dict(color="red", width=2, dash="dash"),
+                          xref="paper", yref="y")
 
-                # Actualizar el diseño del gráfico
-                fig.update_layout(
-                    title_text=f'Comparación de Gráfico de Caja - {column}',
-                    xaxis_title="Conjuntos",
-                    yaxis_title=column,
-                    showlegend=True,
-                    height=600,
-                    width=800,
-                    margin=dict(t=50, b=50, l=50, r=50)
-                )
+                    # Actualizar el diseño del gráfico
+                    fig.update_layout(
+                        title_text=f'Comparación de Gráfico de Caja - {column}',
+                        xaxis_title="Conjuntos",
+                        yaxis_title=column,
+                        showlegend=True,
+                        height=600,
+                        width=800,
+                        margin=dict(t=50, b=50, l=50, r=50)
+                    )
 
-                # Mostrar el gráfico individual en Streamlit
-                st.plotly_chart(fig)
-        else:
-            st.write("No se encontraron clusters con intersecciones significativas con el grupo de sarcopenia grave.")
+                    # Mostrar el gráfico individual en Streamlit
+                    st.plotly_chart(fig)
+            else:
+                st.write("No se encontraron clusters con intersecciones significativas con el grupo de sarcopenia grave.")
 
 
 ##################################
