@@ -2195,53 +2195,53 @@ if pestañas == "Predicción de Sarcopenia":
 
 ###########
 
-        # Crear subconjuntos con bootstrap y entrenar árboles de decisión
-        from sklearn.utils import resample
+            # Crear subconjuntos con bootstrap y entrenar árboles de decisión
+            from sklearn.utils import resample
 
-        # Crear listas para almacenar los puntos de corte de cada modelo
-        split_points_best_cluster = {col: [] for col in selected_columns}
+            # Crear listas para almacenar los puntos de corte de cada modelo
+            split_points_best_cluster = {col: [] for col in selected_columns}
 
-        # Número de iteraciones definido por el usuario
-        n_iterations = st.number_input("Número de iteraciones (bootstrap)", min_value=100, max_value=2000, value=1000, step=100)
+            # Número de iteraciones definido por el usuario
+            n_iterations = st.number_input("Número de iteraciones (bootstrap)", min_value=100, max_value=2000, value=1000, step=100)
 
-        for i in range(n_iterations):
-            # Crear un subconjunto con bootstrap
-            X_bootstrap, y_bootstrap = resample(X, y, replace=True, random_state=i)
+            for i in range(n_iterations):
+                # Crear un subconjunto con bootstrap
+                X_bootstrap, y_bootstrap = resample(X, y, replace=True, random_state=i)
 
-            # Dividir el dataset en conjunto de entrenamiento y prueba
-            X_train, X_test, y_train, y_test = train_test_split(X_bootstrap, y_bootstrap, test_size=0.3, random_state=i)
+                # Dividir el dataset en conjunto de entrenamiento y prueba
+                X_train, X_test, y_train, y_test = train_test_split(X_bootstrap, y_bootstrap, test_size=0.3, random_state=i)
 
-            # Crear y entrenar el modelo de árbol de decisión
-            decision_tree = DecisionTreeClassifier(random_state=i, min_samples_split=5, min_samples_leaf=20)
-            decision_tree.fit(X_train, y_train)
+                # Crear y entrenar el modelo de árbol de decisión
+                decision_tree = DecisionTreeClassifier(random_state=i, min_samples_split=5, min_samples_leaf=20)
+                decision_tree.fit(X_train, y_train)
 
-            # Extraer puntos de corte de los nodos que conducen a la clasificación del cluster con mayor intersección
-            tree = decision_tree.tree_
-            for idx, feature in enumerate(tree.feature):
-                if feature != -2:  # -2 indica que no es un nodo de decisión
-                    variable = selected_columns[feature]
-                    threshold = tree.threshold[idx]
-                    # Considerar solo umbrales que conducen a la clasificación del cluster seleccionado
-                    left_child, right_child = tree.children_left[idx], tree.children_right[idx]
-                    if (tree.value[left_child][0, best_cluster] > 0 or tree.value[right_child][0, best_cluster] > 0):
-                        split_points_best_cluster[variable].append(threshold)
+                # Extraer puntos de corte de los nodos que conducen a la clasificación del cluster con mayor intersección
+                tree = decision_tree.tree_
+                for idx, feature in enumerate(tree.feature):
+                    if feature != -2:  # -2 indica que no es un nodo de decisión
+                        variable = selected_columns[feature]
+                        threshold = tree.threshold[idx]
+                        # Considerar solo umbrales que conducen a la clasificación del cluster seleccionado
+                        left_child, right_child = tree.children_left[idx], tree.children_right[idx]
+                        if (tree.value[left_child][0, best_cluster] > 0 or tree.value[right_child][0, best_cluster] > 0):
+                            split_points_best_cluster[variable].append(threshold)
 
-        # Calcular el promedio de los puntos de corte para clasificar en el cluster con mayor intersección
-        average_split_points = {var: np.mean(points) for var, points in split_points_best_cluster.items() if points}
+            # Calcular el promedio de los puntos de corte para clasificar en el cluster con mayor intersección
+            average_split_points = {var: np.mean(points) for var, points in split_points_best_cluster.items() if points}
 
-        # Mostrar los puntos de corte promedio en Streamlit
-        st.write("Puntos de corte promedio para clasificar en el Cluster con la mayor intersección (con bootstrap):")
-        for variable, threshold in average_split_points.items():
-            st.write(f"{variable}: {threshold:.4f}")
+            # Mostrar los puntos de corte promedio en Streamlit
+            st.write("Puntos de corte promedio para clasificar en el Cluster con la mayor intersección (con bootstrap):")
+            for variable, threshold in average_split_points.items():
+                st.write(f"{variable}: {threshold:.4f}")
 
-        # Mostrar el gráfico de importancia de características
-        st.write("Importancia de características del último modelo de árbol de decisión:")
-        feature_importances = decision_tree.feature_importances_
-        plt.figure(figsize=(8, 6))
-        plt.barh(selected_columns, feature_importances, color='skyblue')
-        plt.xlabel("Importancia de la característica")
-        plt.title("Importancia de características del modelo de árbol de decisión")
-        st.pyplot(plt)
+            # Mostrar el gráfico de importancia de características
+            st.write("Importancia de características del último modelo de árbol de decisión:")
+            feature_importances = decision_tree.feature_importances_
+            plt.figure(figsize=(8, 6))
+            plt.barh(selected_columns, feature_importances, color='skyblue')
+            plt.xlabel("Importancia de la característica")
+            plt.title("Importancia de características del modelo de árbol de decisión")
+            st.pyplot(plt)
 
 
 
