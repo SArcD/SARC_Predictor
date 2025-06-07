@@ -5,31 +5,25 @@ from io import BytesIO
 
 st.title("📊 Selector de Base de Datos desde GitHub")
 
-# URL raw del archivo
-url_github = "https://github.com/SArcD/SARC_Predictor/raw/main/Base%202019%20Santiago%20Arceo.xlsx"
+st.subheader("Carga de los datos")
+    
+st.markdown("""
+En el siguiente menú puede elegir entre las bases de datos disponibles
+    
+""")
+# Seleccionar el año de la base de datos
+selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
 
+# Definir la ruta del archivo en función de la selección
+if selected_year == "2022":
+    file_path = "Base 2022 Santiago Arceo.xls"
+else:
+    file_path = "Base 2019 Santiago Arceo.xls"
+
+# Intento de cargar el archivo de Excel usando `xlrd` para archivos `.xls`
 try:
-    # Descargar archivo como binario
-    r = requests.get(url_github)
-    r.raise_for_status()  # Verifica error HTTP
 
-    archivo = BytesIO(r.content)
+    datos = pd.read_excel(file_path)  # Rellenar NaN con espacios
+    st.write(f"Datos de la base {selected_year} cargados con éxito:")
+    st.dataframe(datos)
 
-    # Leer archivo Excel con engine explícito
-    excel_file = pd.ExcelFile(archivo, engine="openpyxl")
-
-    # Obtener lista de hojas
-    hojas = excel_file.sheet_names
-    hoja_seleccionada = st.selectbox("Selecciona una hoja:", hojas)
-
-    # Cargar la hoja seleccionada
-    df = pd.read_excel(excel_file, sheet_name=hoja_seleccionada, engine="openpyxl")
-
-    st.success(f"Hoja cargada: {hoja_seleccionada}")
-    st.dataframe(df.head())
-
-except requests.exceptions.RequestException as req_err:
-    st.error(f"Error al descargar el archivo: {req_err}")
-
-except Exception as e:
-    st.error(f"Error al procesar el archivo: {e}")
