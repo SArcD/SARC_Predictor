@@ -21,7 +21,7 @@ else:
 # Intento de cargar el archivo de Excel usando `xlrd` para archivos `.xls`
 try:
     datos = pd.read_excel(file_path)  # Rellenar NaN con espacios
-    st.write(f"Datos de la base {selected_year} cargados con éxito:")
+    #st.write(f"Datos de la base {selected_year} cargados con éxito:")
     #st.dataframe(datos)
     st.success(f"✅ Datos de la base {selected_year} cargados con éxito.")
 
