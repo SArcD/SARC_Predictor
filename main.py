@@ -27,7 +27,9 @@ try:
 
     # Mostrar vista previa opcional en un expander
     with st.expander("📂 Ver datos cargados"):
-        st.dataframe(datos)
+        #st.dataframe(datos)
+        st.dataframe(datos.describe())
+
 
 
 except Exception as e:
