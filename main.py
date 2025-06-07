@@ -29,6 +29,30 @@ try:
     with st.expander("📂 Ver datos cargados"):
         #st.dataframe(datos)
         st.dataframe(datos.describe())
+        import matplotlib.pyplot as plt
+        import streamlit as st
+
+        # Reemplazar valores numéricos por etiquetas de sexo
+        datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
+
+        # Conteo por categoría
+        sexo_counts = datos['sexo'].value_counts()
+
+        # Crear la gráfica de pastel
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.pie(
+            sexo_counts,
+            labels=sexo_counts.index,
+            autopct='%1.1f%%',
+            startangle=90,
+            colors=['skyblue', 'lightpink']
+        )
+        ax.set_title('Proporción de Hombres vs Mujeres')
+        ax.axis('equal')
+
+        # Mostrar en Streamlit
+        st.pyplot(fig)
+
 
 
 
