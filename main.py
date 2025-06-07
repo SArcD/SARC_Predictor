@@ -142,6 +142,115 @@ try:
 
         # Mostrar en Streamlit
         st.pyplot(fig)
+#------------------------------Comparación por sexo
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import pandas as pd
+
+        # Asegurar que la columna 'sexo' esté bien codificada
+        datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
+
+        # --- Separar por sexo
+        hombres = datos[datos['sexo'] == 'Hombre'].copy()
+        mujeres = datos[datos['sexo'] == 'Mujer'].copy()
+
+        # Sumar comorbilidades
+        hombres_counts = hombres[columns_to_check].sum()
+        mujeres_counts = mujeres[columns_to_check].sum()
+
+        # Añadir 'Sin comorbilidades'
+        hombres['Sin comorbilidades'] = (hombres[columns_to_check].sum(axis=1) == 0).astype(int)
+        mujeres['Sin comorbilidades'] = (mujeres[columns_to_check].sum(axis=1) == 0).astype(int)
+
+        hombres_counts['Sin comorbilidades'] = hombres['Sin comorbilidades'].sum()
+        mujeres_counts['Sin comorbilidades'] = mujeres['Sin comorbilidades'].sum()
+
+        # Crear DataFrames
+        df_hombres = pd.DataFrame({
+            'Comorbilidad': comorbidities_labels + ['Sin Comorbilidades'],
+            'Conteo': hombres_counts.values
+        })
+
+        df_mujeres = pd.DataFrame({
+            'Comorbilidad': comorbidities_labels + ['Sin Comorbilidades'],
+            'Conteo': mujeres_counts.values
+        })
+
+        # --- Definir orden personalizado
+        orden_personalizado = [
+            'Sin Comorbilidades',
+            'Diabetes Leve',
+            'Diabetes Complicada',
+            'Hipertensión Complicada',
+            'Hipertensión Sin Complicación',
+            'Otras'
+        ]
+
+        comorbilidades_principales = ['Diabetes Leve', 'Diabetes Complicada', 'Hipertensión Complicada', 'Hipertensión Sin Complicación']
+
+        def preparar(df):
+            principales = df[df['Comorbilidad'].isin(comorbilidades_principales + ['Sin Comorbilidades'])]
+            restantes = df[~df['Comorbilidad'].isin(comorbilidades_principales + ['Sin Comorbilidades'])]
+            otras = pd.DataFrame({'Comorbilidad': ['Otras'], 'Conteo': [restantes['Conteo'].sum()]})
+            final = pd.concat([principales, otras], ignore_index=True)
+            final['Comorbilidad'] = pd.Categorical(final['Comorbilidad'], categories=orden_personalizado, ordered=True)
+            return final.sort_values('Comorbilidad')
+
+        top_hombres = preparar(df_hombres)
+        top_mujeres = preparar(df_mujeres)
+
+        # --- Graficar
+        fig, ax = plt.subplots(figsize=(10, 6), dpi=100)
+
+        # Paleta de colores
+        color_dict = {
+            'Sin Comorbilidades': '#ADD8E6',
+            'Diabetes Leve': '#66C2A5',
+            'Diabetes Complicada': '#A6D854',
+            'Hipertensión Complicada': '#FC8D62',
+            'Hipertensión Sin Complicación': '#8DA0CB',
+            'Otras': '#E78AC3'
+        }
+
+        # Totales
+        total_hombres = hombres.shape[0]
+        total_mujeres = mujeres.shape[0]
+
+        # Hombres
+        bottom = 0
+        for _, row in top_hombres.iterrows():
+            ax.bar('Hombres', row['Conteo'], bottom=bottom, color=color_dict.get(row['Comorbilidad'], 'gray'), edgecolor='white')
+            porcentaje = row['Conteo'] / total_hombres * 100
+            if porcentaje > 2:
+                ax.text('Hombres', bottom + row['Conteo']/2, f'{porcentaje:.1f}%', ha='center', va='center', fontsize=8)
+            bottom += row['Conteo']
+
+        # Mujeres
+        bottom = 0
+        for _, row in top_mujeres.iterrows():
+            ax.bar('Mujeres', row['Conteo'], bottom=bottom, color=color_dict.get(row['Comorbilidad'], 'gray'), edgecolor='white')
+            porcentaje = row['Conteo'] / total_mujeres * 100
+            if porcentaje > 2:
+                ax.text('Mujeres', bottom + row['Conteo']/2, f'{porcentaje:.1f}%', ha='center', va='center', fontsize=8)
+            bottom += row['Conteo']
+
+        # Ajustes finales
+        ax.set_ylabel('Número de Pacientes')
+        ax.set_title('Distribución de Comorbilidades Principales por Sexo')
+        ax.grid(axis='y', linestyle='--', alpha=0.7)
+        ax.set_ylim(0, max(total_hombres, total_mujeres) * 1.2)
+
+        # Totales
+        ax.text('Hombres', total_hombres * 0.05, f'n={total_hombres}', ha='center', va='top', fontsize=9, fontweight='bold')
+        ax.text('Mujeres', total_mujeres * 0.05, f'n={total_mujeres}', ha='center', va='top', fontsize=9, fontweight='bold')
+
+        # Leyenda
+        handles_labels = {label: plt.Rectangle((0,0),1,1, color=color_dict[label]) for label in orden_personalizado}
+        ax.legend(handles_labels.values(), handles_labels.keys(), bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, frameon=False, title="Comorbilidades")
+
+        plt.tight_layout()
+        st.pyplot(fig)
 
 
 
