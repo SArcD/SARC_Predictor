@@ -4,7 +4,8 @@ import pandas as pd
 st.title("Selector de Base de Datos desde GitHub")
 
 # URL del archivo en GitHub (formato raw)
-url_github = "https://raw.githubusercontent.com/SArcD/SARC_Predictor/main/Base%202019%20Santiago%20Arceo.xlsx"
+url_github = "https://github.com/SArcD/SARC_Predictor/raw/main/Base%202019%20Santiago%20Arceo.xlsx"
+
 
 # Cargar el archivo
 try:
