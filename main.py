@@ -8,9 +8,7 @@ st.title("📊 Selector de Base de Datos desde GitHub")
 st.subheader("Carga de los datos")
     
 st.markdown("""
-En el siguiente menú puede elegir entre las bases de datos disponibles
-    
-""")
+En el siguiente menú puede elegir entre las bases de datos disponibles""")
 # Seleccionar el año de la base de datos
 selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
 
@@ -22,7 +20,6 @@ else:
 
 # Intento de cargar el archivo de Excel usando `xlrd` para archivos `.xls`
 try:
-
     datos = pd.read_excel(file_path)  # Rellenar NaN con espacios
     st.write(f"Datos de la base {selected_year} cargados con éxito:")
     st.dataframe(datos)
