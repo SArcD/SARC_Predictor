@@ -58,6 +58,23 @@ try:
         import numpy as np
         import streamlit as st
 
+
+        # --- 1. Definir columnas y etiquetas ---
+        columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
+                        'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']
+
+        comorbidities_labels = ['VIH', 'Anemia', 'Arritmia', 'Artritis Reumatoide', 'Cáncer', 'Depresión', 'Diabetes Complicada',
+                            'Diabetes Leve', 'Enfermedad Cerebro Vascular', 'Hipertensión Complicada', 'Hipertensión Sin Complicación',
+                            'Insuficiencia Renal', 'Obesidad', 'Pérdida de Peso']
+
+        # --- 2. Procesamiento de datos ---
+        datos[columns_to_check] = datos[columns_to_check].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
+        datos['Sin comorbilidades'] = (datos[columns_to_check].sum(axis=1) == 0).astype(int)
+
+        comorbidities_counts = datos[columns_to_check + ['Sin comorbilidades']].sum()
+        comorbidities_labels_with_none = comorbidities_labels + ['Sin comorbilidades']
+
+        
         # --- Preparar proporciones y etiquetas
 
         total = comorbidities_counts.sum()
