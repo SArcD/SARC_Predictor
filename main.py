@@ -25,6 +25,11 @@ try:
     #st.dataframe(datos)
     st.success(f"✅ Datos de la base {selected_year} cargados con éxito.")
 
+    # Mostrar vista previa opcional en un expander
+    with st.expander("📂 Ver datos cargados"):
+        st.dataframe(datos)
+
+
 except Exception as e:
     st.error(f"Ocurrió un error al intentar cargar el archivo: {e}")
 
