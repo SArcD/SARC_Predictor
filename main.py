@@ -3,22 +3,21 @@ import pandas as pd
 
 st.title("Selector de Base de Datos desde GitHub")
 
-# URL del archivo en GitHub (formato raw)
+# URL raw del archivo en GitHub
 url_github = "https://github.com/SArcD/SARC_Predictor/raw/main/Base%202019%20Santiago%20Arceo.xlsx"
 
-
-# Cargar el archivo
 try:
-    excel_file = pd.ExcelFile(url_github)
+    # Cargar el archivo Excel especificando el engine
+    excel_file = pd.ExcelFile(url_github, engine="openpyxl")
     hojas = excel_file.sheet_names
 
     # Menú desplegable para seleccionar la hoja
     hoja_seleccionada = st.selectbox("Selecciona una hoja del archivo:", hojas)
 
     # Leer los datos de la hoja seleccionada
-    datos = pd.read_excel(excel_file, sheet_name=hoja_seleccionada)
+    datos = pd.read_excel(excel_file, sheet_name=hoja_seleccionada, engine="openpyxl")
 
-    # Mostrar una vista previa de los datos
+    # Mostrar vista previa
     st.write(f"Vista previa de la hoja **{hoja_seleccionada}**:")
     st.dataframe(datos.head())
 
