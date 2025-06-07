@@ -22,7 +22,9 @@ else:
 try:
     datos = pd.read_excel(file_path)  # Rellenar NaN con espacios
     st.write(f"Datos de la base {selected_year} cargados con éxito:")
-    st.dataframe(datos)
+    #st.dataframe(datos)
+    st.success(f"✅ Datos de la base {selected_year} cargados con éxito.")
+
 except Exception as e:
     st.error(f"Ocurrió un error al intentar cargar el archivo: {e}")
 
