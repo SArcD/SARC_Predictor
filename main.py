@@ -446,6 +446,8 @@ try:
         ax.grid(axis='x', linestyle='--', alpha=0.7)
         ax.legend()
         fig.tight_layout()
+        st.pyplot(fig)
+
 
 
 
