@@ -349,12 +349,21 @@ try:
         # --- 3. Graficar ---
         #plt.figure(figsize=(10, 6), dpi=300)
         fig, ax = plt.subplots(figsize=(10, 6), dpi=150)
-
-        plt.barh(variances_filtered['Variable_English'], variances_filtered['Normalized Variance'], color='skyblue', edgecolor='black')    
-        plt.xlabel('Normalized Variance')
-        plt.title('Normalized Variances of Variables (Men)')
-        plt.gca().invert_yaxis()
-        plt.grid(axis='x', linestyle='--', alpha=0.7)
+        ax.barh(
+            variances_filtered['Variable_English'],
+            variances_filtered['Normalized Variance'],
+            color='skyblue', edgecolor='black'
+        )
+        ax.set_xlabel('Normalized Variance')
+        ax.set_title('Normalized Variances of Variables (Men)')
+        ax.invert_yaxis()
+        ax.grid(axis='x', linestyle='--', alpha=0.7)
+        
+        #plt.barh(variances_filtered['Variable_English'], variances_filtered['Normalized Variance'], color='skyblue', edgecolor='black')    
+        #plt.xlabel('Normalized Variance')
+        #plt.title('Normalized Variances of Variables (Men)')
+        #plt.gca().invert_yaxis()
+        #plt.grid(axis='x', linestyle='--', alpha=0.7)
         #plt.tight_layout()
         fig.tight_layout()
 
