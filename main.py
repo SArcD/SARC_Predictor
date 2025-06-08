@@ -347,13 +347,17 @@ try:
         variances_filtered = variances_df[variances_df['Normalized Variance'] >= 0.02]
 
         # --- 3. Graficar ---
-        plt.figure(figsize=(10, 6), dpi=300)
+        #plt.figure(figsize=(10, 6), dpi=300)
+        fig, ax = plt.subplots(figsize=(10, 6), dpi=150)
+
         plt.barh(variances_filtered['Variable_English'], variances_filtered['Normalized Variance'], color='skyblue', edgecolor='black')    
         plt.xlabel('Normalized Variance')
         plt.title('Normalized Variances of Variables (Men)')
         plt.gca().invert_yaxis()
         plt.grid(axis='x', linestyle='--', alpha=0.7)
-        plt.tight_layout()
+        #plt.tight_layout()
+        fig.tight_layout()
+
 
         # Guardar en alta resolución
         #plt.savefig('/content/Normalized_Variances_Men_Filtered.png', dpi=300, bbox_inches='tight')
