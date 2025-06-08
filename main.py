@@ -447,6 +447,82 @@ try:
         ax.legend()
         fig.tight_layout()
         st.pyplot(fig)
+        ################################ Histogramas comparativos de variables
+
+        #import streamlit as st
+        import plotly.graph_objects as go
+        import plotly.subplots as sp
+
+        # Diccionario de etiquetas en español
+        column_labels = {
+            'P112_vel': 'Marcha',
+            'P113': 'Fuerza',
+            'P125': 'P. Tricipital',
+            'P128': 'P. Pantorrilla',
+            'P127': 'P. Biceps',
+            'P126': 'P. Subescapular',
+            'IMC': 'IMC',
+            'P121': 'Cintura',
+            'P123': 'Muslo',
+            'P120': 'Brazo',
+            'P124': 'Pantorrilla',
+            'P117': 'Peso'
+        }
+
+        # Renombrar columnas
+        df_combined_renamed = df_combined.rename(columns=column_labels)
+
+        # Crear subplots    
+        fig = sp.make_subplots(rows=4, cols=3, subplot_titles=list(column_labels.values()))
+
+        # Iterar por cada variable
+        row, col = 1, 1
+        for column in column_labels.values():
+            # Determinar tamaño del bin
+            min_val = df_combined_renamed[column].min()
+            max_val = df_combined_renamed[column].max()
+            bin_size = (max_val - min_val) / 10 if max_val != min_val else 1
+
+            # Histograma para Hombres
+            histogram_male = go.Histogram(
+                x=df_combined_renamed[df_combined['sexo'] == "Hombre"][column],
+                xbins=dict(size=bin_size),
+                name=f'Hombres - {column}',
+                opacity=0.6,
+                marker=dict(line=dict(width=1, color='blue')),
+                showlegend=False
+            )
+
+            # Histograma para Mujeres
+            histogram_female = go.Histogram(
+                x=df_combined_renamed[df_combined['sexo'] == "Mujer"][column],
+                xbins=dict(size=bin_size),
+                name=f'Mujeres - {column}',
+                opacity=0.6,
+                marker=dict(line=dict(width=1, color='deeppink')),
+                showlegend=False
+            )
+
+            # Agregar al subplot
+            fig.add_trace(histogram_male, row=row, col=col)
+            fig.add_trace(histogram_female, row=row, col=col)
+
+            # Avanzar en la cuadrícula
+            col += 1
+            if col > 3:
+                col = 1
+                row += 1
+
+        # Configurar layout
+        fig.update_layout(
+            title_text="Histogramas por Sexo (Hombres vs Mujeres)",
+            height=900,
+            barmode='overlay'
+        )
+
+        # Mostrar en Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
 
 
 
