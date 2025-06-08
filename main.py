@@ -298,7 +298,67 @@ try:
         df_4 = df_4.drop(columns=['P112_4_1', 'P112_4_2', 'P112'])
         #df_4
         df_datos=filtered_data[['folio_paciente','edad_am','sexo','nacio_en_mexico']]
-        df_datos
+        #df_datos
+        # Concatenating df_grouped with df_r to create a single DataFrame
+        df_combined = pd.concat([df_datos, df_grouped, df_3b, df_4], axis=1)
+        #df_combined
+        # Hombre# Standardizing the columns from the 4th column onwards in df_combined
+        #df_combined = df_combined[df_combined['sexo'] == "Hombre"]
+
+        columns_to_standardize = df_combined.columns[4:]  # Selecting columns from the 4th column onwards
+
+        # Calculating variance using the provided method: dividing by the mean and then calculating the variance
+        features = df_combined[columns_to_standardize]  # Selecting the standardized features
+        variances = (features / features.mean()).dropna().var()
+
+        variances=variances.sort_values(ascending=False)
+        variances
+        variances_df = pd.DataFrame({'Variable': variances.index, 'Normalized Variance': variances.values})
+        #import matplotlib.pyplot as plt
+
+        # Diccionario de traducción
+        column_labels_en = {
+            'P112_vel': 'Gait Speed',
+            'P113': 'Grip Strength',
+            'P125': 'Triceps Skinfold',
+            'P126': 'Subscapular Skinfold',
+            'P128': 'Calf Circumference',
+            'P127': 'Biceps Skinfold',
+            'P117': 'Weight',
+            'IMC': 'BMI',
+            'P123': 'Thigh Circumference',
+            'P121': 'Waist Circumference',
+            'P120': 'Arm Circumference',
+            'P124': 'Calf Skinfold',
+            'P122': 'Abdomen Circumference',
+            'P119': 'Chest Circumference',
+            'P129': 'Neck Circumference',
+            'P130': 'Wrist Circumference',
+            'P118': 'Hip Circumference'
+        }
+
+        # --- 1. Traducir nombres de variable en variances_df ---
+        variances_df['Variable_English'] = variances_df['Variable'].map(column_labels_en)
+
+        # Si alguna variable no está en el diccionario, deja el nombre original
+        variances_df['Variable_English'] = variances_df['Variable_English'].fillna(variances_df['Variable'])
+
+        # --- 2. Aplicar umbral 0.02 ---
+        variances_filtered = variances_df[variances_df['Normalized Variance'] >= 0.02]
+
+        # --- 3. Graficar ---
+        plt.figure(figsize=(10, 6), dpi=300)
+        plt.barh(variances_filtered['Variable_English'], variances_filtered['Normalized Variance'], color='skyblue', edgecolor='black')    
+        plt.xlabel('Normalized Variance')
+        plt.title('Normalized Variances of Variables (Men)')
+        plt.gca().invert_yaxis()
+        plt.grid(axis='x', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+
+        # Guardar en alta resolución
+        #plt.savefig('/content/Normalized_Variances_Men_Filtered.png', dpi=300, bbox_inches='tight')
+        st.pyplot(fig)
+
 
 
 
