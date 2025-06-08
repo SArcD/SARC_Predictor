@@ -372,6 +372,81 @@ try:
         #plt.savefig('/content/Normalized_Variances_Men_Filtered.png', dpi=300, bbox_inches='tight')
         st.pyplot(fig)
 
+        # --- 1. Separar hombres y mujeres
+        df_hombres = df_combined[df_combined['sexo'] == 'Hombre']
+        df_mujeres = df_combined[df_combined['sexo'] == 'Mujer']
+
+        # --- 2. Columnas a estandarizar
+        columns_to_standardize = df_combined.columns[4:]
+
+        # --- 3. Calcular varianzas normalizadas
+        features_hombres = df_hombres[columns_to_standardize]
+        variances_hombres = (features_hombres / features_hombres.mean()).dropna().var()
+        variances_hombres = variances_hombres.sort_values(ascending=False)
+
+        features_mujeres = df_mujeres[columns_to_standardize]
+        variances_mujeres = (features_mujeres / features_mujeres.mean()).dropna().var()
+        variances_mujeres = variances_mujeres.sort_values(ascending=False)
+    
+        # --- 4. Diccionario de nombres en inglés
+        column_labels_en = {
+            'P112_vel': 'Gait Speed',
+            'P113': 'Grip Strength',
+            'P125': 'Triceps Skinfold',
+            'P126': 'Subscapular Skinfold',
+            'P128': 'Calf Circumference',
+            'P127': 'Biceps Skinfold',
+            'P117': 'Weight',
+            'IMC': 'BMI',
+            'P123': 'Thigh Circumference',
+            'P121': 'Waist Circumference',
+            'P120': 'Arm Circumference',
+            'P124': 'Calf Skinfold',
+            'P122': 'Abdomen Circumference',
+            'P119': 'Chest Circumference',
+            'P129': 'Neck Circumference',
+            'P130': 'Wrist Circumference',
+            'P118': 'Hip Circumference'
+        }
+
+        # --- 5. Traducir nombres
+        variances_hombres.index = variances_hombres.index.map(lambda x: column_labels_en.get(x, x))    
+        variances_mujeres.index = variances_mujeres.index.map(lambda x: column_labels_en.get(x, x))
+
+        # --- 6. Crear DataFrame combinado
+        merged_df = pd.merge(
+            variances_hombres.rename('Men'),
+            variances_mujeres.rename('Women'),
+            left_index=True,
+            right_index=True,
+            how='inner'
+        )
+
+        # --- 7. Ordenar por promedio de varianza        
+        merged_df['Mean Variance'] = merged_df[['Men', 'Women']].mean(axis=1)
+        merged_df = merged_df.sort_values('Mean Variance', ascending=False)
+
+        # --- 8. Gráfica comparativa
+        fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
+
+        bar_width = 0.4
+        y_pos = np.arange(len(merged_df))
+
+        # Barras de hombres
+        ax.barh(y_pos - bar_width/2, merged_df['Men'], height=bar_width, label='Men', color='steelblue', edgecolor='black')
+
+        # Barras de mujeres
+        ax.barh(y_pos + bar_width/2, merged_df['Women'], height=bar_width, label='Women', color='lightcoral', edgecolor='black')
+
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(merged_df.index)
+        ax.set_xlabel('Normalized Variance')
+        ax.set_title('Comparison of Normalized Variances by Sex')
+        ax.invert_yaxis()
+        ax.grid(axis='x', linestyle='--', alpha=0.7)
+        ax.legend()
+        fig.tight_layout()
+
 
 
 
