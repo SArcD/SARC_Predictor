@@ -270,7 +270,36 @@ try:
         # Calculando el IMC: Peso / (Altura^2)
         df_grouped['IMC'] = df_grouped['P117'] / ((df_grouped['P118']*0.01) ** 2)
 
-        df_grouped
+        #df_grouped
+        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+        df_2=filtered_data[['P113_1', 'P113_3', 'P113_5']]
+        df_2['P113_iz'] = filtered_data[['P113_1', 'P113_3', 'P113_5']].mean(axis=1)
+        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+        df_2 = df_2.drop(columns=['P113_1', 'P113_3', 'P113_5'])
+        #df_2
+        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+        df_3=filtered_data[['P113_2', 'P113_4', 'P113_6']]
+        df_3['P113_der'] = filtered_data[['P113_2', 'P113_4', 'P113_6']].mean(axis=1)
+        # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+        df_3 = df_3.drop(columns=['P113_2', 'P113_4', 'P113_6'])
+        #df_3
+        df_3b = pd.concat([df_2,df_3], axis=1)
+        df_3b['P113']=(df_2['P113_iz']+df_3['P113_der'])/2
+        df_3b = df_3b.drop(columns=['P113_iz', 'P113_der'])
+        #df_3b
+        # Seleccionar las columnas y eliminar los valores que sean 0 antes de calcular el promedio
+        df_4 = filtered_data[['P112_4_1', 'P112_4_2']].replace(0, np.nan).dropna()
+        # Calcular el promedio
+        df_4['P112'] = df_4.mean(axis=1)
+        # Verificar los valores únicos en P112 para asegurarse de que no sean todos iguales
+        unique_values = df_4['P112'].unique()
+        #df_4, unique_values
+        df_4['P112_vel'] = 4 / df_4['P112']
+        df_4 = df_4.drop(columns=['P112_4_1', 'P112_4_2', 'P112'])
+        #df_4
+        df_datos=filtered_data[['folio_paciente','edad_am','sexo','nacio_en_mexico']]
+        df_datos
+
 
 
 except Exception as e:
