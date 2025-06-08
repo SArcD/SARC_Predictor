@@ -519,7 +519,9 @@ try:
             height=900,
             barmode='overlay',
             showlegend=True,
-        )
+            legend=dict(x=1.02, y=1, traceorder='normal', borderwidth=0),
+            margin=dict(r=120)  # margen derecho extra para leyenda
+            )
 
         # Mostrar en Streamlit
         st.plotly_chart(fig, use_container_width=True)
