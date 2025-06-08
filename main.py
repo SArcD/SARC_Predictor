@@ -455,18 +455,18 @@ try:
 
         # Diccionario de etiquetas en español
         column_labels = {
-            'P112_vel': 'Marcha',
-            'P113': 'Fuerza',
-            'P125': 'P. Tricipital',
-            'P128': 'P. Pantorrilla',
-            'P127': 'P. Biceps',
-            'P126': 'P. Subescapular',
+            'P112_vel': 'Marcha (m/s)',
+            'P113': 'Fuerza (kg)',
+            'P125': 'P. Tricipital (mm)',
+            'P128': 'P. Pantorrilla (mm)',
+            'P127': 'P. Biceps (mm)',
+            'P126': 'P. Subescapular (mm)',
             'IMC': 'IMC',
-            'P121': 'Cintura',
-            'P123': 'Muslo',
-            'P120': 'Brazo',
-            'P124': 'Pantorrilla',
-            'P117': 'Peso'
+            'P121': 'Cintura (cm)',
+            'P123': 'Muslo (cm)',
+            'P120': 'Brazo (cm)',
+            'P124': 'Pantorrilla (cm)',
+            'P117': 'Peso (kg)'
         }
 
         # Renombrar columnas
@@ -517,7 +517,8 @@ try:
         fig.update_layout(
             title_text="Histogramas por Sexo (Hombres vs Mujeres)",
             height=900,
-            barmode='overlay'
+            barmode='overlay',
+            showlegend=True,
         )
 
         # Mostrar en Streamlit
