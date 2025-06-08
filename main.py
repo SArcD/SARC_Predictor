@@ -252,7 +252,25 @@ try:
         plt.tight_layout()
         st.pyplot(fig)
 
+    with st.expander("Varianzas"):
+        # Definir las columnas que deben ser iguales a 0
+        columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
+                    'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']
 
+        # Filtrar las filas en las que todas las columnas especificadas son iguales a 0
+        filtered_data = datos[(datos[columns_to_check] == 0).all(axis=1)]
+
+        # Mostrar el DataFrame resultante
+        #filtered_data
+
+        df=filtered_data[['P117_1','P117_2','P117_3','P118_1','P118_2','P118_3','P119_1','P119_2','P119_3','P120_1','P120_2','P120_3','P121_1','P121_2','P121_3','P122_1','P122_2','P122_3','P123_1','P123_2','P123_3','P124_1','P124_2','P124_3','P125_1','P125_2','P125_3','P126_1','P126_2','P126_3','P127_1','P127_2','P127_3','P128_1','P128_2','P128_3','P129_1','P129_2','P129_3','P130_1','P130_2','P130_3']]
+
+        # Corrigiendo la advertencia al agrupar columnas
+        df_grouped = df.T.groupby(lambda x: x.split('_')[0]).mean().T
+        # Calculando el IMC: Peso / (Altura^2)
+        df_grouped['IMC'] = df_grouped['P117'] / ((df_grouped['P118']*0.01) ** 2)
+
+        df_grouped
 
 
 except Exception as e:
