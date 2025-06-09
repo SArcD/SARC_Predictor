@@ -861,44 +861,52 @@ try:
         import numpy as np
 
 
-        # Reentrenar los dos modelos si es necesario    
-        X_global = df_combined[list(mejor_combinacion)]        
-        y_global = df_combined['IMME']
-        modelo_global = DecisionTreeRegressor(random_state=42).fit(X_global, y_global)
-        y_pred_global = modelo_global.predict(X_global)
+        if mejor_combinacion_n is not None:
+            # Datos para la mejor combinación global
+            X_global = df_combined[list(mejor_combinacion)]
+            y = df_combined['IMME']
+            Xg_train, Xg_test, yg_train, yg_test = train_test_split(X_global, y, test_size=0.2, random_state=42)
+            modelo_global = DecisionTreeRegressor(random_state=42).fit(Xg_train, yg_train)
+            y_pred_global = modelo_global.predict(Xg_test)
+            mse_global = mean_squared_error(yg_test, y_pred_global)
 
-        X_n = df_combined[list(mejor_combinacion_n)]
-        modelo_n = DecisionTreeRegressor(random_state=42).fit(X_n, y_global)
-        y_pred_n = modelo_n.predict(X_n)
+            # Datos para la mejor combinación con n variables
+            X_n = df_combined[mejor_combinacion_n]
+            Xn_train, Xn_test, yn_train, yn_test = train_test_split(X_n, y, test_size=0.2, random_state=42)
+            modelo_n = DecisionTreeRegressor(random_state=42).fit(Xn_train, yn_train)
+            y_pred_n = modelo_n.predict(Xn_test)
+            mse_n = mean_squared_error(yn_test, y_pred_n)
 
-        # Crear los dos DataFrames comparativos
-        df_comparacion_global = pd.DataFrame({
-            'Predicción Fórmula (IMME)': df_combined['IMME'],
-            'Predicción Árbol (Global)': y_pred_global
-        })
+            # Crear DataFrames para comparación
+            df_comparacion_global = pd.DataFrame({
+                'IMME Real': yg_test,
+                'IMME Predicho': y_pred_global
+            })
 
-        df_comparacion_n = pd.DataFrame({
-            'Predicción Fórmula (IMME)': df_combined['IMME'],
-            'Predicción Árbol (n vars)': y_pred_n
-        })
+            df_comparacion_n = pd.DataFrame({
+                'IMME Real': yn_test,
+                'IMME Predicho': y_pred_n
+            })
 
-        # Gráficas lado a lado
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+            # Gráficas lado a lado
+            fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-        for i, (df_cmp, title) in enumerate([
-            (df_comparacion_global, '🌳 Mejor Modelo Global'),
-            (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables')
-        ]):
-            axes[i].scatter(df_cmp['Predicción Fórmula (IMME)'], df_cmp.iloc[:, 1], color='teal')
-            axes[i].plot([df_cmp.min().min(), df_cmp.max().max()],
-                 [df_cmp.min().min(), df_cmp.max().max()],
-                 color='red', linestyle='--', label='y = x')
-            axes[i].set_title(title)
-            axes[i].set_xlabel('IMME por Fórmula')
-            axes[i].set_ylabel('IMME por Árbol')
-            axes[i].legend()
+            for i, (df_cmp, title, mse_val) in enumerate([
+                (df_comparacion_global, '🌳 Mejor Modelo Global', mse_global),
+                (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
+            ]):
+                axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
+                axes[i].plot([df_cmp.min().min(), df_cmp.max().max()],
+                     [df_cmp.min().min(), df_cmp.max().max()],
+                     color='red', linestyle='--', label='y = x')
+                axes[i].set_title(f"{title}\nMSE: {mse_val:.4f}", fontsize=12)
+                axes[i].set_xlabel('IMME Real (Fórmula)')
+                axes[i].set_ylabel('IMME Predicho (Árbol)')
+                axes[i].legend()
 
-        st.pyplot(fig)
+            st.pyplot(fig)
+        else:
+            st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
 
         
