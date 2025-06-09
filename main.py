@@ -992,84 +992,45 @@ try:
                         st.session_state.variables_manual = seleccion_manual
                     modelo = st.session_state.modelo_manual
 
-
-
-
-            
-   #         # Elegir modelo para predicción
-   #         modelo_seleccionado = st.radio(
-   #             "Selecciona el modelo con el que deseas introducir los valores:",
-   #             options=["Mejor combinación global", f"Mejor combinación con {selected_n} variables"],
-   #             index=0,
-   #             key="modelo_usado"
-   #         )
-
-   #         # Determinar variables y modelo
-   #         if modelo_seleccionado == "Mejor combinación global":
-   #             variables_formulario = list(mejor_combinacion)
-   #             modelo = modelo_global
-   #         else:
-   #             variables_formulario = mejor_combinacion_n
-   #             modelo = modelo_n
-#for var in variables_input:
+            # Diccionario de nombres amigables
+            nombres_amigables = {
+                'P117': 'Peso (kg)',
+                'P118': 'Estatura (cm)',
+                'P119': 'Circunferencia de cintura',
+                'P120': 'Circunferencia de cadera',
+                'P121': 'Circunferencia de brazo',
+                'P122': 'Pliegue tricipital',
+                'P123': 'Pliegue subescapular',
+                'P124': 'Circunferencia de pantorrilla',
+                'P125': 'Pliegue abdominal',
+                'P126': 'Pliegue suprailíaco',
+                'P127': 'Pliegue muslo',
+                'P128': 'Pliegue pierna',
+                'P129': 'Pliegue pectoral',
+                'IMC': 'Índice de Masa Corporal',
+                'P113': 'Fuerza de prensión',
+                'P112_vel': 'Velocidad de marcha',
+                'sexo': 'Sexo (Mujer/Hombre)'
+            }
 
             # Formulario para ingresar valores
             st.markdown(f"Introduce los valores para las siguientes variables:")
-            #for var in variables_formulario:
-            for var in variables_input:
 
-                st.session_state.valores_usuario[var] = st.number_input(
-                    label=var,
-                    key=f"input_{var}",
-                    value=st.session_state.valores_usuario.get(var, 0.0)
-                )
-
-
-            #modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:",
-            #                       ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
-#
-#            if modelo_seleccionado == "Mejor combinación global":
-#                variables_input = list(st.session_state.mejor_combinacion)
-#                modelo = st.session_state.modelo_global
-#            else:
-#                variables_input = list(st.session_state.mejor_combinacion_n)
- #               modelo = st.session_state.modelo_n
-
- #           st.markdown("### Introduce los valores:")
-
-             input_values = {}
-
+            input_values = {}
             for var in variables_input:
                 unique_key = f"input_{var}_{modelo_seleccionado.replace(' ', '_')}"
-
+    
                 if var == 'sexo':
-                    input_values[var] = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
-                    input_values[var] = 1.0 if input_values[var] == "Hombre" else 0.0
+                    sexo_valor = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
+                    input_values[var] = 1.0 if sexo_valor == "Hombre" else 0.0
                 else:
-                    nombre_amigable = {
-                        'P117': 'Peso (kg)',
-                        'P118': 'Estatura (cm)',
-                        'P119': 'Circunferencia de cintura',
-                        'P120': 'Circunferencia de cadera',
-                        'P121': 'Circunferencia de brazo',
-                        'P122': 'Pliegue tricipital',
-                        'P123': 'Pliegue subescapular',
-                        'P124': 'Circunferencia de pantorrilla',
-                        'P125': 'Pliegue abdominal',
-                        'P126': 'Pliegue suprailíaco',
-                        'P127': 'Pliegue muslo',
-                        'P128': 'Pliegue pierna',
-                        'P129': 'Pliegue pectoral',
-                        'IMC': 'Índice de Masa Corporal',
-                        'P113': 'Fuerza de prensión',
-                        'P112_vel': 'Velocidad de marcha'
-                    }.get(var, var)
+                    input_values[var] = st.number_input(
+                        label=nombres_amigables.get(var, var),
+                        key=unique_key,
+                        value=0.0
+                    )
 
-                    input_values[var] = st.number_input(f"{nombre_amigable}", key=unique_key)
-
-
-            
-
+            # Botón para predecir
             if st.button("Predecir IMME"):
                 input_df = pd.DataFrame([input_values])
                 pred = modelo.predict(input_df)[0]
