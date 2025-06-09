@@ -1025,15 +1025,15 @@ try:
                 )
 
 
-            modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:",
-                                   ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
-
-            if modelo_seleccionado == "Mejor combinación global":
-                variables_input = list(st.session_state.mejor_combinacion)
-                modelo = st.session_state.modelo_global
-            else:
-                variables_input = list(st.session_state.mejor_combinacion_n)
-                modelo = st.session_state.modelo_n
+            #modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:",
+            #                       ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
+#
+#            if modelo_seleccionado == "Mejor combinación global":
+#                variables_input = list(st.session_state.mejor_combinacion)
+#                modelo = st.session_state.modelo_global
+#            else:
+#                variables_input = list(st.session_state.mejor_combinacion_n)
+ #               modelo = st.session_state.modelo_n
 
             st.markdown("### Introduce los valores:")
 
