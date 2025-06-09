@@ -888,23 +888,37 @@ try:
                 'IMME Predicho': y_pred_n
             })
 
-            # Gráficas lado a lado
-            fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-            for i, (df_cmp, title, mse_val) in enumerate([
-                (df_comparacion_global, '🌳 Mejor Modelo Global', mse_global),
-                (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
-            ]):
-                axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
-                axes[i].plot([df_cmp.min().min(), df_cmp.max().max()],
-                     [df_cmp.min().min(), df_cmp.max().max()],
-                     color='red', linestyle='--', label='y = x')
-                axes[i].set_title(f"{title}\nMSE: {mse_val:.4f}", fontsize=12)
-                axes[i].set_xlabel('IMME Real (Fórmula)')
-                axes[i].set_ylabel('IMME Predicho (Árbol)')
-                axes[i].legend()
+        for i, (df_cmp, title, mse_val) in enumerate([
+            (df_comparacion_global, '🌳 Mejor Modelo Global', mse_global),
+            (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
+        ]):
+            # Dispersión
+            axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
 
-            st.pyplot(fig)
+            # Línea y = x
+            min_val = min(df_cmp.min().min(), df_cmp.max().max())
+            max_val = max(df_cmp.min().min(), df_cmp.max().max())
+            axes[i].plot([min_val, max_val], [min_val, max_val],
+                 color='red', linestyle='--', label='y = x')
+
+            # Líneas de error
+            for j in range(len(df_cmp)):
+                real = df_cmp['IMME Real'].iloc[j]
+                pred = df_cmp['IMME Predicho'].iloc[j]
+                axes[i].plot([real, real], [real, pred], color='gray', alpha=0.4)
+
+            # Títulos y etiquetas
+            axes[i].set_title(f"{title}\nMSE: {mse_val:.4f}", fontsize=12)
+            axes[i].set_xlabel('IMME Real (Fórmula)')
+            axes[i].set_ylabel('IMME Predicho (Árbol)')
+            axes[i].legend()
+
+st.pyplot(fig)
+
+            x
+        
         else:
             st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
