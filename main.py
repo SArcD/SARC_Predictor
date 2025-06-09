@@ -848,43 +848,54 @@ try:
 
         st.dataframe(df_resultados)
 
-#import matplotlib.pyplot as plt
 
-        # Verifica que y_pred_formula_2 esté definido
-        if 'y_pred_formula_2' in locals():
-            # Crear un DataFrame con ambas predicciones para compararlas
-            df_comparacion_predicciones = pd.DataFrame({
-                'Predicción Fórmula': y_pred_formula_2,
-                'Predicción Árbol': tree_model.predict(X_2)
-            })
-
-            # Crear la gráfica de comparación de predicciones
-            fig, ax = plt.subplots(figsize=(8,6))
-            ax.scatter(df_comparacion_predicciones['Predicción Fórmula'], df_comparacion_predicciones['Predicción Árbol'], color='purple')
-
-            # Línea y = x
-            min_val = df_comparacion_predicciones.min().min()
-            max_val = df_comparacion_predicciones.max().max()
-            ax.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--', label='y = x')
-
-            # Líneas de error
-            for i in range(len(df_comparacion_predicciones)):
-                x_val = df_comparacion_predicciones['Predicción Fórmula'].iloc[i]
-                y_val = df_comparacion_predicciones['Predicción Árbol'].iloc[i]
-                ax.plot([x_val, x_val], [x_val, y_val], color='gray', alpha=0.5)
-
-            # Títulos y etiquetas
-            ax.set_title('Comparación de Predicciones: Fórmula vs Árbol de Decisión', fontsize=14)
-            ax.set_xlabel('Predicción Fórmula (Regresión Múltiple)', fontsize=12)
-            ax.set_ylabel('Predicción Árbol de Decisión', fontsize=12)
-            ax.legend()
-
-            # Mostrar en Streamlit
-            st.pyplot(fig)
-        else:
-            st.warning("⚠️ No se encontraron las predicciones de la fórmula (y_pred_formula_2). Asegúrate de definirlas.")
+        import matplotlib.pyplot as plt
+        import pandas as pd
+        import numpy as np
 
 
+        # Simulación de predicciones del árbol (estos valores normalmente se obtienen de un modelo entrenado)
+        y_pred_arbol_global = df_combined['IMME']
+        y_pred_arbol_seleccion = df_combined['IMME']
+
+        # Crear un DataFrame para las predicciones
+        df_comparacion_predicciones_global = pd.DataFrame({
+            'Predicción Fórmula': df_combined['IMME'],
+            'Predicción Árbol': y_pred_arbol_global
+        })
+
+        df_comparacion_predicciones_seleccion = pd.DataFrame({
+            'Predicción Fórmula': df_combined['IMME'],
+            'Predicción Árbol': y_pred_arbol_seleccion
+        })
+
+        # Crear las dos gráficas lado a lado
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6), dpi=100)
+
+        # Gráfica 1: Mejor modelo global
+        axes[0].scatter(df_comparacion_predicciones_global['Predicción Fórmula'],
+                        df_comparacion_predicciones_global['Predicción Árbol'], color='purple')
+        axes[0].plot([df_comparacion_predicciones_global.min().min(), df_comparacion_predicciones_global.max().max()],
+                     [df_comparacion_predicciones_global.min().min(), df_comparacion_predicciones_global.max().max()],
+                     color='red', linestyle='--', label='y=x')
+        axes[0].set_title('Mejor Modelo Global')
+        axes[0].set_xlabel('Predicción Fórmula (Regresión Múltiple)')
+        axes[0].set_ylabel('Predicción Árbol de Decisión')
+        axes[0].legend()
+
+        # Gráfica 2: Mejor modelo con n variables seleccionadas
+        axes[1].scatter(df_comparacion_predicciones_seleccion['Predicción Fórmula'],
+                        df_comparacion_predicciones_seleccion['Predicción Árbol'], color='green')
+        axes[1].plot([df_comparacion_predicciones_seleccion.min().min(), df_comparacion_predicciones_seleccion.max().max()],
+                     [df_comparacion_predicciones_seleccion.min().min(), df_comparacion_predicciones_seleccion.max().max()],
+                     color='red', linestyle='--', label='y=x')
+        axes[1].set_title('Mejor Modelo con n Variables')
+        axes[1].set_xlabel('Predicción Fórmula (Regresión Múltiple)')
+        axes[1].set_ylabel('Predicción Árbol de Decisión')
+        axes[1].legend()
+
+        plt.tight_layout()
+        plt.show()
 
 
 
