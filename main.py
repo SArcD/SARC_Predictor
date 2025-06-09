@@ -552,6 +552,52 @@ try:
         reduced_df = features.loc[:, mask]
         reduced_df.to_excel('reduced_df_hombres.xlsx', index=False)
 
+        ##matriz de correlacion
+
+
+        import streamlit as st
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        from sklearn.preprocessing import MinMaxScaler
+        import numpy as np
+        import pandas as pd
+    
+        # --- Columnas seleccionadas ---
+        selected_columns = ['P112_vel','P113', 'P125', 'P128', 'P127','P126','IMC','P121','P123','P120', 'P124']
+
+        # --- Filtrar el DataFrame con esas columnas ---    
+        numeric_df = reduced_df[selected_columns]
+
+        # --- Normalizar con MinMaxScaler ---
+        scaler = MinMaxScaler()    
+        normalized_array = scaler.fit_transform(numeric_df)
+        normalized_df = pd.DataFrame(normalized_array, columns=selected_columns)
+
+        # --- Calcular matriz de correlación ---
+        corr = normalized_df.corr(method='pearson')
+
+        # --- Crear máscara triangular superior ---
+        mask = np.triu(np.ones_like(corr, dtype=bool))
+
+        # --- Crear figura y graficar ---
+        fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
+        cmap = sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
+        sns.heatmap(
+            corr,
+            mask=mask,
+            center=0,
+            cmap=cmap,
+            linewidths=1,
+            annot=True,
+            fmt='.2f',
+            square=True,
+            ax=ax
+        )
+
+        # --- Mostrar en Streamlit ---
+        st.subheader("🔗 Mapa de correlaciones normalizadas")
+        st.pyplot(fig)
+
 
 
 
