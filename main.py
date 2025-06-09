@@ -571,7 +571,8 @@ try:
         # --- Normalizar con MinMaxScaler ---
         scaler = MinMaxScaler()    
         normalized_array = scaler.fit_transform(numeric_df)
-        normalized_df = pd.DataFrame(normalized_array, columns=selected_columns)
+        #normalized_df = pd.DataFrame(normalized_array, columns=selected_columns)
+        normalized_df = pd.DataFrame(normalized_array, columns=[column_labels[col] for col in selected_columns])
 
         # --- Calcular matriz de correlación ---
         corr = normalized_df.corr(method='pearson')
