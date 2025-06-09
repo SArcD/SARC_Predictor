@@ -915,10 +915,8 @@ try:
             axes[i].set_ylabel('IMME Predicho (Árbol)')
             axes[i].legend()
 
-st.pyplot(fig)
-
-            x
-        
+        st.pyplot(fig)
+ 
         else:
             st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
