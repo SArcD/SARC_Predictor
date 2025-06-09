@@ -661,10 +661,7 @@ try:
         nodes_men -= nodes_both    
         nodes_women -= nodes_both
 
-#import streamlit as st
-#import matplotlib.pyplot as plt
         import networkx as nx
-#import numpy as np
         import matplotlib.patches as mpatches
 
         # Layout Kamada-Kawai
@@ -759,6 +756,38 @@ try:
         # Mostrar en Streamlit
         st.subheader("🔗 Red de correlación")
         st.pyplot(fig)
+
+
+        # Draw nodes
+        df_combined['sexo'] = df_combined['sexo'].replace({'Hombre': 1.0, 'Mujer': 0.0})
+
+        # Modificar la función para calcular el Índice de Masa Muscular Esquelética (IMME)
+        def calcular_IMME(row):
+            CP = row['P124']  # Circunferencia de Pantorrilla en cm
+            FP = row['P113']  # Fuerza de Prensión de la Mano en kg
+            P = row['P117']  # Peso corporal en kg
+            Sexo = row['sexo']  # Sexo (1.0 para hombres, 2.0 para mujeres)
+            IMC = row['IMC']  # Índice de Masa Corporal (IMC)
+
+            # Calcular la Talla (Altura en cm) a partir del IMC y el Peso
+            Talla = np.sqrt(P / IMC)  # Talla en metros (no es necesario convertir a cm aquí)
+
+            # Estimar la masa muscular esquelética (puede adaptarse según la referencia)
+            masa_muscular = (
+                0.215 * CP +  # Estimación con circunferencia de pantorrilla
+                0.093 * FP +  # Estimación con fuerza de prensión
+                0.061 * P +   # Estimación con peso corporal
+                3.637 * Sexo  # Ajuste según el sexo
+            )
+
+            # Calcular el IMME (masa muscular dividida por talla al cuadrado)
+            imme = masa_muscular / (Talla ** 2)
+
+            return imme
+
+        # Aplicar la función a cada fila del DataFrame
+        df_combined['IMME'] = df_combined.apply(calcular_IMME, axis=1)
+        df_combined.describe()
 
 
 
