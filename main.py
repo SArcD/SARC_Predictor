@@ -800,7 +800,7 @@ try:
         #import pandas as pd
 
         # --- 1. Definir variables disponibles ---
-        variables = ['P117', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
+        variables = ['sexo','P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
              'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
 
         # --- 2. Parámetro ajustable ---
