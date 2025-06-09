@@ -992,8 +992,8 @@ try:
                         st.session_state.variables_manual = seleccion_manual
                     modelo = st.session_state.modelo_manual
 
-            # Diccionario de nombres amigables
-            nombres_amigables = {
+
+            nombre_amigables = {
                 'P117': 'Peso (kg)',
                 'P118': 'Estatura (cm)',
                 'P119': 'Circunferencia de cintura',
@@ -1009,10 +1009,10 @@ try:
                 'P129': 'Pliegue pectoral',
                 'IMC': 'Índice de Masa Corporal',
                 'P113': 'Fuerza de prensión',
-                'P112_vel': 'Velocidad de marcha',
-                'sexo': 'Sexo (Mujer/Hombre)'
-            }
+                'P112_vel': 'Velocidad de marcha'
+            }.get(var, var)
 
+            
             # Formulario para ingresar valores
             st.markdown(f"Introduce los valores para las siguientes variables:")
 
