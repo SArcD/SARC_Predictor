@@ -816,12 +816,12 @@ try:
 
 
         if 'errores_combinaciones' not in st.session_state:
-        st.session_state.errores_combinaciones = {}
-        st.session_state.mejor_combinacion = None
-        st.session_state.mejor_error = None
-        st.session_state.resultados_filtrados = None
-        st.session_state.modelo_global = None
-        st.session_state.modelo_n = None
+            st.session_state.errores_combinaciones = {}
+            st.session_state.mejor_combinacion = None
+            st.session_state.mejor_error = None
+            st.session_state.resultados_filtrados = None
+            st.session_state.modelo_global = None
+            st.session_state.modelo_n = None
 
         # Calcula combinaciones
         errores_combinaciones = {}
