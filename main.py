@@ -895,19 +895,39 @@ try:
                 (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
             ]):
                 # Dispersión
-                axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
+                #axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
+
+                # Línea y = x
+                #min_val = min(df_cmp.min().min(), df_cmp.max().max())
+                #max_val = max(df_cmp.min().min(), df_cmp.max().max())
+                #axes[i].plot([min_val, max_val], [min_val, max_val],
+                #color='red', linestyle='--', label='y = x')
+
+                # Líneas de error
+                #for j in range(len(df_cmp)):
+                #    real = df_cmp['IMME Real'].iloc[j]
+                #    pred = df_cmp['IMME Predicho'].iloc[j]
+                #    axes[i].plot([real, real], [real, pred], color='gray', alpha=0.4)
+
+                # Calcular errores individuales
+                errores_individuales = np.abs(df_cmp['IMME Real'] - df_cmp['IMME Predicho'])
+
+                # Dispersión con código de color por error
+                sc = axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'],
+                     c=errores_individuales, cmap='RdYlGn_r', s=50, alpha=0.8)
 
                 # Línea y = x
                 min_val = min(df_cmp.min().min(), df_cmp.max().max())
                 max_val = max(df_cmp.min().min(), df_cmp.max().max())
                 axes[i].plot([min_val, max_val], [min_val, max_val],
-                color='red', linestyle='--', label='y = x')
+                color='black', linestyle='--', label='y = x')
 
                 # Líneas de error
                 for j in range(len(df_cmp)):
                     real = df_cmp['IMME Real'].iloc[j]
                     pred = df_cmp['IMME Predicho'].iloc[j]
-                    axes[i].plot([real, real], [real, pred], color='gray', alpha=0.4)
+                    axes[i].plot([real, real], [real, pred], color='gray', alpha=0.3)
+               
 
                 # Títulos y etiquetas
                 axes[i].set_title(f"{title}\nMSE: {mse_val:.4f}", fontsize=12)
