@@ -1009,29 +1009,80 @@ try:
                     value=st.session_state.valores_usuario.get(var, 0.0)
                 )
 
+
+            modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:",
+                                   ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
+
+            if modelo_seleccionado == "Mejor combinación global":
+                variables_input = list(st.session_state.mejor_combinacion)
+                modelo = st.session_state.modelo_global
+            else:
+                variables_input = list(st.session_state.mejor_combinacion_n)
+                modelo = st.session_state.modelo_n
+
+            st.markdown("### Introduce los valores:")
+
+            input_values = {}
+            for var in variables_input:
+                if var == 'sexo':
+                    input_values[var] = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=f"input_{var}")
+                    input_values[var] = 1.0 if input_values[var] == "Hombre" else 0.0
+                else:
+                    nombre_amigable = {
+                        'P117': 'Peso (kg)',
+                        'P118': 'Estatura (cm)',
+                        'P119': 'Circunferencia de cintura',
+                        'P120': 'Circunferencia de cadera',
+                        'P121': 'Circunferencia de brazo',
+                        'P122': 'Pliegue tricipital',
+                        'P123': 'Pliegue subescapular',
+                        'P124': 'Circunferencia de pantorrilla',
+                        'P125': 'Pliegue abdominal',
+                        'P126': 'Pliegue suprailíaco',
+                        'P127': 'Pliegue muslo',
+                        'P128': 'Pliegue pierna',
+                        'P129': 'Pliegue pectoral',
+                        'IMC': 'Índice de Masa Corporal',
+                        'P113': 'Fuerza de prensión',
+                        'P112_vel': 'Velocidad de marcha'
+                    }.get(var, var)
+
+                    input_values[var] = st.number_input(f"{nombre_amigable}", key=f"input_{var}")
+
+            if st.button("Predecir IMME"):
+                input_df = pd.DataFrame([input_values])
+                pred = modelo.predict(input_df)[0]
+                st.success(f"🧠 IMME estimado: **{pred:.2f}**")
+
+
+
+
+
+
+            
             # Selección del modelo
-            modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:", 
-                               ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
+            #modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:", 
+            #                   ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
 
             # Botón para hacer la predicción
-            if st.button("Predecir IMME"):
-                # Obtener el modelo correspondiente según selección
-                modelo = st.session_state.modelo_global if modelo_seleccionado == "Mejor combinación global" else st.session_state.modelo_n
+            #if st.button("Predecir IMME"):
+            #    # Obtener el modelo correspondiente según selección
+            #    modelo = st.session_state.modelo_global if modelo_seleccionado == "Mejor combinación global" else st.session_state.modelo_n
 
-                # Extraer las variables necesarias según la combinación seleccionada
-                if modelo_seleccionado == "Mejor combinación global":
-                    variables_input = list(st.session_state.mejor_combinacion)
-                else:
-                    variables_input = list(st.session_state.mejor_combinacion_n)
+#                # Extraer las variables necesarias según la combinación seleccionada
+#                if modelo_seleccionado == "Mejor combinación global":
+#                    variables_input = list(st.session_state.mejor_combinacion)
+#                else:
+#                    variables_input = list(st.session_state.mejor_combinacion_n)
 
-                # Reunir los valores del formulario en un DataFrame
-                input_data = pd.DataFrame([[
-                    st.session_state[f"input_{var}"] for var in variables_input
-                ]], columns=variables_input)
+#                # Reunir los valores del formulario en un DataFrame
+#                input_data = pd.DataFrame([[
+#                    st.session_state[f"input_{var}"] for var in variables_input
+#                ]], columns=variables_input)
 
-                # Hacer predicción
-                pred = modelo.predict(input_data)[0]
-                st.success(f"🔍 Predicción del IMME: **{pred:.2f}**")
+#                # Hacer predicción
+#                pred = modelo.predict(input_data)[0]
+#                st.success(f"🔍 Predicción del IMME: **{pred:.2f}**")
 
 
             
