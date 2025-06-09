@@ -993,7 +993,7 @@ try:
                     modelo = st.session_state.modelo_manual
 
 
-            nombre_amigables = {
+            nombres_amigables = {
                 'P117': 'Peso (kg)',
                 'P118': 'Estatura (cm)',
                 'P119': 'Circunferencia de cintura',
