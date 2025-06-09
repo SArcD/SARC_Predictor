@@ -788,6 +788,52 @@ try:
         df_combined['IMME'] = df_combined.apply(calcular_IMME, axis=1)
         df_combined
 
+        from sklearn.model_selection import GridSearchCV
+        from itertools import combinations
+        import numpy as np
+
+        # Definir las variables disponibles para la selección
+        variables = ['P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
+             'P125', 'P126', 'P127', 'P128', 'P129', 'P130', 'IMC', 'P113', 'P112_vel']
+
+        # Definir el número máximo de variables a combinar (puedes ajustar este número)
+        max_combinaciones = 4
+
+        # Crear un diccionario para almacenar los errores de cada combinación
+        errores_combinaciones = {}
+
+        # Probar todas las combinaciones posibles de hasta max_combinaciones variables
+        for r in range(1, max_combinaciones + 1):
+            for combinacion in combinations(variables, r):
+                # Seleccionar las columnas correspondientes a la combinación actual
+                X_2 = df_combined_2[list(combinacion)]
+                y_2 = df_combined_2['IMME']  # Suponiendo que tenemos los valores de IMME
+
+                # Dividir los datos en conjunto de entrenamiento y prueba
+                X_train, X_test, y_train, y_test = train_test_split(X_2, y_2, test_size=0.2, random_state=42)
+
+                # Entrenar el modelo de árbol de regresión
+                tree_model = DecisionTreeRegressor(random_state=42)
+                tree_model.fit(X_train, y_train)
+
+                # Realizar predicciones en el conjunto de prueba
+                y_pred_tree = tree_model.predict(X_test)
+
+                # Calcular el error cuadrático medio para las predicciones
+                mse_tree = mean_squared_error(y_test, y_pred_tree)
+
+                # Almacenar el error y la combinación de variables
+                errores_combinaciones[combinacion] = mse_tree
+
+        # Encontrar la combinación con el menor error
+        mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
+        mejor_error = errores_combinaciones[mejor_combinacion]
+
+        # Mostrar la mejor combinación y el error correspondiente
+        mejor_combinacion, mejor_error
+
+
+
 
 except Exception as e:
     st.error(f"Ocurrió un error al intentar cargar el archivo: {e}")
