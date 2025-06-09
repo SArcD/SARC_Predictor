@@ -855,23 +855,23 @@ try:
 
 
         # Reentrenar los dos modelos si es necesario    
-        X_global = df_combined_2[list(mejor_combinacion)]        
-        y_global = df_combined_2['IMME']
+        X_global = df_combined[list(mejor_combinacion)]        
+        y_global = df_combined['IMME']
         modelo_global = DecisionTreeRegressor(random_state=42).fit(X_global, y_global)
         y_pred_global = modelo_global.predict(X_global)
 
-        X_n = df_combined_2[list(mejor_combinacion_n)]
+        X_n = df_combined[list(mejor_combinacion_n)]
         modelo_n = DecisionTreeRegressor(random_state=42).fit(X_n, y_global)
         y_pred_n = modelo_n.predict(X_n)
 
         # Crear los dos DataFrames comparativos
         df_comparacion_global = pd.DataFrame({
-            'Predicción Fórmula (IMME)': df_combined_2['IMME'],
+            'Predicción Fórmula (IMME)': df_combined['IMME'],
             'Predicción Árbol (Global)': y_pred_global
         })
 
         df_comparacion_n = pd.DataFrame({
-            'Predicción Fórmula (IMME)': df_combined_2['IMME'],
+            'Predicción Fórmula (IMME)': df_combined['IMME'],
             'Predicción Árbol (n vars)': y_pred_n
         })
 
