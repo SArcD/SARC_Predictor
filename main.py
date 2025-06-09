@@ -359,12 +359,6 @@ try:
         ax.invert_yaxis()
         ax.grid(axis='x', linestyle='--', alpha=0.7)
         
-        #plt.barh(variances_filtered['Variable_English'], variances_filtered['Normalized Variance'], color='skyblue', edgecolor='black')    
-        #plt.xlabel('Normalized Variance')
-        #plt.title('Normalized Variances of Variables (Men)')
-        #plt.gca().invert_yaxis()
-        #plt.grid(axis='x', linestyle='--', alpha=0.7)
-        #plt.tight_layout()
         fig.tight_layout()
 
 
@@ -846,19 +840,6 @@ try:
         mejor_error = st.session_state.mejor_error
         errores_combinaciones = st.session_state.errores_combinaciones
 
-        #----------------------------------------------------------------------------------------------------
-        # Calcular errores
-        #errores_combinaciones = {}
-        #for r in range(1, max_combinaciones + 1):
-        #    for combinacion in combinations(variables, r):
-        #        X = df_combined[list(combinacion)]
-        #        y = df_combined['IMME']
-        #        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        #        model = DecisionTreeRegressor(random_state=42)
-        #        model.fit(X_train, y_train)
-        #        y_pred = model.predict(X_test)
-        #        mse = mean_squared_error(y_test, y_pred)
-        #        errores_combinaciones[combinacion] = mse
 
         # Mostrar la mejor combinación global
         mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
@@ -929,20 +910,6 @@ try:
                 (df_comparacion_global, '🌳 Mejor Modelo Global', mse_global),
                 (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
             ]):
-                # Dispersión
-                #axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
-
-                # Línea y = x
-                #min_val = min(df_cmp.min().min(), df_cmp.max().max())
-                #max_val = max(df_cmp.min().min(), df_cmp.max().max())
-                #axes[i].plot([min_val, max_val], [min_val, max_val],
-                #color='red', linestyle='--', label='y = x')
-
-                # Líneas de error
-                #for j in range(len(df_cmp)):
-                #    real = df_cmp['IMME Real'].iloc[j]
-                #    pred = df_cmp['IMME Predicho'].iloc[j]
-                #    axes[i].plot([real, real], [real, pred], color='gray', alpha=0.4)
 
                 # Calcular errores individuales
                 errores_individuales = np.abs(df_cmp['IMME Real'] - df_cmp['IMME Predicho'])
@@ -984,25 +951,73 @@ try:
             if 'prediccion_valor' not in st.session_state:
                 st.session_state.prediccion_valor = None
 
-            # Elegir modelo para predicción
+
+            # Selección del modelo a usar
             modelo_seleccionado = st.radio(
-                "Selecciona el modelo con el que deseas introducir los valores:",
-                options=["Mejor combinación global", f"Mejor combinación con {selected_n} variables"],
-                index=0,
-                key="modelo_usado"
+                "Selecciona el modelo para usar en la predicción:",
+                ("Mejor combinación global", f"Mejor combinación con {selected_n} variables", f"Elegir manualmente {selected_n} variables"),
+                horizontal=True
             )
 
-            # Determinar variables y modelo
+            # Obtener modelo y variables según selección
+            modelo = None
+            variables_input = []
+
             if modelo_seleccionado == "Mejor combinación global":
-                variables_formulario = list(mejor_combinacion)
-                modelo = modelo_global
+                modelo = st.session_state.modelo_global
+                variables_input = list(st.session_state.mejor_combinacion)
+            elif modelo_seleccionado.startswith("Mejor combinación con"):
+                modelo = st.session_state.modelo_n
+                variables_input = list(st.session_state.mejor_combinacion_n)
             else:
-                variables_formulario = mejor_combinacion_n
-                modelo = modelo_n
+                # Elección manual con multiselect
+                variables_disponibles = variables  # ya definido anteriormente
+                seleccion_manual = st.multiselect(
+                    f"Selecciona exactamente {selected_n} variables:",
+                    options=variables_disponibles,
+                    default=[],
+                    key="manual_vars"
+                )
+                if len(seleccion_manual) != selected_n:
+                    st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
+                else:
+                    variables_input = seleccion_manual
+                    # Entrenar modelo solo si aún no está en session_state
+                    if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
+                        X_manual = df_combined[seleccion_manual]
+                        y_manual = df_combined['IMME']
+                        X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(X_manual, y_manual, test_size=0.2, random_state=42)
+                        modelo_manual = DecisionTreeRegressor(random_state=42).fit(X_train_m, y_train_m)
+                        st.session_state.modelo_manual = modelo_manual
+                        st.session_state.variables_manual = seleccion_manual
+                    modelo = st.session_state.modelo_manual
+
+
+
+
+            
+   #         # Elegir modelo para predicción
+   #         modelo_seleccionado = st.radio(
+   #             "Selecciona el modelo con el que deseas introducir los valores:",
+   #             options=["Mejor combinación global", f"Mejor combinación con {selected_n} variables"],
+   #             index=0,
+   #             key="modelo_usado"
+   #         )
+
+   #         # Determinar variables y modelo
+   #         if modelo_seleccionado == "Mejor combinación global":
+   #             variables_formulario = list(mejor_combinacion)
+   #             modelo = modelo_global
+   #         else:
+   #             variables_formulario = mejor_combinacion_n
+   #             modelo = modelo_n
+#for var in variables_input:
 
             # Formulario para ingresar valores
             st.markdown(f"Introduce los valores para las siguientes variables:")
-            for var in variables_formulario:
+            #for var in variables_formulario:
+            for var in variables_input:
+
                 st.session_state.valores_usuario[var] = st.number_input(
                     label=var,
                     key=f"input_{var}",
@@ -1053,35 +1068,7 @@ try:
                     input_values[var] = st.number_input(f"{nombre_amigable}", key=unique_key)
 
 
-
-
-
             
- #           for var in variables_input:
- #               if var == 'sexo':
- #                   input_values[var] = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=f"input_{var}")
- #                   input_values[var] = 1.0 if input_values[var] == "Hombre" else 0.0
- #               else:
- #                   nombre_amigable = {
- #                       'P117': 'Peso (kg)',
- #                       'P118': 'Estatura (cm)',
- #                       'P119': 'Circunferencia de cintura',
- #                       'P120': 'Circunferencia de cadera',
- #                       'P121': 'Circunferencia de brazo',
- #                       'P122': 'Pliegue tricipital',
- #                       'P123': 'Pliegue subescapular',
- #                       'P124': 'Circunferencia de pantorrilla',
- #                       'P125': 'Pliegue abdominal',
- #                       'P126': 'Pliegue suprailíaco',
- #                       'P127': 'Pliegue muslo',
- #                       'P128': 'Pliegue pierna',
- #                       'P129': 'Pliegue pectoral',
- #                       'IMC': 'Índice de Masa Corporal',
- #                       'P113': 'Fuerza de prensión',
- #                       'P112_vel': 'Velocidad de marcha'
- #                   }.get(var, var)
-
-  #                  input_values[var] = st.number_input(f"{nombre_amigable}", key=f"input_{var}")
 
             if st.button("Predecir IMME"):
                 input_df = pd.DataFrame([input_values])
@@ -1089,51 +1076,6 @@ try:
                 st.success(f"🧠 IMME estimado: **{pred:.2f}**")
 
 
-
-
-
-
-            
-            # Selección del modelo
-            #modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:", 
-            #                   ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
-
-            # Botón para hacer la predicción
-            #if st.button("Predecir IMME"):
-            #    # Obtener el modelo correspondiente según selección
-            #    modelo = st.session_state.modelo_global if modelo_seleccionado == "Mejor combinación global" else st.session_state.modelo_n
-
-#                # Extraer las variables necesarias según la combinación seleccionada
-#                if modelo_seleccionado == "Mejor combinación global":
-#                    variables_input = list(st.session_state.mejor_combinacion)
-#                else:
-#                    variables_input = list(st.session_state.mejor_combinacion_n)
-
-#                # Reunir los valores del formulario en un DataFrame
-#                input_data = pd.DataFrame([[
-#                    st.session_state[f"input_{var}"] for var in variables_input
-#                ]], columns=variables_input)
-
-#                # Hacer predicción
-#                pred = modelo.predict(input_data)[0]
-#                st.success(f"🔍 Predicción del IMME: **{pred:.2f}**")
-
-
-            
-#            # Botón para ejecutar la predicción
-#            if st.button("🔍 Predecir IMME"):
-#                entrada_df = pd.DataFrame([st.session_state.valores_usuario])
-#                try:
-#                    prediccion = modelo.predict(entrada_df)[0]
-#                    st.session_state.prediccion_realizada = True
-#                    st.session_state.prediccion_valor = prediccion
-#                except Exception as e:
-#                    st.error(f"❌ Error en la predicción: {e}")
-#                    st.session_state.prediccion_realizada = False
-
-#            # Mostrar resultado si ya se hizo la predicción
-#            if st.session_state.prediccion_realizada:
-#                st.success(f"✅ Predicción del IMME con el modelo seleccionado: **{st.session_state.prediccion_valor:.2f}**")
 
         
         else:
