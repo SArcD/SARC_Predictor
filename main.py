@@ -848,6 +848,13 @@ try:
 
         st.dataframe(df_resultados)
 
+        # Obtener la mejor combinación con n variables seleccionadas por el usuario
+        if not df_resultados.empty:
+            mejor_combinacion_n = df_resultados.iloc[0]['Variables'].split(', ')
+        else:
+            mejor_combinacion_n = None
+
+        
 
         import matplotlib.pyplot as plt
         import pandas as pd
