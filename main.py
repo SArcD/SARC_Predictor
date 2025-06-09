@@ -759,7 +759,7 @@ try:
 
         df_combined
         df_combined['sexo'] = df_combined['sexo'].replace({'Hombre': 1.0, 'Mujer': 0.0})
-        df_combied_2 = df_combined.copy()
+        #df_combied_2 = df_combined.copy()
         # Modificar la función para calcular el Índice de Masa Muscular Esquelética (IMME)
         def calcular_IMME(row):
             CP = row['P124']  # Circunferencia de Pantorrilla en cm
@@ -813,8 +813,8 @@ try:
             for r in range(1, max_combinaciones + 1):
                 for combinacion in combinations(variables, r):
                     try:
-                        X_2 = df_combined_2[list(combinacion)]
-                        y_2 = df_combined_2['IMME']
+                        X_2 = df_combined[list(combinacion)]
+                        y_2 = df_combined['IMME']
 
                         X_train, X_test, y_train, y_test = train_test_split(X_2, y_2, test_size=0.2, random_state=42)
 
