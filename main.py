@@ -758,7 +758,6 @@ try:
         st.pyplot(fig)
 
 
-        # Draw nodes
         df_combined['sexo'] = df_combined['sexo'].replace({'Hombre': 1.0, 'Mujer': 0.0})
 
         # Modificar la función para calcular el Índice de Masa Muscular Esquelética (IMME)
@@ -787,8 +786,7 @@ try:
 
         # Aplicar la función a cada fila del DataFrame
         df_combined['IMME'] = df_combined.apply(calcular_IMME, axis=1)
-        df_combined.describe()
-
+        df_combined
 
 
 except Exception as e:
