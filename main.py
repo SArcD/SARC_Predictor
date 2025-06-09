@@ -802,7 +802,7 @@ try:
 
         # Variables disponibles
         variables = ['P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
-             'P125', 'P126', 'P127', 'P128', 'P129', 'P130', 'IMC', 'P113', 'P112_vel']
+             'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
 
         # Recalcular estatura si es necesario
         if 'P118' not in df_combined.columns:
