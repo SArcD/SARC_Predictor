@@ -599,6 +599,167 @@ try:
         st.subheader("🔗 Mapa de correlaciones normalizadas")
         st.pyplot(fig)
 
+        # Concatenating df_grouped with df_r to create a single DataFrame
+        df_combined = pd.concat([df_datos, reduced_df], axis=1)
+        df_combined = df_combined.dropna()
+        #df_combined
+
+        import networkx as nx
+        import numpy as np
+        import pandas as pd
+
+        # 1. Definir las variables de interés
+        selected_vars = ['P112_vel', 'P113', 'P117', 'P120','P121','P122','P123','P124','P125', 'P128', 'P127', 'P126', 'IMC']
+        threshold = 0.3
+
+        # 2. Separar por sexo    
+        df_men = df_combined[df_combined['sexo'] == 'Hombre']    
+        df_women = df_combined[df_combined['sexo'] == 'Mujer']
+
+        # 3. Calcular matrices de correlación
+        corr_men = df_men[selected_vars].corr()
+        corr_women = df_women[selected_vars].corr()
+
+        # 4. Crear sets de aristas
+        edges_men = set()
+        edges_women = set()
+
+        for i, var1 in enumerate(selected_vars):
+            for j, var2 in enumerate(selected_vars):
+                if i < j:
+                    if abs(corr_men.loc[var1, var2]) > threshold:
+                        edges_men.add((var1, var2))
+                    if abs(corr_women.loc[var1, var2]) > threshold:
+                        edges_women.add((var1, var2))
+
+        # 5. Determinar intersecciones
+        edges_both = edges_men & edges_women
+        edges_men_only = edges_men - edges_both
+        edges_women_only = edges_women - edges_both
+
+        # 6. Crear grafo final con etiquetas de grupo
+        G = nx.Graph()
+
+        for u, v in edges_men_only:
+            weight = corr_men.loc[u, v]
+            G.add_edge(u, v, weight=weight, group='Men')
+
+        for u, v in edges_women_only:
+            weight = corr_women.loc[u, v]
+            G.add_edge(u, v, weight=weight, group='Women')
+
+        for u, v in edges_both:
+            weight = np.mean([corr_men.loc[u, v], corr_women.loc[u, v]])
+            G.add_edge(u, v, weight=weight, group='Both')
+
+        # 7. Identificar nodos por grupo
+        nodes_men = {n for e in edges_men_only for n in e}
+        nodes_women = {n for e in edges_women_only for n in e}
+        nodes_both = {n for e in edges_both for n in e}
+
+        # Eliminar duplicados
+        nodes_men -= nodes_both    
+        nodes_women -= nodes_both
+
+        import streamlit as st
+        import matplotlib.pyplot as plt
+        import networkx as nx
+        import numpy as np
+        import matplotlib.patches as mpatches
+
+        # --- Calcular layout ---
+        pos = nx.spring_layout(G, seed=42, k=0.1)
+
+        # --- Colorear nodos según grupo ---
+        node_colors = []
+        for node in G.nodes():
+            if node in nodes_both:
+                node_colors.append('mediumvioletred')  # Ambos sexos
+            elif node in nodes_men:
+                node_colors.append('steelblue')        # Solo hombres
+            elif node in nodes_women:
+                node_colors.append('lightcoral')       # Solo mujeres
+            else:
+                node_colors.append('grey')
+
+        # --- Tamaños de nodos según grado ---
+        degree_dict = dict(G.degree())
+        node_sizes = [400 + degree_dict[n] * 150 for n in G.nodes()]
+
+        # --- Crear figura para graficar ---
+        fig, ax = plt.subplots(figsize=(14, 10), dpi=150)
+
+        # Dibujar nodos
+        nx.draw_networkx_nodes(
+            G, pos,
+            node_size=node_sizes,
+            node_color=node_colors,
+            edgecolors='black',
+            linewidths=1.5,
+            ax=ax
+        )
+
+        # Aristas por grupo
+        edges_men = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Men']
+        edges_women = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Women']
+        edges_both = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Both']
+
+        # Dibujar aristas con grosor proporcional
+        nx.draw_networkx_edges(
+            G, pos,
+            edgelist=[(u, v) for u, v, d in edges_men],
+            width=[abs(d['weight'])*5 for u, v, d in edges_men],
+            edge_color='steelblue',
+            alpha=0.7,
+            ax=ax
+        )
+
+        nx.draw_networkx_edges(
+            G, pos,
+            edgelist=[(u, v) for u, v, d in edges_women],
+            width=[abs(d['weight'])*5 for u, v, d in edges_women],
+            edge_color='lightcoral',
+            alpha=0.7,
+            ax=ax
+        )
+
+        nx.draw_networkx_edges(
+            G, pos,
+            edgelist=[(u, v) for u, v, d in edges_both],
+            width=[abs(d['weight'])*5 for u, v, d in edges_both],
+            edge_color='mediumvioletred',
+            alpha=0.8,
+            ax=ax
+        )
+
+        # Etiquetas traducidas
+        labels_translated = {n: column_labels_en.get(n, n) for n in G.nodes()}
+        nx.draw_networkx_labels(
+            G, pos,
+            labels=labels_translated,
+            font_size=11,
+            font_family="sans-serif",
+            ax=ax
+        )
+
+        # Leyenda
+        legend_handles = [
+            mpatches.Patch(color='steelblue', label='Hombres'),
+            mpatches.Patch(color='lightcoral', label='Mujeres'),
+            mpatches.Patch(color='mediumvioletred', label='Ambos')
+        ]
+        ax.legend(handles=legend_handles, loc='lower left', bbox_to_anchor=(1.05, 0.5), frameon=False, fontsize=11)
+
+        # Título y ajustes
+        ax.set_title("Red de Correlación de Variables Antropométricas\n(Varianza Normalizada ≥ 0.005) por Sexo", fontsize=16)
+        ax.axis('off')
+        fig.tight_layout()
+
+        # Mostrar en Streamlit
+        st.subheader("🔗 Red de correlaciones por sexo")
+        st.pyplot(fig)
+
+
 
 
 
