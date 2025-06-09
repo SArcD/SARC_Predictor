@@ -797,8 +797,8 @@ try:
         #import pandas as pd
 
         # --- 1. Definir variables disponibles ---
-        variables = ['P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
-             'P125', 'P126', 'P127', 'P128', 'P129', 'P130', 'IMC', 'P113', 'P112_vel']
+        variables = ['P117', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
+             'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
 
         # --- 2. Parámetro ajustable ---
         max_combinaciones = st.slider("Número máximo de variables por combinación", min_value=1, max_value=5, value=4)
