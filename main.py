@@ -888,12 +888,12 @@ try:
                 'IMME Predicho': y_pred_n
             })
 
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+            fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-        for i, (df_cmp, title, mse_val) in enumerate([
-            (df_comparacion_global, '🌳 Mejor Modelo Global', mse_global),
-            (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
-        ]):
+            for i, (df_cmp, title, mse_val) in enumerate([
+                (df_comparacion_global, '🌳 Mejor Modelo Global', mse_global),
+                (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables', mse_n)
+            ]):
             # Dispersión
             axes[i].scatter(df_cmp['IMME Real'], df_cmp['IMME Predicho'], color='teal', alpha=0.6)
 
@@ -915,7 +915,7 @@ try:
             axes[i].set_ylabel('IMME Predicho (Árbol)')
             axes[i].legend()
 
-        st.pyplot(fig)
+            st.pyplot(fig)
  
         else:
             st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
