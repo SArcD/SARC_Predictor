@@ -801,7 +801,7 @@ try:
         st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
 
         # Variables disponibles
-        variables = ['P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
+        variables = ["sexo",'P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
              'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
 
         # Recalcular estatura si es necesario
@@ -812,7 +812,7 @@ try:
         selected_n = st.number_input("Selecciona el número de variables en cada combinación a mostrar", min_value=1, max_value=len(variables), value=3)
 
         # Máximo tamaño a combinar en evaluación general
-        max_combinaciones = 4
+        max_combinaciones = 5
 
         # Calcular errores
         errores_combinaciones = {}
