@@ -1035,37 +1035,37 @@ try:
 #                variables_input = list(st.session_state.mejor_combinacion_n)
  #               modelo = st.session_state.modelo_n
 
-            st.markdown("### Introduce los valores:")
+ #           st.markdown("### Introduce los valores:")
 
-            input_values = {}
+#            input_values = {}
 
-            for var in variables_input:
-                unique_key = f"input_{var}_{modelo_seleccionado.replace(' ', '_')}"
+#            for var in variables_input:
+#                unique_key = f"input_{var}_{modelo_seleccionado.replace(' ', '_')}"
+##
+#                if var == 'sexo':
+#                    input_values[var] = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
+#                    input_values[var] = 1.0 if input_values[var] == "Hombre" else 0.0
+#                else:
+#                    nombre_amigable = {
+#                        'P117': 'Peso (kg)',
+#                        'P118': 'Estatura (cm)',
+#                        'P119': 'Circunferencia de cintura',
+ #                       'P120': 'Circunferencia de cadera',
+ #                       'P121': 'Circunferencia de brazo',
+ #                       'P122': 'Pliegue tricipital',
+ #                       'P123': 'Pliegue subescapular',
+ #                       'P124': 'Circunferencia de pantorrilla',
+ #                       'P125': 'Pliegue abdominal',
+ #                       'P126': 'Pliegue suprailíaco',
+ #                       'P127': 'Pliegue muslo',
+ #                       'P128': 'Pliegue pierna',
+ #                       'P129': 'Pliegue pectoral',
+ #                       'IMC': 'Índice de Masa Corporal',
+ #                       'P113': 'Fuerza de prensión',
+ #                       'P112_vel': 'Velocidad de marcha'
+ #                   }.get(var, var)
 
-                if var == 'sexo':
-                    input_values[var] = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
-                    input_values[var] = 1.0 if input_values[var] == "Hombre" else 0.0
-                else:
-                    nombre_amigable = {
-                        'P117': 'Peso (kg)',
-                        'P118': 'Estatura (cm)',
-                        'P119': 'Circunferencia de cintura',
-                        'P120': 'Circunferencia de cadera',
-                        'P121': 'Circunferencia de brazo',
-                        'P122': 'Pliegue tricipital',
-                        'P123': 'Pliegue subescapular',
-                        'P124': 'Circunferencia de pantorrilla',
-                        'P125': 'Pliegue abdominal',
-                        'P126': 'Pliegue suprailíaco',
-                        'P127': 'Pliegue muslo',
-                        'P128': 'Pliegue pierna',
-                        'P129': 'Pliegue pectoral',
-                        'IMC': 'Índice de Masa Corporal',
-                        'P113': 'Fuerza de prensión',
-                        'P112_vel': 'Velocidad de marcha'
-                    }.get(var, var)
-
-                    input_values[var] = st.number_input(f"{nombre_amigable}", key=unique_key)
+ #                   input_values[var] = st.number_input(f"{nombre_amigable}", key=unique_key)
 
 
             
