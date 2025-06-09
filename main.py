@@ -936,9 +936,62 @@ try:
                 axes[i].legend()
 
             st.pyplot(fig)
- 
+
+            st.markdown("### 🧪 Comparar predicciones con valores personalizados")
+
+            # Inicializar session_state si no existe
+            if 'valores_usuario' not in st.session_state:
+                st.session_state.valores_usuario = {}
+            if 'modelo_usado' not in st.session_state:
+                st.session_state.modelo_usado = None
+            if 'prediccion_realizada' not in st.session_state:
+                st.session_state.prediccion_realizada = False
+            if 'prediccion_valor' not in st.session_state:
+                st.session_state.prediccion_valor = None
+
+            # Elegir modelo para predicción
+            modelo_seleccionado = st.radio(
+                "Selecciona el modelo con el que deseas introducir los valores:",
+                options=["Mejor combinación global", f"Mejor combinación con {selected_n} variables"],
+                index=0,
+                key="modelo_usado"
+            )
+
+            # Determinar variables y modelo
+            if modelo_seleccionado == "Mejor combinación global":
+                variables_formulario = list(mejor_combinacion)
+                modelo = modelo_global
+            else:
+                variables_formulario = mejor_combinacion_n
+                modelo = modelo_n
+
+            # Formulario para ingresar valores
+            st.markdown(f"Introduce los valores para las siguientes variables:")
+            for var in variables_formulario:
+                st.session_state.valores_usuario[var] = st.number_input(
+                    label=var,
+                    key=f"input_{var}",
+                    value=st.session_state.valores_usuario.get(var, 0.0)
+                )
+
+            # Botón para ejecutar la predicción
+            if st.button("🔍 Predecir IMME"):
+                entrada_df = pd.DataFrame([st.session_state.valores_usuario])
+                try:
+                    prediccion = modelo.predict(entrada_df)[0]
+                    st.session_state.prediccion_realizada = True
+                    st.session_state.prediccion_valor = prediccion
+                except Exception as e:
+                    st.error(f"❌ Error en la predicción: {e}")
+                    st.session_state.prediccion_realizada = False
+
+            # Mostrar resultado si ya se hizo la predicción
+            if st.session_state.prediccion_realizada:
+                st.success(f"✅ Predicción del IMME con el modelo seleccionado: **{st.session_state.prediccion_valor:.2f}**")
+
+        
         else:
-            st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
+                st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
 
         
