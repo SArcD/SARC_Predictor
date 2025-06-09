@@ -661,35 +661,35 @@ try:
         nodes_men -= nodes_both    
         nodes_women -= nodes_both
 
-        import streamlit as st
-        import matplotlib.pyplot as plt
+#import streamlit as st
+#import matplotlib.pyplot as plt
         import networkx as nx
-        import numpy as np
+#import numpy as np
         import matplotlib.patches as mpatches
 
-        # --- Calcular layout ---
-        pos = nx.spring_layout(G, seed=42, k=0.1)
+        # Layout Kamada-Kawai
+        pos = nx.kamada_kawai_layout(G)
 
-        # --- Colorear nodos según grupo ---
+        # Colores de nodos
         node_colors = []
         for node in G.nodes():
             if node in nodes_both:
-                node_colors.append('mediumvioletred')  # Ambos sexos
+                node_colors.append('mediumvioletred')
             elif node in nodes_men:
-                node_colors.append('steelblue')        # Solo hombres
+                node_colors.append('steelblue')
             elif node in nodes_women:
-                node_colors.append('lightcoral')       # Solo mujeres
+                node_colors.append('lightcoral')
             else:
                 node_colors.append('grey')
 
-        # --- Tamaños de nodos según grado ---
+        # Tamaño de nodos por grado
         degree_dict = dict(G.degree())
         node_sizes = [400 + degree_dict[n] * 150 for n in G.nodes()]
 
-        # --- Crear figura para graficar ---
-        fig, ax = plt.subplots(figsize=(14, 10), dpi=150)
+        # Crear figura
+        fig, ax = plt.subplots(figsize=(14, 10), dpi=150, facecolor='white')
 
-        # Dibujar nodos
+        # Dibujar nodos    
         nx.draw_networkx_nodes(
             G, pos,
             node_size=node_sizes,
@@ -699,40 +699,41 @@ try:
             ax=ax
         )
 
-        # Aristas por grupo
+        # Agrupar aristas por grupo
         edges_men = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Men']
         edges_women = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Women']
         edges_both = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Both']
 
-        # Dibujar aristas con grosor proporcional
-        nx.draw_networkx_edges(
-            G, pos,
-            edgelist=[(u, v) for u, v, d in edges_men],
-            width=[abs(d['weight'])*5 for u, v, d in edges_men],
-            edge_color='steelblue',
-            alpha=0.7,
-            ax=ax
-        )
+        # Función para dibujar aristas según rangos
+        def draw_edges(edges_list, color):
+            # Punteadas: < 0.5
+            dotted_edges = [(u, v) for u, v, d in edges_list if abs(d['weight']) < 0.5]
+            dotted_widths = [abs(d['weight'])*4 for u, v, d in edges_list if abs(d['weight']) < 0.5]
 
-        nx.draw_networkx_edges(
-            G, pos,
-            edgelist=[(u, v) for u, v, d in edges_women],
-            width=[abs(d['weight'])*5 for u, v, d in edges_women],
-            edge_color='lightcoral',
-            alpha=0.7,
-            ax=ax
-        )
+            # Sólidas medias: 0.5 – 0.7
+            medium_edges = [(u, v) for u, v, d in edges_list if 0.5 <= abs(d['weight']) <= 0.7]
+            medium_widths = [abs(d['weight'])*5 for u, v, d in edges_list if 0.5 <= abs(d['weight']) <= 0.7]
 
-        nx.draw_networkx_edges(
-            G, pos,
-            edgelist=[(u, v) for u, v, d in edges_both],
-            width=[abs(d['weight'])*5 for u, v, d in edges_both],
-            edge_color='mediumvioletred',
-            alpha=0.8,
-            ax=ax
-        )
+            # Sólidas gruesas: > 0.7
+            strong_edges = [(u, v) for u, v, d in edges_list if abs(d['weight']) > 0.7]
+            strong_widths = [abs(d['weight'])*6 for u, v, d in edges_list if abs(d['weight']) > 0.7]
 
-        # Etiquetas traducidas
+            # Dibujar
+            nx.draw_networkx_edges(G, pos, edgelist=dotted_edges, width=dotted_widths,
+                           edge_color=color, style='dashed', alpha=0.5, ax=ax)
+
+            nx.draw_networkx_edges(G, pos, edgelist=medium_edges, width=medium_widths,
+                           edge_color=color, style='solid', alpha=0.7, ax=ax)
+
+            nx.draw_networkx_edges(G, pos, edgelist=strong_edges, width=strong_widths,
+                           edge_color=color, style='solid', alpha=0.9, ax=ax)
+
+        # Dibujar aristas por grupo
+        draw_edges(edges_men, color='steelblue')
+        draw_edges(edges_women, color='lightcoral')
+        draw_edges(edges_both, color='mediumvioletred')
+
+        # Etiquetas
         labels_translated = {n: column_labels_en.get(n, n) for n in G.nodes()}
         nx.draw_networkx_labels(
             G, pos,
@@ -742,7 +743,7 @@ try:
             ax=ax
         )
 
-        # Leyenda
+        # Leyend    a        
         legend_handles = [
             mpatches.Patch(color='steelblue', label='Hombres'),
             mpatches.Patch(color='lightcoral', label='Mujeres'),
@@ -750,17 +751,14 @@ try:
         ]
         ax.legend(handles=legend_handles, loc='lower left', bbox_to_anchor=(1.05, 0.5), frameon=False, fontsize=11)
 
-        # Título y ajustes
-        ax.set_title("Red de Correlación de Variables Antropométricas\n(Varianza Normalizada ≥ 0.005) por Sexo", fontsize=16)
+        # Título y ajustes    
+        ax.set_title("Red de Correlación con Aristas Diferenciadas\npor Rango de Fuerza y Sexo", fontsize=16)
         ax.axis('off')
         fig.tight_layout()
 
         # Mostrar en Streamlit
-        st.subheader("🔗 Red de correlaciones por sexo")
+        st.subheader("🔗 Red de correlación")
         st.pyplot(fig)
-
-
-
 
 
 
