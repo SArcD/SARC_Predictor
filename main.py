@@ -788,49 +788,65 @@ try:
         df_combined['IMME'] = df_combined.apply(calcular_IMME, axis=1)
         df_combined
 
-        from sklearn.model_selection import GridSearchCV
+        #import streamlit as st
+        from sklearn.model_selection import train_test_split
+        from sklearn.tree import DecisionTreeRegressor
+        from sklearn.metrics import mean_squared_error
         from itertools import combinations
-        import numpy as np
+        #import numpy as np
+        #import pandas as pd
 
-        # Definir las variables disponibles para la selección
+        # --- 1. Definir variables disponibles ---
         variables = ['P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
              'P125', 'P126', 'P127', 'P128', 'P129', 'P130', 'IMC', 'P113', 'P112_vel']
 
-        # Definir el número máximo de variables a combinar (puedes ajustar este número)
-        max_combinaciones = 4
+        # --- 2. Parámetro ajustable ---
+        max_combinaciones = st.slider("Número máximo de variables por combinación", min_value=1, max_value=5, value=4)
 
-        # Crear un diccionario para almacenar los errores de cada combinación
+        # --- 3. Lanzar búsqueda de combinaciones ---
         errores_combinaciones = {}
 
-        # Probar todas las combinaciones posibles de hasta max_combinaciones variables
-        for r in range(1, max_combinaciones + 1):
-            for combinacion in combinations(variables, r):
-                # Seleccionar las columnas correspondientes a la combinación actual
-                X_2 = df_combined_2[list(combinacion)]
-                y_2 = df_combined_2['IMME']  # Suponiendo que tenemos los valores de IMME
+        st.subheader("🔍 Búsqueda de combinaciones de variables para predecir IMME")
 
-                # Dividir los datos en conjunto de entrenamiento y prueba
-                X_train, X_test, y_train, y_test = train_test_split(X_2, y_2, test_size=0.2, random_state=42)
+        with st.spinner("Ejecutando combinaciones..."):
 
-                # Entrenar el modelo de árbol de regresión
-                tree_model = DecisionTreeRegressor(random_state=42)
-                tree_model.fit(X_train, y_train)
+            for r in range(1, max_combinaciones + 1):
+                for combinacion in combinations(variables, r):
+                    try:
+                        X_2 = df_combined_2[list(combinacion)]
+                        y_2 = df_combined_2['IMME']
 
-                # Realizar predicciones en el conjunto de prueba
-                y_pred_tree = tree_model.predict(X_test)
+                        X_train, X_test, y_train, y_test = train_test_split(X_2, y_2, test_size=0.2, random_state=42)
 
-                # Calcular el error cuadrático medio para las predicciones
-                mse_tree = mean_squared_error(y_test, y_pred_tree)
+                        tree_model = DecisionTreeRegressor(random_state=42)
+                        tree_model.fit(X_train, y_train)
 
-                # Almacenar el error y la combinación de variables
-                errores_combinaciones[combinacion] = mse_tree
+                        y_pred_tree = tree_model.predict(X_test)
+                        mse_tree = mean_squared_error(y_test, y_pred_tree)
 
-        # Encontrar la combinación con el menor error
-        mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
-        mejor_error = errores_combinaciones[mejor_combinacion]
+                        errores_combinaciones[combinacion] = mse_tree
 
-        # Mostrar la mejor combinación y el error correspondiente
-        mejor_combinacion, mejor_error
+                    except Exception as e:
+                        st.warning(f"Error en combinación {combinacion}: {e}")
+
+        # --- 4. Mostrar mejor resultado ---
+        if errores_combinaciones:
+            mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
+            mejor_error = errores_combinaciones[mejor_combinacion]
+
+            st.success("✅ Mejor combinación encontrada:")
+            st.write(f"**Variables:** {mejor_combinacion}")
+            st.write(f"**Error cuadrático medio (MSE):** {mejor_error:.4f}")
+
+            # Tabla con los top 10
+            top_combos = sorted(errores_combinaciones.items(), key=lambda x: x[1])[:10]
+            st.subheader("📋 Top 10 combinaciones")
+            st.table(pd.DataFrame([
+                {"Variables": ", ".join(k), "MSE": v}
+                for k, v in top_combos
+            ]))
+        else:
+            st.error("❌ No se pudo calcular ninguna combinación válida.")
 
 
 
