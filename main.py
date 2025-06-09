@@ -527,6 +527,31 @@ try:
         st.plotly_chart(fig, use_container_width=True)
 
 
+########### mascara de varianzas
+
+        from sklearn.feature_selection import VarianceThreshold
+
+        # Standardizing the columns from the 4th column onwards in df_combined
+        columns_to_standardize = df_combined.columns[4:]  # Selecting columns from the 4th column onwards
+
+        # Calculating variance using the provided method: dividing by the mean and then calculating the variance
+        features = df_combined[columns_to_standardize]  # Selecting the features to be standardized
+        variances = (features / features.mean()).dropna().var()
+
+        # Sorting variances in descending order
+        variances = variances.sort_values(ascending=False)
+
+        # Applying the variance threshold mask
+        sel = VarianceThreshold(threshold=0.005)
+        sel.fit(features / features.mean())
+
+        # Creating a boolean mask based on the variance    
+        mask = variances >= 0.005
+
+        # Applying the mask to create a reduced DataFrame
+        reduced_df = features.loc[:, mask]
+        reduced_df.to_excel('reduced_df_hombres.xlsx', index=False)
+
 
 
 
