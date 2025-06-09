@@ -757,7 +757,7 @@ try:
         st.subheader("🔗 Red de correlación")
         st.pyplot(fig)
 
-        df_combined
+        #df_combined
         # Calcular estatura en cm a partir de peso (P117) e IMC
         df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
     
@@ -789,7 +789,7 @@ try:
 
         # Aplicar la función a cada fila del DataFrame
         df_combined['IMME'] = df_combined.apply(calcular_IMME, axis=1)
-        df_combined
+        #df_combined
 
         #import streamlit as st
         from sklearn.tree import DecisionTreeRegressor
@@ -814,7 +814,16 @@ try:
         # Máximo tamaño a combinar en evaluación general
         max_combinaciones = 5
 
-        # Calcular errores
+
+        if 'errores_combinaciones' not in st.session_state:
+        st.session_state.errores_combinaciones = {}
+        st.session_state.mejor_combinacion = None
+        st.session_state.mejor_error = None
+        st.session_state.resultados_filtrados = None
+        st.session_state.modelo_global = None
+        st.session_state.modelo_n = None
+
+        # Calcula combinaciones
         errores_combinaciones = {}
         for r in range(1, max_combinaciones + 1):
             for combinacion in combinations(variables, r):
@@ -826,6 +835,30 @@ try:
                 y_pred = model.predict(X_test)
                 mse = mean_squared_error(y_test, y_pred)
                 errores_combinaciones[combinacion] = mse
+
+        # Guardar resultados en session_state
+        st.session_state.errores_combinaciones = errores_combinaciones
+        st.session_state.mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
+        st.session_state.mejor_error = errores_combinaciones[st.session_state.mejor_combinacion]
+
+        # Usar mejor combinación almacenada
+        mejor_combinacion = st.session_state.mejor_combinacion
+        mejor_error = st.session_state.mejor_error
+        errores_combinaciones = st.session_state.errores_combinaciones
+
+        #----------------------------------------------------------------------------------------------------
+        # Calcular errores
+        #errores_combinaciones = {}
+        #for r in range(1, max_combinaciones + 1):
+        #    for combinacion in combinations(variables, r):
+        #        X = df_combined[list(combinacion)]
+        #        y = df_combined['IMME']
+        #        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        #        model = DecisionTreeRegressor(random_state=42)
+        #        model.fit(X_train, y_train)
+        #        y_pred = model.predict(X_test)
+        #        mse = mean_squared_error(y_test, y_pred)
+        #        errores_combinaciones[combinacion] = mse
 
         # Mostrar la mejor combinación global
         mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
@@ -861,12 +894,14 @@ try:
         import numpy as np
 
 
+
         if mejor_combinacion_n is not None:
             # Datos para la mejor combinación global
             X_global = df_combined[list(mejor_combinacion)]
             y = df_combined['IMME']
             Xg_train, Xg_test, yg_train, yg_test = train_test_split(X_global, y, test_size=0.2, random_state=42)
             modelo_global = DecisionTreeRegressor(random_state=42).fit(Xg_train, yg_train)
+            st.session_state.modelo_global = modelo_global
             y_pred_global = modelo_global.predict(Xg_test)
             mse_global = mean_squared_error(yg_test, y_pred_global)
 
@@ -974,20 +1009,46 @@ try:
                     value=st.session_state.valores_usuario.get(var, 0.0)
                 )
 
-            # Botón para ejecutar la predicción
-            if st.button("🔍 Predecir IMME"):
-                entrada_df = pd.DataFrame([st.session_state.valores_usuario])
-                try:
-                    prediccion = modelo.predict(entrada_df)[0]
-                    st.session_state.prediccion_realizada = True
-                    st.session_state.prediccion_valor = prediccion
-                except Exception as e:
-                    st.error(f"❌ Error en la predicción: {e}")
-                    st.session_state.prediccion_realizada = False
+            # Selección del modelo
+            modelo_seleccionado = st.radio("Selecciona el modelo para la predicción:", 
+                               ["Mejor combinación global", f"Mejor combinación con {selected_n} variables"])
 
-            # Mostrar resultado si ya se hizo la predicción
-            if st.session_state.prediccion_realizada:
-                st.success(f"✅ Predicción del IMME con el modelo seleccionado: **{st.session_state.prediccion_valor:.2f}**")
+            # Botón para hacer la predicción
+            if st.button("Predecir IMME"):
+                # Obtener el modelo correspondiente según selección
+                modelo = st.session_state.modelo_global if modelo_seleccionado == "Mejor combinación global" else st.session_state.modelo_n
+
+                # Extraer las variables necesarias según la combinación seleccionada
+                if modelo_seleccionado == "Mejor combinación global":
+                    variables_input = list(st.session_state.mejor_combinacion)
+                else:
+                    variables_input = list(st.session_state.mejor_combinacion_n)
+
+                # Reunir los valores del formulario en un DataFrame
+                input_data = pd.DataFrame([[
+                    st.session_state[f"input_{var}"] for var in variables_input
+                ]], columns=variables_input)
+
+                # Hacer predicción
+                pred = modelo.predict(input_data)[0]
+                st.success(f"🔍 Predicción del IMME: **{pred:.2f}**")
+
+
+            
+#            # Botón para ejecutar la predicción
+#            if st.button("🔍 Predecir IMME"):
+#                entrada_df = pd.DataFrame([st.session_state.valores_usuario])
+#                try:
+#                    prediccion = modelo.predict(entrada_df)[0]
+#                    st.session_state.prediccion_realizada = True
+#                    st.session_state.prediccion_valor = prediccion
+#                except Exception as e:
+#                    st.error(f"❌ Error en la predicción: {e}")
+#                    st.session_state.prediccion_realizada = False
+
+#            # Mostrar resultado si ya se hizo la predicción
+#            if st.session_state.prediccion_realizada:
+#                st.success(f"✅ Predicción del IMME con el modelo seleccionado: **{st.session_state.prediccion_valor:.2f}**")
 
         
         else:
