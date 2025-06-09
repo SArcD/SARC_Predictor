@@ -758,6 +758,9 @@ try:
         st.pyplot(fig)
 
         df_combined
+        # Calcular estatura en cm a partir de peso (P117) e IMC
+        df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
+    
         df_combined['sexo'] = df_combined['sexo'].replace({'Hombre': 1.0, 'Mujer': 0.0})
         #df_combied_2 = df_combined.copy()
         # Modificar la función para calcular el Índice de Masa Muscular Esquelética (IMME)
