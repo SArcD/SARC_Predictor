@@ -848,6 +848,44 @@ try:
 
         st.dataframe(df_resultados)
 
+#import matplotlib.pyplot as plt
+
+        # Verifica que y_pred_formula_2 esté definido
+        if 'y_pred_formula_2' in locals():
+            # Crear un DataFrame con ambas predicciones para compararlas
+            df_comparacion_predicciones = pd.DataFrame({
+                'Predicción Fórmula': y_pred_formula_2,
+                'Predicción Árbol': tree_model.predict(X_2)
+            })
+
+            # Crear la gráfica de comparación de predicciones
+            fig, ax = plt.subplots(figsize=(8,6))
+            ax.scatter(df_comparacion_predicciones['Predicción Fórmula'], df_comparacion_predicciones['Predicción Árbol'], color='purple')
+
+            # Línea y = x
+            min_val = df_comparacion_predicciones.min().min()
+            max_val = df_comparacion_predicciones.max().max()
+            ax.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--', label='y = x')
+
+            # Líneas de error
+            for i in range(len(df_comparacion_predicciones)):
+                x_val = df_comparacion_predicciones['Predicción Fórmula'].iloc[i]
+                y_val = df_comparacion_predicciones['Predicción Árbol'].iloc[i]
+                ax.plot([x_val, x_val], [x_val, y_val], color='gray', alpha=0.5)
+
+            # Títulos y etiquetas
+            ax.set_title('Comparación de Predicciones: Fórmula vs Árbol de Decisión', fontsize=14)
+            ax.set_xlabel('Predicción Fórmula (Regresión Múltiple)', fontsize=12)
+            ax.set_ylabel('Predicción Árbol de Decisión', fontsize=12)
+            ax.legend()
+
+            # Mostrar en Streamlit
+            st.pyplot(fig)
+        else:
+            st.warning("⚠️ No se encontraron las predicciones de la fórmula (y_pred_formula_2). Asegúrate de definirlas.")
+
+
+
 
 
 except Exception as e:
