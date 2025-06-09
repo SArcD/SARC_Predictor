@@ -854,49 +854,49 @@ try:
         import numpy as np
 
 
-        # Simulación de predicciones del árbol (estos valores normalmente se obtienen de un modelo entrenado)
-        y_pred_arbol_global = df_combined['IMME']
-        y_pred_arbol_seleccion = df_combined['IMME']
+        # Reentrenar los dos modelos si es necesario    
+        X_global = df_combined_2[list(mejor_combinacion)]        
+        y_global = df_combined_2['IMME']
+        modelo_global = DecisionTreeRegressor(random_state=42).fit(X_global, y_global)
+        y_pred_global = modelo_global.predict(X_global)
 
-        # Crear un DataFrame para las predicciones
-        df_comparacion_predicciones_global = pd.DataFrame({
-            'Predicción Fórmula': df_combined['IMME'],
-            'Predicción Árbol': y_pred_arbol_global
+        X_n = df_combined_2[list(mejor_combinacion_n)]
+        modelo_n = DecisionTreeRegressor(random_state=42).fit(X_n, y_global)
+        y_pred_n = modelo_n.predict(X_n)
+
+        # Crear los dos DataFrames comparativos
+        df_comparacion_global = pd.DataFrame({
+            'Predicción Fórmula (IMME)': df_combined_2['IMME'],
+            'Predicción Árbol (Global)': y_pred_global
         })
 
-        df_comparacion_predicciones_seleccion = pd.DataFrame({
-            'Predicción Fórmula': df_combined['IMME'],
-            'Predicción Árbol': y_pred_arbol_seleccion
+        df_comparacion_n = pd.DataFrame({
+            'Predicción Fórmula (IMME)': df_combined_2['IMME'],
+            'Predicción Árbol (n vars)': y_pred_n
         })
 
-        # Crear las dos gráficas lado a lado
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6), dpi=100)
+        # Gráficas lado a lado
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
-        # Gráfica 1: Mejor modelo global
-        axes[0].scatter(df_comparacion_predicciones_global['Predicción Fórmula'],
-                        df_comparacion_predicciones_global['Predicción Árbol'], color='purple')
-        axes[0].plot([df_comparacion_predicciones_global.min().min(), df_comparacion_predicciones_global.max().max()],
-                     [df_comparacion_predicciones_global.min().min(), df_comparacion_predicciones_global.max().max()],
-                     color='red', linestyle='--', label='y=x')
-        axes[0].set_title('Mejor Modelo Global')
-        axes[0].set_xlabel('Predicción Fórmula (Regresión Múltiple)')
-        axes[0].set_ylabel('Predicción Árbol de Decisión')
-        axes[0].legend()
+        for i, (df_cmp, title) in enumerate([
+            (df_comparacion_global, '🌳 Mejor Modelo Global'),
+            (df_comparacion_n, f'📉 Mejor Modelo con {selected_n} variables')
+        ]):
+            axes[i].scatter(df_cmp['Predicción Fórmula (IMME)'], df_cmp.iloc[:, 1], color='teal')
+            axes[i].plot([df_cmp.min().min(), df_cmp.max().max()],
+                 [df_cmp.min().min(), df_cmp.max().max()],
+                 color='red', linestyle='--', label='y = x')
+            axes[i].set_title(title)
+            axes[i].set_xlabel('IMME por Fórmula')
+            axes[i].set_ylabel('IMME por Árbol')
+            axes[i].legend()
 
-        # Gráfica 2: Mejor modelo con n variables seleccionadas
-        axes[1].scatter(df_comparacion_predicciones_seleccion['Predicción Fórmula'],
-                        df_comparacion_predicciones_seleccion['Predicción Árbol'], color='green')
-        axes[1].plot([df_comparacion_predicciones_seleccion.min().min(), df_comparacion_predicciones_seleccion.max().max()],
-                     [df_comparacion_predicciones_seleccion.min().min(), df_comparacion_predicciones_seleccion.max().max()],
-                     color='red', linestyle='--', label='y=x')
-        axes[1].set_title('Mejor Modelo con n Variables')
-        axes[1].set_xlabel('Predicción Fórmula (Regresión Múltiple)')
-        axes[1].set_ylabel('Predicción Árbol de Decisión')
-        axes[1].legend()
+        st.pyplot(fig)
 
-        plt.tight_layout()
-        plt.show()
 
+        
+
+        
 
 
 except Exception as e:
