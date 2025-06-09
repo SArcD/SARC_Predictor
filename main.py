@@ -966,12 +966,14 @@ try:
             if modelo_seleccionado == "Mejor combinación global":
                 modelo = st.session_state.modelo_global
                 variables_input = list(st.session_state.mejor_combinacion)
+
             elif modelo_seleccionado.startswith("Mejor combinación con"):
                 modelo = st.session_state.modelo_n
                 variables_input = list(st.session_state.mejor_combinacion_n)
+
             else:
                 # Elección manual con multiselect
-                variables_disponibles = variables  # ya definido anteriormente
+                variables_disponibles = variables  # debe estar definido antes
                 seleccion_manual = st.multiselect(
                     f"Selecciona exactamente {selected_n} variables:",
                     options=variables_disponibles,
@@ -982,7 +984,7 @@ try:
                     st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
                 else:
                     variables_input = seleccion_manual
-                    # Entrenar modelo solo si aún no está en session_state
+                    # Entrenar modelo si es nuevo
                     if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
                         X_manual = df_combined[seleccion_manual]
                         y_manual = df_combined['IMME']
@@ -992,7 +994,7 @@ try:
                         st.session_state.variables_manual = seleccion_manual
                     modelo = st.session_state.modelo_manual
 
-
+            # Diccionario de nombres amigables
             nombres_amigables = {
                 'P117': 'Peso (kg)',
                 'P118': 'Estatura (cm)',
@@ -1009,23 +1011,24 @@ try:
                 'P129': 'Pliegue pectoral',
                 'IMC': 'Índice de Masa Corporal',
                 'P113': 'Fuerza de prensión',
-                'P112_vel': 'Velocidad de marcha'
-            }.get(var, var)
+                'P112_vel': 'Velocidad de marcha',
+                'sexo': 'Sexo (Mujer/Hombre)'
+            }
 
-            
             # Formulario para ingresar valores
-            st.markdown(f"Introduce los valores para las siguientes variables:")
-
+            st.markdown("### ✍️ Introduce los valores para las siguientes variables:")
             input_values = {}
+
             for var in variables_input:
                 unique_key = f"input_{var}_{modelo_seleccionado.replace(' ', '_')}"
-    
+
                 if var == 'sexo':
                     sexo_valor = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
                     input_values[var] = 1.0 if sexo_valor == "Hombre" else 0.0
                 else:
+                    label = nombres_amigables.get(var, var)
                     input_values[var] = st.number_input(
-                        label=nombres_amigables.get(var, var),
+                        label=label,
                         key=unique_key,
                         value=0.0
                     )
@@ -1035,8 +1038,6 @@ try:
                 input_df = pd.DataFrame([input_values])
                 pred = modelo.predict(input_df)[0]
                 st.success(f"🧠 IMME estimado: **{pred:.2f}**")
-
-
 
         
         else:
