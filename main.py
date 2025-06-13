@@ -1423,6 +1423,41 @@ try:
                 # Mostrar el gráfico en Streamlit
                 st.plotly_chart(fig)
 
+######################
+
+            import pandas as pd
+            import matplotlib.pyplot as plt
+
+            # Calcular el percentil 60 global de 'Fuerza' en todo df_combined_hombres
+            percentile_40_IMME = df_combined_2['IMME'].quantile(0.40)
+
+            # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
+            df_filtered_2 = pd.DataFrame()
+            percentages_deleted = {}
+
+            for cluster in df_filtered['Cluster'].unique():
+                # Filtrar el DataFrame por cada cluster
+                cluster_data = df_filtered[df_filtered['Cluster'] == cluster]
+                # Mantener solo las filas con 'Fuerza' menor o igual al percentil 60 global
+                filtered_cluster_data = cluster_data[cluster_data['IMME'] <= percentile_40_IMME]
+                # Agregar las filas filtradas al nuevo DataFrame
+                df_filtered_2 = pd.concat([df_filtered_2, filtered_cluster_data])
+                # Calcular el porcentaje de filas eliminadas en cada cluster
+                percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
+                percentages_deleted[cluster] = percentage_deleted
+
+            # Convertir los porcentajes a un DataFrame para visualizar
+            percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
+
+            # Mostrar el DataFrame con los datos filtrados
+
+            # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por cluster    
+            plt.figure(figsize=(10, 6))
+            plt.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
+            plt.xlabel('Cluster')
+            plt.ylabel('Porcentaje de Filas Eliminadas')
+            plt.title('Porcentaje de Filas Eliminadas por Cluster (IMME > Quintil 40% Global)')
+            plt.show()
 
 
 
