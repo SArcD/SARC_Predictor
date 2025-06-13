@@ -1039,13 +1039,16 @@ try:
                 pred = modelo.predict(input_df)[0]
                 st.success(f"🧠 IMME estimado: **{pred:.2f}**")
 
+
+    
         
         else:
                 st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
 
         
-
+    with st.expander("Agrupación por clusters"):
+        df_combined
         
 
 
