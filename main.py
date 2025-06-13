@@ -1143,6 +1143,61 @@ try:
             ax.set_title('Silhouette Score para Agglomerative Clustering')
             st.pyplot(fig)
 
+            import streamlit as st
+            import pandas as pd    
+            import numpy as np
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.cluster import AgglomerativeClustering
+
+            # Suponiendo que df_combined_2 ya está disponible como DataFrame
+            # df_combined_2 = pd.read_csv('path_to_your_data.csv')
+
+            # Título de la aplicación
+            st.title('Clustering Jerárquico Aglomerativo')
+
+            # Opción de filtro por sexo
+            sexo = st.radio("Selecciona el sexo para el análisis", ('Hombres', 'Mujeres'))
+
+            # Filtrar el DataFrame según el sexo seleccionado (0 para mujeres, 1 para hombres)
+            if sexo == 'Mujeres':
+                df_filtered = df_combined_2[df_combined_2['sexo'] == 0]
+            else:
+                df_filtered = df_combined_2[df_combined_2['sexo'] == 1]
+
+            # Mostrar un resumen de los datos filtrados
+            st.write(f"Mostrando datos para: {sexo}")
+            st.write(df_filtered.head())
+
+            # Selección de las columnas para el análisis
+            selected_columns = ['P113']  # Cambia según las columnas que necesites
+            numeric_data_2 = df_filtered[selected_columns]
+
+            # Eliminar valores no numéricos y valores faltantes
+            numeric_data_2 = numeric_data_2.dropna()
+
+            # Normalizar los datos
+            scaler = StandardScaler()
+            normalized_data_2 = scaler.fit_transform(numeric_data_2)
+
+            # Entrada del número de clusters (por defecto 4)
+            num_clusters = st.number_input("Número de clusters:", min_value=2, max_value=10, value=4)
+
+            # Aplicar Agglomerative Clustering con el número de clusters especificado        
+            clustering = AgglomerativeClustering(n_clusters=num_clusters, linkage='ward')
+            labels_2019 = clustering.fit_predict(normalized_data_2)
+
+            # Agregar las etiquetas de clúster al DataFrame original
+            df_filtered['Cluster'] = labels_2019
+
+            # Mostrar el DataFrame con las etiquetas de los clústeres
+            st.write("Datos con Clustering aplicado:")
+            st.write(df_filtered)
+
+            # Opcional: Mostrar la cantidad de elementos en cada clúster
+            st.write("Cantidad de elementos por clúster:")
+            st.write(df_filtered['Cluster'].value_counts())
+
+
 
 
 except Exception as e:
