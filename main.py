@@ -1199,7 +1199,7 @@ try:
 
 
             # Renombrar las columnas como se mencionó
-            df_combined_2 = df_combined_2.rename(columns={
+            df_filtered = df_filtered.rename(columns={
                 'P112_vel': 'Marcha',
                 'P113': 'Fuerza',
                 'P125': 'P. Tricipital',
