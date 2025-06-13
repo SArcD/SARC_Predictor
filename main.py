@@ -1271,6 +1271,52 @@ try:
                 st.plotly_chart(fig)  # Usamos st.plotly_chart para integrar el gráfico en Streamlit
 
 
+            import streamlit as st
+            import pandas as pd
+            import matplotlib.pyplot as plt
+
+            # Calcular el percentil 40 global de 'Fuerza' en todo df_filtered
+            percentile_40_fuerza = df_filtered['Fuerza'].quantile(0.40)
+
+            # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
+            df_filtered_result = pd.DataFrame()
+            percentages_deleted = {}
+
+            # Iterar sobre cada clúster y aplicar el filtro
+            for cluster in df_filtered['Cluster'].unique():
+                # Filtrar el DataFrame por cada cluster
+                cluster_data = df_filtered[df_filtered['Cluster'] == cluster]
+                # Mantener solo las filas con 'Fuerza' menor o igual al percentil 40 global
+                filtered_cluster_data = cluster_data[cluster_data['Fuerza'] <= percentile_40_fuerza]
+                # Agregar las filas filtradas al nuevo DataFrame
+                df_filtered_result = pd.concat([df_filtered_result, filtered_cluster_data])
+                # Calcular el porcentaje de filas eliminadas en cada cluster
+                percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
+                percentages_deleted[cluster] = percentage_deleted
+
+            # Convertir los porcentajes a un DataFrame para visualizar
+            percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
+
+            # Mostrar el DataFrame con los datos filtrados en Streamlit
+            st.write("Datos filtrados según el percentil 40 de 'Fuerza':")
+            st.write(df_filtered_result)
+
+            # Mostrar el porcentaje de filas eliminadas por clúster    
+            st.write("Porcentaje de filas eliminadas por clúster:")
+            st.write(percentages_df)
+
+            # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por clúster
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
+            ax.set_xlabel('Cluster')
+            ax.set_ylabel('Porcentaje de Filas Eliminadas')
+            ax.set_title('Porcentaje de Filas Eliminadas por Cluster (Fuerza <= Percentil 40%)')
+
+            # Mostrar el gráfico en Streamlit
+            st.pyplot(fig)
+
+
+
 
 except Exception as e:
     st.error(f"Ocurrió un error al intentar cargar el archivo: {e}")
