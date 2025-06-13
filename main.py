@@ -1222,18 +1222,18 @@ try:
             ]
 
             # Filtrar el DataFrame para incluir solo las columnas seleccionadas
-            numeric_columns = df_combined_2[selected_columns_renamed]
+            numeric_columns = df_filtered[selected_columns_renamed]
 
             # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
             for column in numeric_columns.columns:
                 # Obtener los datos de cada cluster para el parámetro actual
-                cluster_data = [df_combined_2[df_combined_2['Cluster'] == cluster][column] for cluster in range(8)]
+                cluster_data = [df_filtered[df_filtered['Cluster'] == cluster][column] for cluster in range(8)]
 
                 # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
-                quintile_1 = df_combined_2[column].quantile(0.20)
-                quintile_2 = df_combined_2[column].quantile(0.40)
-                quintile_3 = df_combined_2[column].quantile(0.60)
-                quintile_4 = df_combined_2[column].quantile(0.80)
+                quintile_1 = df_filtered[column].quantile(0.20)
+                quintile_2 = df_filtered[column].quantile(0.40)
+                quintile_3 = df_filtered[column].quantile(0.60)
+                quintile_4 = df_filtered[column].quantile(0.80)
 
                 # Crear una nueva figura para el gráfico de caja
                 fig = go.Figure()
