@@ -1316,6 +1316,55 @@ try:
             st.pyplot(fig)
 
 
+############################
+
+            import streamlit as st
+            import pandas as pd
+            import numpy as np
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.cluster import AgglomerativeClustering
+
+# Supongamos que df_filtered ya está disponible como DataFrame
+# df_filtered = pd.read_csv('path_to_your_data.csv')
+
+
+            # Selección de columnas para el análisis
+            selected_columns = st.multiselect(
+                'Selecciona las columnas para el análisis de clustering',
+                options=df_filtered.columns,
+                default=['IMME']  # Esta es la columna por defecto
+            )
+
+            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
+            numeric_data_2 = df_filtered[selected_columns]
+
+            # Eliminar valores no numéricos y valores faltantes
+            numeric_data_2 = numeric_data_2.dropna()
+
+            # Normalizar los datos
+            scaler = StandardScaler()
+            normalized_data_2 = scaler.fit_transform(numeric_data_2)
+
+            # Número de clusters, con valor por defecto 4
+            num_clusters = st.number_input("Número de clusters:", min_value=2, max_value=10, value=4)
+
+            # Aplicar Agglomerative Clustering
+            clustering = AgglomerativeClustering(n_clusters=num_clusters, linkage='ward')
+            labels_2019 = clustering.fit_predict(normalized_data_2)
+
+            # Agregar las etiquetas al DataFrame original filtrado
+            df_filtered['Cluster'] = labels_2019
+
+            # Mostrar el DataFrame con los resultados del clustering
+            st.write("Datos con las etiquetas de clúster agregadas:")    
+            st.write(df_filtered.head())
+
+            # Opcional: Mostrar la cantidad de elementos por clúster
+            st.write("Cantidad de elementos por clúster:")
+            st.write(df_filtered['Cluster'].value_counts())
+
+
+
 
 
 except Exception as e:
