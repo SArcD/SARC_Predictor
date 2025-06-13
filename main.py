@@ -1198,6 +1198,78 @@ try:
             st.write(df_filtered['Cluster'].value_counts())
 
 
+            # Renombrar las columnas como se mencionó
+            df_combined_2 = df_combined_2.rename(columns={
+                'P112_vel': 'Marcha',
+                'P113': 'Fuerza',
+                'P125': 'P. Tricipital',
+                'P128': 'P. Pantorrilla',
+                'IMC': 'IMC',
+                'P127': 'Biceps',
+                'P126': 'P. subescapular',
+                'P121': 'Cintura',
+                'P123': 'Muslo',
+                'P120': 'Brazo',
+                'P122': 'Cadera',
+                'P124': 'Pantorrilla',
+                'P117': 'Peso'
+            })
+
+            # Seleccionar las columnas específicas con los nuevos nombres
+            selected_columns_renamed = [
+                'Marcha', 'Fuerza', 'P. Tricipital', 'P. Pantorrilla',
+                'IMC', 'Biceps', 'P. subescapular', 'Cintura', 'Muslo', 'Brazo', 'Cadera', 'Pantorrilla', 'Peso', 'IMME'
+            ]
+
+            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
+            numeric_columns = df_combined_2[selected_columns_renamed]
+
+            # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
+            for column in numeric_columns.columns:
+                # Obtener los datos de cada cluster para el parámetro actual
+                cluster_data = [df_combined_2[df_combined_2['Cluster'] == cluster][column] for cluster in range(8)]
+
+                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
+                quintile_1 = df_combined_2[column].quantile(0.20)
+                quintile_2 = df_combined_2[column].quantile(0.40)
+                quintile_3 = df_combined_2[column].quantile(0.60)
+                quintile_4 = df_combined_2[column].quantile(0.80)
+
+                # Crear una nueva figura para el gráfico de caja
+                fig = go.Figure()
+
+                # Agregar el gráfico de caja para cada cluster
+                for j in range(8):  # Cambié de 6 a 8, ya que usas hasta 8 clusters
+                    fig.add_trace(go.Box(y=cluster_data[j], boxpoints='all', notched=True, name=f'Cluster {j}'))
+
+                # Agregar líneas horizontales para los quintiles
+                fig.add_shape(type="line",
+                  x0=0, x1=1, y0=quintile_1, y1=quintile_1,
+                  line=dict(color="blue", width=2, dash="dash"),
+                  xref="paper", yref="y")  # Línea del primer quintil (Q1 = 20%)
+
+                fig.add_shape(type="line",
+                  x0=0, x1=1, y0=quintile_2, y1=quintile_2,
+                  line=dict(color="green", width=2, dash="dash"),
+                  xref="paper", yref="y")  # Línea del segundo quintil (Q2 = 40%)
+
+                fig.add_shape(type="line",
+                  x0=0, x1=1, y0=quintile_3, y1=quintile_3,
+                  line=dict(color="orange", width=2, dash="dash"),
+                  xref="paper", yref="y")  # Línea de la mediana (Q3 = 60%)
+
+                fig.add_shape(type="line",
+                  x0=0, x1=1, y0=quintile_4, y1=quintile_4,
+                  line=dict(color="red", width=2, dash="dash"),
+                  xref="paper", yref="y")  # Línea del cuarto quintil (Q4 = 80%)
+
+                # Actualizar el diseño y mostrar cada gráfico de caja individual
+                fig.update_layout(title_text=f'Comparación de Clusters - {column}',
+                      xaxis_title="Clusters",
+                      yaxis_title=column,
+                      showlegend=False)
+                st.plotly_chart(fig)  # Usamos st.plotly_chart para integrar el gráfico en Streamlit
+
 
 
 except Exception as e:
