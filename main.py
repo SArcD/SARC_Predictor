@@ -1046,10 +1046,86 @@ try:
                 st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
 
-        
+
     with st.expander("Agrupación por clusters"):
         df_combined
-        
+
+        import matplotlib.pyplot as plt
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.decomposition import PCA
+        from sklearn.cluster import AgglomerativeClustering
+        from scipy.spatial.distance import pdist, squareform
+        from sklearn.metrics import silhouette_score
+
+
+        # Selección del sexo
+        sexo = st.radio("Selecciona el sexo para el análisis", (0, 1), format_func=lambda x: 'Mujeres' if x == 0 else 'Hombres')
+
+        # Filtrar los datos según el sexo seleccionado
+        df_filtered = df_combined_2[df_combined_2['sexo'] == sexo]
+
+        # Mostrar algunos datos filtrados para validación
+        st.write(f"Mostrando datos para: {'Mujeres' if sexo == 0 else 'Hombres'}")
+        st.write(df_filtered.head())
+
+        # Verificar si hay datos después del filtro
+        if df_filtered.empty:
+            st.error('No hay datos disponibles para este sexo. Intenta con otro.')
+        else:
+            # Seleccionar las columnas y normalizar los datos
+            selected_columns = ['P113']  # Aquí puedes seleccionar las columnas que necesitas
+            numeric_data_2 = df_filtered[selected_columns].dropna()
+    
+            # Normalización de los datos
+            scaler = StandardScaler()
+            normalized_data_2 = scaler.fit_transform(numeric_data_2)
+
+            # Aplicar PCA para reducir la dimensionalidad
+            pca = PCA(n_components=1)
+            pca_data = pca.fit_transform(normalized_data_2)
+
+            # Calcular la matriz de distancias
+            distance_matrix = squareform(pdist(pca_data))
+
+            # Aplicar Agglomerative Clustering
+            avg_distances = []
+            silhouettes = []
+            K = range(2, 15)
+    
+            for k in K:
+                clustering = AgglomerativeClustering(n_clusters=k, linkage='ward')
+                labels = clustering.fit_predict(pca_data)
+
+                # Calcular la distancia intra-cluster
+                intra_cluster_distances = []
+                for cluster in range(k):
+                    cluster_points = distance_matrix[np.ix_(labels == cluster, labels == cluster)]
+                    intra_cluster_distances.append(np.mean(cluster_points))
+
+                avg_distances.append(np.mean(intra_cluster_distances))
+
+                # Calcular el Silhouette Score
+                silhouette_avg = silhouette_score(pca_data, labels)
+                silhouettes.append(silhouette_avg)
+
+            # Graficar el método del codo
+            st.subheader('Método del Codo')
+            plt.figure(figsize=(8, 6))
+            plt.plot(K, avg_distances, 'bo-')
+            plt.xlabel('Número de clusters (k)')
+            plt.ylabel('Distancia intra-cluster promedio')
+            plt.title('Método del codo para Agglomerative Clustering')
+            st.pyplot()
+
+            # Graficar el Silhouette Score
+            st.subheader('Silhouette Score')
+            plt.figure(figsize=(8, 6))
+            plt.plot(K, silhouettes, 'go-')
+            plt.xlabel('Número de clusters (k)')
+            plt.ylabel('Silhouette Score')
+            plt.title('Silhouette Score para Agglomerative Clustering')
+            st.pyplot()
+
 
 
 except Exception as e:
