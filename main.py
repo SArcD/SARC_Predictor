@@ -1109,22 +1109,39 @@ try:
                 silhouettes.append(silhouette_avg)
 
             # Graficar el método del codo
+            #st.subheader('Método del Codo')
+            #plt.figure(figsize=(8, 6))
+            #plt.plot(K, avg_distances, 'bo-')
+            #plt.xlabel('Número de clusters (k)')
+            #plt.ylabel('Distancia intra-cluster promedio')
+            #plt.title('Método del codo para Agglomerative Clustering')
+            #st.pyplot()
+            # Graficar el método del codo
             st.subheader('Método del Codo')
-            plt.figure(figsize=(8, 6))
-            plt.plot(K, avg_distances, 'bo-')
-            plt.xlabel('Número de clusters (k)')
-            plt.ylabel('Distancia intra-cluster promedio')
-            plt.title('Método del codo para Agglomerative Clustering')
-            st.pyplot()
+            fig, ax = plt.subplots(figsize=(8, 6))
+            ax.plot(K, avg_distances, 'bo-')
+            ax.set_xlabel('Número de clusters (k)')
+            ax.set_ylabel('Distancia intra-cluster promedio')
+            ax.set_title('Método del codo para Agglomerative Clustering')
+            st.pyplot(fig)
+
 
             # Graficar el Silhouette Score
+            #st.subheader('Silhouette Score')
+            #plt.figure(figsize=(8, 6))
+            #plt.plot(K, silhouettes, 'go-')
+            #plt.xlabel('Número de clusters (k)')
+            #plt.ylabel('Silhouette Score')
+            #plt.title('Silhouette Score para Agglomerative Clustering')
+            #st.pyplot()
+            # Graficar el Silhouette Score
             st.subheader('Silhouette Score')
-            plt.figure(figsize=(8, 6))
-            plt.plot(K, silhouettes, 'go-')
-            plt.xlabel('Número de clusters (k)')
-            plt.ylabel('Silhouette Score')
-            plt.title('Silhouette Score para Agglomerative Clustering')
-            st.pyplot()
+            fig, ax = plt.subplots(figsize=(8, 6))
+            ax.plot(K, silhouettes, 'go-')
+            ax.set_xlabel('Número de clusters (k)')
+            ax.set_ylabel('Silhouette Score')
+            ax.set_title('Silhouette Score para Agglomerative Clustering')
+            st.pyplot(fig)
 
 
 
