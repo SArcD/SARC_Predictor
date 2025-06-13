@@ -1060,7 +1060,7 @@ try:
 
         # Selección del sexo
         sexo = st.radio("Selecciona el sexo para el análisis", (0, 1), format_func=lambda x: 'Mujeres' if x == 0 else 'Hombres')
-
+        df_combined_2 = df_combined
         # Filtrar los datos según el sexo seleccionado
         df_filtered = df_combined_2[df_combined_2['sexo'] == sexo]
 
