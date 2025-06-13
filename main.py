@@ -1346,7 +1346,7 @@ try:
             normalized_data_2 = scaler.fit_transform(numeric_data_2)
 
             # Número de clusters, con valor por defecto 4
-            num_clusters = st.number_input("Número de clusters:", min_value=2, max_value=10, value=4)
+            num_clusters = st.number_input("Núm de clusters:", min_value=2, max_value=10, value=4)
 
             # Aplicar Agglomerative Clustering
             clustering = AgglomerativeClustering(n_clusters=num_clusters, linkage='ward')
