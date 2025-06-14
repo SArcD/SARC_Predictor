@@ -1054,13 +1054,10 @@ try:
         from sklearn.preprocessing import StandardScaler
         from sklearn.cluster import AgglomerativeClustering
 
-# Simulación de carga: remplaza esto con tu propio DataFrame
-# df_combined_2 = pd.read_csv('tu_archivo.csv')
-
         
         # Selección de sexo
         sexo = st.radio("Selecciona el sexo para el análisis", ('Hombres', 'Mujeres'))
-        df_filtered = df_combined_2[df_combined_2['sexo'] == (0 if sexo == 'Mujeres' else 1)]
+        df_filtered = df_filtered[df_filtered['sexo'] == (0 if sexo == 'Mujeres' else 1)]
 
         # Selección del número de cluster    s        
         num_clusters = st.number_input("Número de clústeres", min_value=2, max_value=10, value=4)
