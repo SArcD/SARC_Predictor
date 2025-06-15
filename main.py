@@ -1128,17 +1128,6 @@ try:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
-# Simulación de DataFrame completo y df_resultado clasificado
-# En la práctica, df_combined_2 y df_resultado vendrían del flujo Streamlit
-#df_combined_2_sim = pd.DataFrame({'sexo': [1]*100})  # 100 hombres
-#df_resultado_sim = pd.DataFrame({
-#    'Clasificación Sarcopenia': (
-#        ['Sarcopenia Sospechosa'] * 40 +
-#        ['Sarcopenia Probable'] * 25 +
-#        ['Sarcopenia Grave'] * 10
-#   )
-#})
-
         # Filtrar total por sexo (1 = hombres, 0 = mujeres)
         #sexo_elegido = 1  # Simular que el usuario eligió hombres
         df_total_sexo = df_combined[df_combined['sexo'] == sexo]
@@ -1152,38 +1141,39 @@ try:
         saludables = total_pacientes - sospechosa
     
         # Crear figura
+        # === Crear gráfico con matplotlib ===
         fig, ax = plt.subplots(figsize=(8, 8))
 
-        # Dibujar círculos manualmente para representar los conjuntos
+        # Círculos concéntricos jerárquicos
         circle_salud = patches.Circle((0.5, 0.5), 0.45, color='green', alpha=0.2)
         circle_sospecha = patches.Circle((0.5, 0.5), 0.35, color='yellow', alpha=0.3)
         circle_probable = patches.Circle((0.5, 0.5), 0.25, color='orange', alpha=0.4)
         circle_grave = patches.Circle((0.5, 0.5), 0.15, color='red', alpha=0.5)
 
-        # Añadir círculos a la gráfica
-        ax.add_patch(circle_salud)
-        ax.add_patch(circle_sospecha)
-        ax.add_patch(circle_probable)
-        ax.add_patch(circle_grave)
+        # Agregar círculos
+        for circle in [circle_salud, circle_sospecha, circle_probable, circle_grave]:
+            ax.add_patch(circle)
 
-        # Añadir etiquetas con cantidades
-        ax.text(0.5, 0.91, f'Saludables: {saludables} ({saludables/total_pacientes:.0%})', 
+        # Etiquetas con valores y porcentajes
+        ax.text(0.5, 0.91, f'Saludables: {saludables} ({saludables/total_pacientes:.0%})',
         ha='center', fontsize=12, color='green')
-        ax.text(0.5, 0.77, f'Sospechosa: {sospechosa} ({sospechosa/total_pacientes:.0%})', 
+        ax.text(0.5, 0.77, f'Sospechosa: {sospechosa} ({sospechosa/total_pacientes:.0%})',
         ha='center', fontsize=12, color='goldenrod')
-        ax.text(0.5, 0.63, f'Probable: {probable} ({probable/total_pacientes:.0%})', 
+        ax.text(0.5, 0.63, f'Probable: {probable} ({probable/total_pacientes:.0%})',
         ha='center', fontsize=12, color='darkorange')
-        ax.text(0.5, 0.50, f'Grave: {grave} ({grave/total_pacientes:.0%})', 
+        ax.text(0.5, 0.50, f'Grave: {grave} ({grave/total_pacientes:.0%})',
         ha='center', fontsize=12, color='darkred')
 
-        # Configuraciones del gráfico
+        # Estética del gráfico
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
         ax.set_aspect('equal')
         ax.axis('off')
         plt.title("Clasificación Jerárquica de Sarcopenia", fontsize=14)
 
-        plt.show()
+        # === Mostrar en Streamlit ===
+        st.subheader("Visualización Jerárquica de Sarcopenia")
+        st.pyplot(fig)
 
 
 
