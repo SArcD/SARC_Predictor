@@ -104,7 +104,7 @@ try:
         # --- Graficar
         if 'fig_comorbilidades' not in st.session_state:
 
-            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 6), gridspec_kw={'height_ratios': [3, 1]}, dpi=100)
+            fig_1, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 6), gridspec_kw={'height_ratios': [3, 1]}, dpi=100)
 
             color_map = plt.cm.tab20(np.linspace(0, 1, 20))
             colors_main = color_map[:len(final_labels)]
@@ -140,7 +140,7 @@ try:
             ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=7, frameon=False)
 
             plt.tight_layout()
-            st.session_state.fig_comorbilidades = fig
+            st.session_state.fig_comorbilidades = fig_1
         # Mostrar en Streamlit
         st.pyplot(fig)
 #------------------------------Comparación por sexo
