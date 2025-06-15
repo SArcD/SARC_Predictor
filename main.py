@@ -777,7 +777,6 @@ try:
             st.subheader("🔗 Red de correlación")
         st.pyplot(st.session_state.fig_red_correlacion)
 
-        #df_combined
         # Calcular estatura en cm a partir de peso (P117) e IMC
         df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
     
@@ -1135,6 +1134,16 @@ try:
         else:
             df_marcha = pd.DataFrame()
 
+        # 7) Mostrar resumen de eliminación
+        resumen = pd.DataFrame({
+            'Etapa': ['Fuerza', 'IMME', 'Marcha'],
+            'Eliminados': [len(df_elim1), len(df_elim2), len(df_elim3)],
+            '% Eliminados': [pct_elim1, pct_elim2, pct_elim3]
+        })
+        st.subheader("Resumen de cribado por etapas")
+        st.dataframe(resumen.style.format({'% Eliminados':'{:.1f}%'}))
+
+        
         # Combinar resultados
         df_resultado = pd.concat([
             df_fuerza[~df_fuerza.index.isin(df_imme.index)][['Fuerza', 'IMME', 'Marcha', 'Clasificación Sarcopenia']],
