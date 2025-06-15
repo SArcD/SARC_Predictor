@@ -1132,7 +1132,7 @@ try:
         #sexo_elegido = 1  # Simular que el usuario eligió hombres
         df_total_sexo = df_combined[df_combined['sexo'] == sexo]
         total_pacientes = len(df_total_sexo)
-
+        total_pacientes
         # Contar pacientes por clasificación
         conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
         sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
