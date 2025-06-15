@@ -1057,7 +1057,7 @@ try:
         
         # Selección de sexo
         sexo = st.radio("Selecciona el sexo para el análisis", ('Hombres', 'Mujeres'))
-        df_filtered = df_filtered[df_filtered['sexo'] == (0 if sexo == 'Mujeres' else 1)]
+        df_filtered = df_combined[df_combined['sexo'] == (0 if sexo == 'Mujeres' else 1)]
 
         # Selección del número de cluster    s        
         num_clusters = st.number_input("Número de clústeres", min_value=2, max_value=10, value=4)
