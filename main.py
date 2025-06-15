@@ -1125,6 +1125,51 @@ try:
 
 
 
+        import pandas as pd
+        from matplotlib_venn import venn3
+        import matplotlib.pyplot as plt
+
+
+        # Contar cuántos pacientes hay en cada categoría
+        n_sospechosa = df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Sospechosa', 'Sarcopenia Probable', 'Sarcopenia Grave']).sum()
+        n_probable = df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Probable', 'Sarcopenia Grave']).sum()
+        n_grave = df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Grave']).sum()
+        n_saludables = total_pacientes - n_sospechosa
+
+        # Preparar subconjuntos para diagrama de Venn
+        only_sospechosa = n_sospechosa - n_probable
+        only_probable = n_probable - n_grave
+        only_grave = n_grave
+
+        # Crear figura
+        fig, ax = plt.subplots(figsize=(8, 6))
+        v = venn3(subsets=(only_sospechosa, only_probable, 0,
+                   0, 0, 0, only_grave), 
+          set_labels=('Sospechosa', 'Probable', 'Grave'))
+
+        # Aplicar colores si el patch existe
+        color_map = {
+            '100': '#FFFF00',  # amarillo
+            '010': '#FFA500',  # naranja
+            '001': '#FF0000',  # rojo
+            '111': '#FF0000',  # grave también aquí
+        }
+        for k, color in color_map.items():
+            patch = v.get_patch_by_id(k)
+            if patch:
+                patch.set_color(color)
+
+        # Anotar los saludables fuera del diagrama
+        plt.text(0.90, 0.90, f'Saludables: {n_saludables}', 
+                 bbox=dict(facecolor='#90EE90', alpha=0.5), fontsize=12)
+
+        plt.title("Clasificación de Sarcopenia (Diagrama de Venn)")
+        plt.tight_layout()
+        plt.show()
+
+
+
+
 
 
 
