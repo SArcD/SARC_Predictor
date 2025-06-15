@@ -1120,19 +1120,29 @@ try:
             return df_filtrado, df_eliminado
 
         # Paso 1: Clustering por Fuerza
-        df_fuerza, _ = aplicar_clustering(df_filtered, 'Fuerza', 0.40, 'Sarcopenia Sospechosa')
+        #df_fuerza, _ = aplicar_clustering(df_filtered, 'Fuerza', 0.40, 'Sarcopenia Sospechosa')
+        df_fuerza, df_elim1 = aplicar_clustering(df_filtered, 'Fuerza', 0.40, 'Sarcopenia Sospechosa')
+        pct_elim1 = 100 * len(df_elim1) / len(df_filtered)
 
         # Paso 2: Clustering por IMME
         if not df_fuerza.empty:
-            df_imme, _ = aplicar_clustering(df_fuerza, 'IMME', 0.40, 'Sarcopenia Probable')
+            #df_imme, _ = aplicar_clustering(df_fuerza, 'IMME', 0.40, 'Sarcopenia Probable')
+            df_imme, df_elim2 = aplicar_clustering(df_fuerza, 'IMME', 0.40, 'Sarcopenia Probable')
+            pct_elim2 = 100 * len(df_elim2) / len(df_fuerza)
         else:
-            df_imme = pd.DataFrame()
+            #df_imme = pd.DataFrame()
+            df_imme, df_elim2, pct_elim2 = pd.DataFrame(), pd.DataFrame(), 0
+
 
         # Paso 3: Clustering por Marcha
         if not df_imme.empty:
-            df_marcha, _ = aplicar_clustering(df_imme, 'Marcha', 0.40, 'Sarcopenia Grave')
+            #df_marcha, _ = aplicar_clustering(df_imme, 'Marcha', 0.40, 'Sarcopenia Grave')
+            df_marcha, df_elim3 = aplicar_clustering(df_imme, 'Marcha', 0.40, 'Sarcopenia Grave')
+            pct_elim3 = 100 * len(df_elim3) / len(df_imme)
         else:
-            df_marcha = pd.DataFrame()
+            #df_marcha = pd.DataFrame()
+            df_marcha, df_elim3, pct_elim3 = pd.DataFrame(), pd.DataFrame(), 0
+
 
         # 7) Mostrar resumen de eliminación
         resumen = pd.DataFrame({
