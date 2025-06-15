@@ -141,8 +141,10 @@ try:
 
             plt.tight_layout()
             st.session_state.fig_comorbilidades = fig_2
+        st.pyplot(st.session_state.fig_comorbilidades)
+
         # Mostrar en Streamlit
-        st.pyplot(fig_2)
+        #st.pyplot(fig_2)
 #------------------------------Comparación por sexo
 
         import matplotlib.pyplot as plt
