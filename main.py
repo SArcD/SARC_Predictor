@@ -482,59 +482,64 @@ try:
         # Renombrar columnas
         df_combined_renamed = df_combined.rename(columns=column_labels)
 
-        # Crear subplots    
-        fig = sp.make_subplots(rows=4, cols=3, subplot_titles=list(column_labels.values()))
+        # Crear subplots
+        if 'fig_histogramas' not in st.session_state:
 
-        # Iterar por cada variable
-        row, col = 1, 1
-        for column in column_labels.values():
-            # Determinar tamaño del bin
-            min_val = df_combined_renamed[column].min()
-            max_val = df_combined_renamed[column].max()
-            bin_size = (max_val - min_val) / 10 if max_val != min_val else 1
+            fig_6 = sp.make_subplots(rows=4, cols=3, subplot_titles=list(column_labels.values()))
 
-            # Histograma para Hombres
-            histogram_male = go.Histogram(
-                x=df_combined_renamed[df_combined['sexo'] == "Hombre"][column],
-                xbins=dict(size=bin_size),
-                name=f'Hombres - {column}',
-                opacity=0.6,
-                marker=dict(line=dict(width=1, color='blue')),
-                showlegend=False
-            )
+            # Iterar por cada variable
+            row, col = 1, 1
+            for column in column_labels.values():
+                # Determinar tamaño del bin
+                min_val = df_combined_renamed[column].min()
+                max_val = df_combined_renamed[column].max()
+                bin_size = (max_val - min_val) / 10 if max_val != min_val else 1
 
-            # Histograma para Mujeres
-            histogram_female = go.Histogram(
-                x=df_combined_renamed[df_combined['sexo'] == "Mujer"][column],
-                xbins=dict(size=bin_size),
-                name=f'Mujeres - {column}',
-                opacity=0.6,
-                marker=dict(line=dict(width=1, color='deeppink')),
-                showlegend=False
-            )
+                # Histograma para Hombres
+                histogram_male = go.Histogram(
+                    x=df_combined_renamed[df_combined['sexo'] == "Hombre"][column],
+                    xbins=dict(size=bin_size),
+                    name=f'Hombres - {column}',
+                    opacity=0.6,
+                    marker=dict(line=dict(width=1, color='blue')),
+                    showlegend=False
+                )
 
-            # Agregar al subplot
-            fig.add_trace(histogram_male, row=row, col=col)
-            fig.add_trace(histogram_female, row=row, col=col)
+                # Histograma para Mujeres
+                histogram_female = go.Histogram(
+                    x=df_combined_renamed[df_combined['sexo'] == "Mujer"][column],
+                    xbins=dict(size=bin_size),
+                    name=f'Mujeres - {column}',
+                    opacity=0.6,
+                    marker=dict(line=dict(width=1, color='deeppink')),
+                    showlegend=False
+                )
 
-            # Avanzar en la cuadrícula
-            col += 1
-            if col > 3:
-                col = 1
-                row += 1
+                # Agregar al subplot
+                fig_6.add_trace(histogram_male, row=row, col=col)
+                fig_6.add_trace(histogram_female, row=row, col=col)
 
-        # Configurar layout
-        fig.update_layout(
-            title_text="Histogramas por Sexo (Hombres vs Mujeres)",
-            height=900,
-            barmode='overlay',
-            showlegend=True,
-            legend=dict(x=1.02, y=1, traceorder='normal', borderwidth=0),
-            margin=dict(r=120)  # margen derecho extra para leyenda
-            )
+                # Avanzar en la cuadrícula
+                col += 1
+                if col > 3:
+                    col = 1
+                    row += 1
+
+            # Configurar layout
+            fig_6.update_layout(
+                title_text="Histogramas por Sexo (Hombres vs Mujeres)",
+                height=900,
+                barmode='overlay',
+                showlegend=True,
+                legend=dict(x=1.02, y=1, traceorder='normal', borderwidth=0),
+                margin=dict(r=120)  # margen derecho extra para leyenda
+                )
+            st.session_state.fig_histogramas = fig_6
 
         # Mostrar en Streamlit
-        st.plotly_chart(fig, use_container_width=True)
+        st.pyplot(st.session_state.fig_histogramas)
+
+        #st.plotly_chart(fig, use_container_width=True)
 
 
 ########### mascara de varianzas
