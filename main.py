@@ -1129,8 +1129,8 @@ try:
         import matplotlib.patches as patches
 
         # Filtrar total por sexo (1 = hombres, 0 = mujeres)
-        #sexo_elegido = 1  # Simular que el usuario eligió hombres
-        df_total_sexo = df_combined[df_combined['sexo'] == sexo]
+        #sexo_elegido = 1  # Simular que el 
+        df_total_sexo = df_filtered.shape[0]
         total_pacientes = len(df_total_sexo)
         total_pacientes
         # Contar pacientes por clasificación
