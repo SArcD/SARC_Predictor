@@ -367,7 +367,7 @@ try:
             ax.invert_yaxis()
             ax.grid(axis='x', linestyle='--', alpha=0.7)
         
-            fig.tight_layout()
+            fig_4.tight_layout()
             st.session_state.fig_varianza_men = fig_4
 
 
