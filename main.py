@@ -255,7 +255,8 @@ try:
 
             plt.tight_layout()
             st.session_state.fig_comorbilidades_sexo = fig_3
-        st.pyplot(fig_3)
+        st.pyplot(st.session_state.fig_comorbilidades_sexo)
+        #st.pyplot(fig_3)
 
     with st.expander("Varianzas"):
         # Definir las columnas que deben ser iguales a 0
