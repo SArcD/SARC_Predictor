@@ -702,78 +702,80 @@ try:
         node_sizes = [400 + degree_dict[n] * 150 for n in G.nodes()]
 
         # Crear figura
-        fig, ax = plt.subplots(figsize=(14, 10), dpi=150, facecolor='white')
+        if 'fig_red_correlacion' not in st.session_state:
 
-        # Dibujar nodos    
-        nx.draw_networkx_nodes(
-            G, pos,
-            node_size=node_sizes,
-            node_color=node_colors,
-            edgecolors='black',
-            linewidths=1.5,
-            ax=ax
-        )
+            fig_8, ax = plt.subplots(figsize=(14, 10), dpi=150, facecolor='white')
 
-        # Agrupar aristas por grupo
-        edges_men = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Men']
-        edges_women = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Women']
-        edges_both = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Both']
+            # Dibujar nodos    
+            nx.draw_networkx_nodes(
+                G, pos,
+                node_size=node_sizes,
+                node_color=node_colors,
+                edgecolors='black',
+                linewidths=1.5,
+                ax=ax
+            )
 
-        # Función para dibujar aristas según rangos
-        def draw_edges(edges_list, color):
+            # Agrupar aristas por grupo
+            edges_men = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Men']
+            edges_women = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Women']
+            edges_both = [(u, v, d) for u, v, d in G.edges(data=True) if d['group'] == 'Both']
+
+            # Función para dibujar aristas según rangos
+            def draw_edges(edges_list, color):
             # Punteadas: < 0.5
-            dotted_edges = [(u, v) for u, v, d in edges_list if abs(d['weight']) < 0.5]
-            dotted_widths = [abs(d['weight'])*4 for u, v, d in edges_list if abs(d['weight']) < 0.5]
+                dotted_edges = [(u, v) for u, v, d in edges_list if abs(d['weight']) < 0.5]
+                dotted_widths = [abs(d['weight'])*4 for u, v, d in edges_list if abs(d['weight']) < 0.5]
 
-            # Sólidas medias: 0.5 – 0.7
-            medium_edges = [(u, v) for u, v, d in edges_list if 0.5 <= abs(d['weight']) <= 0.7]
-            medium_widths = [abs(d['weight'])*5 for u, v, d in edges_list if 0.5 <= abs(d['weight']) <= 0.7]
+                # Sólidas medias: 0.5 – 0.7
+                medium_edges = [(u, v) for u, v, d in edges_list if 0.5 <= abs(d['weight']) <= 0.7]
+                medium_widths = [abs(d['weight'])*5 for u, v, d in edges_list if 0.5 <= abs(d['weight']) <= 0.7]
 
-            # Sólidas gruesas: > 0.7
-            strong_edges = [(u, v) for u, v, d in edges_list if abs(d['weight']) > 0.7]
-            strong_widths = [abs(d['weight'])*6 for u, v, d in edges_list if abs(d['weight']) > 0.7]
+                # Sólidas gruesas: > 0.7
+                strong_edges = [(u, v) for u, v, d in edges_list if abs(d['weight']) > 0.7]
+                strong_widths = [abs(d['weight'])*6 for u, v, d in edges_list if abs(d['weight']) > 0.7]
 
-            # Dibujar
-            nx.draw_networkx_edges(G, pos, edgelist=dotted_edges, width=dotted_widths,
+                # Dibujar
+                nx.draw_networkx_edges(G, pos, edgelist=dotted_edges, width=dotted_widths,
                            edge_color=color, style='dashed', alpha=0.5, ax=ax)
 
-            nx.draw_networkx_edges(G, pos, edgelist=medium_edges, width=medium_widths,
+                nx.draw_networkx_edges(G, pos, edgelist=medium_edges, width=medium_widths,
                            edge_color=color, style='solid', alpha=0.7, ax=ax)
 
-            nx.draw_networkx_edges(G, pos, edgelist=strong_edges, width=strong_widths,
+                nx.draw_networkx_edges(G, pos, edgelist=strong_edges, width=strong_widths,
                            edge_color=color, style='solid', alpha=0.9, ax=ax)
 
-        # Dibujar aristas por grupo
-        draw_edges(edges_men, color='steelblue')
-        draw_edges(edges_women, color='lightcoral')
-        draw_edges(edges_both, color='mediumvioletred')
+            # Dibujar aristas por grupo
+            draw_edges(edges_men, color='steelblue')
+            draw_edges(edges_women, color='lightcoral')
+            draw_edges(edges_both, color='mediumvioletred')
 
-        # Etiquetas
-        labels_translated = {n: column_labels_en.get(n, n) for n in G.nodes()}
-        nx.draw_networkx_labels(
-            G, pos,
-            labels=labels_translated,
-            font_size=11,
-            font_family="sans-serif",
-            ax=ax
-        )
+            # Etiquetas
+            labels_translated = {n: column_labels_en.get(n, n) for n in G.nodes()}
+            nx.draw_networkx_labels(
+                G, pos,
+                labels=labels_translated,
+                font_size=11,
+                font_family="sans-serif",
+                ax=ax
+            )
 
-        # Leyend    a        
-        legend_handles = [
-            mpatches.Patch(color='steelblue', label='Hombres'),
-            mpatches.Patch(color='lightcoral', label='Mujeres'),
-            mpatches.Patch(color='mediumvioletred', label='Ambos')
-        ]
-        ax.legend(handles=legend_handles, loc='lower left', bbox_to_anchor=(1.05, 0.5), frameon=False, fontsize=11)
+            # Leyend    a        
+            legend_handles = [
+                mpatches.Patch(color='steelblue', label='Hombres'),
+                mpatches.Patch(color='lightcoral', label='Mujeres'),
+                mpatches.Patch(color='mediumvioletred', label='Ambos')
+            ]
+            ax.legend(handles=legend_handles, loc='lower left', bbox_to_anchor=(1.05, 0.5), frameon=False, fontsize=11)
 
-        # Título y ajustes    
-        ax.set_title("Red de Correlación con Aristas Diferenciadas\npor Rango de Fuerza y Sexo", fontsize=16)
-        ax.axis('off')
-        fig.tight_layout()
+            # Título y ajustes    
+            ax.set_title("Red de Correlación con Aristas Diferenciadas\npor Rango de Fuerza y Sexo", fontsize=16)
+            ax.axis('off')
+            fig_8.tight_layout()
+            st.session_state.fig_red_correlacion = fig_8
 
-        # Mostrar en Streamlit
-        st.subheader("🔗 Red de correlación")
-        st.pyplot(fig)
+            st.subheader("🔗 Red de correlación")
+        st.pyplot(st.session_state.fig_red_correlacion)
 
         #df_combined
         # Calcular estatura en cm a partir de peso (P117) e IMC
