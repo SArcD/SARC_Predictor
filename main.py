@@ -1163,7 +1163,7 @@ try:
 
         # Agregar etiquetas a df_filtered (las que sobrevivieron al cribado)
         df_filtered['Clasificación Sarcopenia'] = df_resultado['Clasificación Sarcopenia']
-
+        df_filtered
         
         # Mostrar resultados
         st.subheader("Resultados de Clasificación de Sarcopenia")
@@ -1173,7 +1173,7 @@ try:
             st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
 
 
-        df_combined
+        #df_combined
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
