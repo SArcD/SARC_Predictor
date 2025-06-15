@@ -1130,8 +1130,9 @@ try:
 
         # Filtrar total por sexo (1 = hombres, 0 = mujeres)
         #sexo_elegido = 1  # Simular que el 
-        df_total_sexo = df_filtered.shape[0]
-        total_pacientes = len(df_total_sexo)
+        #df_total_sexo = df_filtered.shape[0]
+        #total_pacientes = len(df_total_sexo)
+        total_pacientes = df_filtered.shape[0]
         total_pacientes
         # Contar pacientes por clasificación
         conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
