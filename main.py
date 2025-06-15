@@ -432,26 +432,31 @@ try:
         merged_df = merged_df.sort_values('Mean Variance', ascending=False)
 
         # --- 8. Gráfica comparativa
-        fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
+        if 'fig_varianza' not in st.session_state:
 
-        bar_width = 0.4
-        y_pos = np.arange(len(merged_df))
+            fig_5, ax = plt.subplots(figsize=(10, 8), dpi=150)
 
-        # Barras de hombres
-        ax.barh(y_pos - bar_width/2, merged_df['Men'], height=bar_width, label='Men', color='steelblue', edgecolor='black')
+            bar_width = 0.4
+            y_pos = np.arange(len(merged_df))
 
-        # Barras de mujeres
-        ax.barh(y_pos + bar_width/2, merged_df['Women'], height=bar_width, label='Women', color='lightcoral', edgecolor='black')
+            # Barras de hombres
+            ax.barh(y_pos - bar_width/2, merged_df['Men'], height=bar_width, label='Men', color='steelblue', edgecolor='black')
 
-        ax.set_yticks(y_pos)
-        ax.set_yticklabels(merged_df.index)
-        ax.set_xlabel('Normalized Variance')
-        ax.set_title('Comparison of Normalized Variances by Sex')
-        ax.invert_yaxis()
-        ax.grid(axis='x', linestyle='--', alpha=0.7)
-        ax.legend()
-        fig.tight_layout()
-        st.pyplot(fig)
+            # Barras de mujeres
+            ax.barh(y_pos + bar_width/2, merged_df['Women'], height=bar_width, label='Women', color='lightcoral', edgecolor='black')
+
+            ax.set_yticks(y_pos)
+            ax.set_yticklabels(merged_df.index)
+            ax.set_xlabel('Normalized Variance')
+            ax.set_title('Comparison of Normalized Variances by Sex')
+            ax.invert_yaxis()
+            ax.grid(axis='x', linestyle='--', alpha=0.7)
+            ax.legend()
+            fig.tight_layout()
+            st.session_state.fig_varianza = fig_5
+
+        st.pyplot(st.session_state.fig_varianza)
+        #st.pyplot(fig)
         ################################ Histogramas comparativos de variables
 
         #import streamlit as st
