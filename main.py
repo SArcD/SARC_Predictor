@@ -537,7 +537,9 @@ try:
             st.session_state.fig_histogramas = fig_6
 
         # Mostrar en Streamlit
-        st.pyplot(st.session_state.fig_histogramas)
+        st.plotly_chart(st.session_state.fig_histogramas)
+
+        #st.pyplot(st.session_state.fig_histogramas)
 
         #st.plotly_chart(fig, use_container_width=True)
 
