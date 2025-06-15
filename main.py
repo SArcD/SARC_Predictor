@@ -1125,46 +1125,64 @@ try:
 
 
 
-        import pandas as pd
-        from matplotlib_venn import venn3
         import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
 
+# Simulación de DataFrame completo y df_resultado clasificado
+# En la práctica, df_combined_2 y df_resultado vendrían del flujo Streamlit
+#df_combined_2_sim = pd.DataFrame({'sexo': [1]*100})  # 100 hombres
+#df_resultado_sim = pd.DataFrame({
+#    'Clasificación Sarcopenia': (
+#        ['Sarcopenia Sospechosa'] * 40 +
+#        ['Sarcopenia Probable'] * 25 +
+#        ['Sarcopenia Grave'] * 10
+#   )
+#})
 
-        # Contar cuántos pacientes hay en cada categoría
-        n_sospechosa = df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Sospechosa', 'Sarcopenia Probable', 'Sarcopenia Grave']).sum()
-        n_probable = df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Probable', 'Sarcopenia Grave']).sum()
-        n_grave = df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Grave']).sum()
-        n_saludables = total_pacientes - n_sospechosa
+        # Filtrar total por sexo (1 = hombres, 0 = mujeres)
+        #sexo_elegido = 1  # Simular que el usuario eligió hombres
+        df_total_sexo = df_combined[df_combined['sexo'] == sexo]
+        total_pacientes = len(df_total_sexo)
 
-        # Preparar subconjuntos para diagrama de Venn
-        only_sospechosa = n_sospechosa - n_probable
-        only_probable = n_probable - n_grave
-        only_grave = n_grave
-
+        # Contar pacientes por clasificación
+        conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
+        sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
+        probable = conteos.get('Sarcopenia Probable', 0)
+        grave = conteos.get('Sarcopenia Grave', 0)
+        saludables = total_pacientes - sospechosa
+    
         # Crear figura
-        fig, ax = plt.subplots(figsize=(8, 6))
-        v = venn3(subsets=(only_sospechosa, only_probable, 0,
-                   0, 0, 0, only_grave), 
-          set_labels=('Sospechosa', 'Probable', 'Grave'))
+        fig, ax = plt.subplots(figsize=(8, 8))
 
-        # Aplicar colores si el patch existe
-        color_map = {
-            '100': '#FFFF00',  # amarillo
-            '010': '#FFA500',  # naranja
-            '001': '#FF0000',  # rojo
-            '111': '#FF0000',  # grave también aquí
-        }
-        for k, color in color_map.items():
-            patch = v.get_patch_by_id(k)
-            if patch:
-                patch.set_color(color)
+        # Dibujar círculos manualmente para representar los conjuntos
+        circle_salud = patches.Circle((0.5, 0.5), 0.45, color='green', alpha=0.2)
+        circle_sospecha = patches.Circle((0.5, 0.5), 0.35, color='yellow', alpha=0.3)
+        circle_probable = patches.Circle((0.5, 0.5), 0.25, color='orange', alpha=0.4)
+        circle_grave = patches.Circle((0.5, 0.5), 0.15, color='red', alpha=0.5)
 
-        # Anotar los saludables fuera del diagrama
-        plt.text(0.90, 0.90, f'Saludables: {n_saludables}', 
-                 bbox=dict(facecolor='#90EE90', alpha=0.5), fontsize=12)
+        # Añadir círculos a la gráfica
+        ax.add_patch(circle_salud)
+        ax.add_patch(circle_sospecha)
+        ax.add_patch(circle_probable)
+        ax.add_patch(circle_grave)
 
-        plt.title("Clasificación de Sarcopenia (Diagrama de Venn)")
-        plt.tight_layout()
+        # Añadir etiquetas con cantidades
+        ax.text(0.5, 0.91, f'Saludables: {saludables} ({saludables/total_pacientes:.0%})', 
+        ha='center', fontsize=12, color='green')
+        ax.text(0.5, 0.77, f'Sospechosa: {sospechosa} ({sospechosa/total_pacientes:.0%})', 
+        ha='center', fontsize=12, color='goldenrod')
+        ax.text(0.5, 0.63, f'Probable: {probable} ({probable/total_pacientes:.0%})', 
+        ha='center', fontsize=12, color='darkorange')
+        ax.text(0.5, 0.50, f'Grave: {grave} ({grave/total_pacientes:.0%})', 
+        ha='center', fontsize=12, color='darkred')
+
+        # Configuraciones del gráfico
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_aspect('equal')
+        ax.axis('off')
+        plt.title("Clasificación Jerárquica de Sarcopenia", fontsize=14)
+
         plt.show()
 
 
