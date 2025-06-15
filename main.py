@@ -1124,7 +1124,7 @@ try:
             st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
 
 
-
+        df_combined
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
 
