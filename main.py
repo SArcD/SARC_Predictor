@@ -452,7 +452,7 @@ try:
             ax.invert_yaxis()
             ax.grid(axis='x', linestyle='--', alpha=0.7)
             ax.legend()
-            fig.tight_layout()
+            fig_5.tight_layout()
             st.session_state.fig_varianza = fig_5
 
         st.pyplot(st.session_state.fig_varianza)
