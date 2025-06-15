@@ -1161,6 +1161,10 @@ try:
             df_marcha[['Fuerza', 'IMME', 'Marcha', 'Clasificación Sarcopenia']]
         ])
 
+        # Agregar etiquetas a df_filtered (las que sobrevivieron al cribado)
+        df_filtered['Clasificación Sarcopenia'] = df_resultado['Clasificación Sarcopenia']
+
+        
         # Mostrar resultados
         st.subheader("Resultados de Clasificación de Sarcopenia")
         if not df_resultado.empty:
