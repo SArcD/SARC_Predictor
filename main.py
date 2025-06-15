@@ -598,23 +598,24 @@ try:
         mask = np.triu(np.ones_like(corr, dtype=bool))
 
         # --- Crear figura y graficar ---
-        fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
-        cmap = sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
-        sns.heatmap(
-            corr,
-            mask=mask,
-            center=0,
-            cmap=cmap,
-            linewidths=1,
-            annot=True,
-            fmt='.2f',
-            square=True,
-            ax=ax
-        )
+        if 'fig_mapas' not in st.session_state:
 
-        # --- Mostrar en Streamlit ---
-        st.subheader("🔗 Mapa de correlaciones normalizadas")
-        st.pyplot(fig)
+            fig_7, ax = plt.subplots(figsize=(10, 8), dpi=150)
+            cmap = sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
+            sns.heatmap(
+                corr,
+                mask=mask,
+                center=0,
+                cmap=cmap,
+                linewidths=1,
+                annot=True,
+                fmt='.2f',
+                square=True,
+                ax=ax
+            )
+            st.session_state.fig_mapas = fig_7  # Guardar en session_state            
+            st.subheader("🔗 Mapa de correlaciones normalizadas")
+        st.pyplot(st.session_state.fig_mapas)
 
         # Concatenating df_grouped with df_r to create a single DataFrame
         df_combined = pd.concat([df_datos, reduced_df], axis=1)
