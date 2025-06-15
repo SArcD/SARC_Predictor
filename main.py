@@ -102,44 +102,45 @@ try:
         final_labels = list(main_labels) + [small_label]
 
         # --- Graficar
+        if 'fig_comorbilidades' not in st.session_state:
 
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 6), gridspec_kw={'height_ratios': [3, 1]}, dpi=100)
+            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 6), gridspec_kw={'height_ratios': [3, 1]}, dpi=100)
 
-        color_map = plt.cm.tab20(np.linspace(0, 1, 20))
-        colors_main = color_map[:len(final_labels)]
-        colors_small = color_map[len(final_labels):len(final_labels)+len(small_labels)]
+            color_map = plt.cm.tab20(np.linspace(0, 1, 20))
+            colors_main = color_map[:len(final_labels)]
+            colors_small = color_map[len(final_labels):len(final_labels)+len(small_labels)]
 
-        # Gráfico 1: Principales + Otras
-        left = 0
-        for prop, label, color in zip(final_props, final_labels, colors_main):
-            ax1.barh(0, prop, left=left, label=label, color=color, edgecolor='white')
-            if prop > 0.02:
-                ax1.text(left + prop/2, 0, f'{prop*100:.1f}%', ha='center', va='center', fontsize=9)
-            left += prop
+            # Gráfico 1: Principales + Otras
+            left = 0
+            for prop, label, color in zip(final_props, final_labels, colors_main):
+                ax1.barh(0, prop, left=left, label=label, color=color, edgecolor='white')
+                if prop > 0.02:
+                    ax1.text(left + prop/2, 0, f'{prop*100:.1f}%', ha='center', va='center', fontsize=9)
+                left += prop
 
-        ax1.set_xlim(0, 1)
-        ax1.set_yticks([])
-        ax1.set_xlabel('Proporción del Total de Pacientes')
-        ax1.set_title('Distribución de Comorbilidades (Principales + "Otras Comorbilidades")')
-        ax1.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, frameon=False)
+            ax1.set_xlim(0, 1)
+            ax1.set_yticks([])
+            ax1.set_xlabel('Proporción del Total de Pacientes')
+            ax1.set_title('Distribución de Comorbilidades (Principales + "Otras Comorbilidades")')
+            ax1.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, frameon=False)
 
-        # Gráfico 2: Detalle de "Otras"
-        left = 0
-        for prop, label, color in zip(small_props, small_labels, colors_small):
-            proportion_within_small = prop / small_sum
-            ax2.barh(0, proportion_within_small, left=left, label=label, color=color, edgecolor='white')
-            if proportion_within_small > 0.05:
-                ax2.text(left + proportion_within_small/2, 0, f'{proportion_within_small*100:.1f}%', ha='center', va='center', fontsize=8)
-            left += proportion_within_small
+            # Gráfico 2: Detalle de "Otras"
+            left = 0
+            for prop, label, color in zip(small_props, small_labels, colors_small):
+                proportion_within_small = prop / small_sum
+                ax2.barh(0, proportion_within_small, left=left, label=label, color=color, edgecolor='white')
+                if proportion_within_small > 0.05:
+                    ax2.text(left + proportion_within_small/2, 0, f'{proportion_within_small*100:.1f}%', ha='center', va='center', fontsize=8)
+                left += proportion_within_small
 
-        ax2.set_xlim(0, 1)
-        ax2.set_yticks([])
-        ax2.set_xlabel('Proporción dentro de "Otras Comorbilidades"')
-        ax2.set_title('Detalle de "Otras Comorbilidades" (Relativo al grupo "Otras")')
-        ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=7, frameon=False)
+            ax2.set_xlim(0, 1)
+            ax2.set_yticks([])
+            ax2.set_xlabel('Proporción dentro de "Otras Comorbilidades"')
+            ax2.set_title('Detalle de "Otras Comorbilidades" (Relativo al grupo "Otras")')
+            ax2.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=7, frameon=False)
 
-        plt.tight_layout()
-
+            plt.tight_layout()
+        st.session_state.fig_comorbilidades = fig
         # Mostrar en Streamlit
         st.pyplot(fig)
 #------------------------------Comparación por sexo
