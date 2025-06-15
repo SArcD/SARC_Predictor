@@ -354,23 +354,28 @@ try:
 
         # --- 3. Graficar ---
         #plt.figure(figsize=(10, 6), dpi=300)
-        fig, ax = plt.subplots(figsize=(10, 6), dpi=150)
-        ax.barh(
-            variances_filtered['Variable_English'],
-            variances_filtered['Normalized Variance'],
-            color='skyblue', edgecolor='black'
-        )
-        ax.set_xlabel('Normalized Variance')
-        ax.set_title('Normalized Variances of Variables (Men)')
-        ax.invert_yaxis()
-        ax.grid(axis='x', linestyle='--', alpha=0.7)
+        if 'fig_varianza_men' not in st.session_state:
+
+            fig_4, ax = plt.subplots(figsize=(10, 6), dpi=150)
+            ax.barh(
+                variances_filtered['Variable_English'],
+                variances_filtered['Normalized Variance'],
+                color='skyblue', edgecolor='black'
+            )
+            ax.set_xlabel('Normalized Variance')
+            ax.set_title('Normalized Variances of Variables (Men)')
+            ax.invert_yaxis()
+            ax.grid(axis='x', linestyle='--', alpha=0.7)
         
-        fig.tight_layout()
+            fig.tight_layout()
+            st.session_state.fig_varianza_men = fig_4
+
 
 
         # Guardar en alta resolución
         #plt.savefig('/content/Normalized_Variances_Men_Filtered.png', dpi=300, bbox_inches='tight')
-        st.pyplot(fig)
+        st.pyplot(st.session_state.fig_varianza_men)
+        #st.pyplot(fig)
 
         # --- 1. Separar hombres y mujeres
         df_hombres = df_combined[df_combined['sexo'] == 'Hombre']
