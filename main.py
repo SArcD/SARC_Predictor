@@ -203,7 +203,7 @@ try:
         
         if 'fig_comorbilidades_sexo' not in st.session_state:
             # --- Graficar
-            fig, ax = plt.subplots(figsize=(10, 6), dpi=100)
+            fig_3, ax = plt.subplots(figsize=(10, 6), dpi=100)
 
             # Paleta de colores
             color_dict = {
@@ -252,8 +252,8 @@ try:
             ax.legend(handles_labels.values(), handles_labels.keys(), bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, frameon=False, title="Comorbilidades")
 
             plt.tight_layout()
-            st.session_state.fig_comorbilidades_sexo = fig
-        st.pyplot(fig)
+            st.session_state.fig_comorbilidades_sexo = fig_3
+        st.pyplot(fig_3)
 
     with st.expander("Varianzas"):
         # Definir las columnas que deben ser iguales a 0
