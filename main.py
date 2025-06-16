@@ -1161,9 +1161,19 @@ try:
             df_marcha[['Fuerza', 'IMME', 'Marcha', 'Clasificación Sarcopenia']]
         ])
 
-        # Agregar etiquetas a df_filtered (las que sobrevivieron al cribado)
-        df_filtered['Clasificación Sarcopenia'] = df_resultado['Clasificación Sarcopenia']
-        df_filtered
+
+        # Crear una copia del DataFrame original filtrado
+        df_filtered = df_filtered.copy()
+
+        # Crear una columna vacía primero
+        df_filtered['Clasificación Sarcopenia'] = None
+
+        # Llenar con las etiquetas de df_resultado donde coincidan los índices
+        df_filtered.loc[df_resultado.index, 'Clasificación Sarcopenia'] = df_resultado['Clasificación Sarcopenia']
+
+        # Asignar "Sin Sarcopenia" a quienes no fueron clasificados
+        df_filtered['Clasificación Sarcopenia'] = df_filtered['Clasificación Sarcopenia'].fillna('Sin Sarcopenia')
+
         
         # Mostrar resultados
         st.subheader("Resultados de Clasificación de Sarcopenia")
