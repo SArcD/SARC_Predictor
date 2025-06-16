@@ -70,4 +70,8 @@ fpdf==1.7.2
 # Streamlit
 streamlit==1.26.0
 
+pygments==2.15.1
+markdown-it-py==2.2.0
+mdurl==0.1.2
+rich==13.5.2
 
