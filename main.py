@@ -1290,7 +1290,7 @@ try:
 
                 # Agregar boxplot por grupo
                 for grupo, color in zip(
-                    ['Sin sarcopenia', 'Sarcopenia Sospechosa', 'Sarcopenia Probable', 'Sarcopenia Grave'],
+                    ['Sin Sarcopenia', 'Sarcopenia Sospechosa', 'Sarcopenia Probable', 'Sarcopenia Grave'],
                     ['green', 'goldenrod', 'orange', 'firebrick']
                 ):
                     data = df_filtered[df_filtered['Clasificación Sarcopenia'] == grupo][column].dropna()
