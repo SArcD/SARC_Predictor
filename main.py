@@ -1315,6 +1315,114 @@ try:
 
 
 
+###################################
+    with st.expander("Modelos predictivos"):
+
+        import streamlit as st
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.model_selection import train_test_split
+        from sklearn.inspection import PartialDependenceDisplay
+        from sklearn.metrics import classification_report, f1_score
+        from imblearn.over_sampling import SMOTE
+        import joblib
+
+        # Título
+        st.subheader("📊 Predicción de sarcopenia con Random Forest + SMOTE")
+
+        # Mostrar multiselect con nombres amigables
+        column_map = {
+            'Fuerza': 'Fuerza (kg)',
+            'Marcha': 'Marcha (m/s)',
+            'IMME': 'IMME',
+            'IMC': 'IMC',
+            'Peso': 'Peso (kg)',
+            'Cintura': 'Cintura (cm)',
+            'Muslo': 'Muslo (cm)',
+            'Pantorrilla': 'Pantorrilla (cm)',
+            'Brazo': 'Brazo (cm)',
+            'P. Tricipital': 'Pliegue Tricipital',
+            'P. subescapular': 'Pliegue Subescapular',
+            'Biceps': 'Pliegue Bicipital',
+            'P. Pantorrilla': 'Pliegue Pantorrilla'
+        }
+
+        # Selección central de variables
+        selected_vars_display = st.multiselect(
+            "Selecciona las variables predictoras:",
+            options=list(column_map.values()),
+            default=['Fuerza (kg)', 'Marcha (m/s)', 'IMME']
+        )
+
+        # Mapeo inverso para obtener nombres reales
+        inv_column_map = {v: k for k, v in column_map.items()}
+        selected_vars = [inv_column_map[var] for var in selected_vars_display]
+
+        if selected_vars:
+            # Entrenar modelo
+            df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
+            X = df[selected_vars]
+            y = df['Clasificación Sarcopenia']
+
+            # Balancear con SMOTE
+            smote = SMOTE(random_state=42)
+            X_resampled, y_resampled = smote.fit_resample(X, y)
+
+            # Dividir
+            X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled)
+
+            # Entrenar modelo
+            model_rf = RandomForestClassifier(
+                n_estimators=300,
+                max_depth=3,
+                min_samples_leaf=5,
+                min_samples_split=10,
+                random_state=42
+            )
+            model_rf.fit(X_train, y_train)
+
+            # Evaluación
+            y_pred = model_rf.predict(X_test)
+            report = classification_report(y_test, y_pred, output_dict=False)
+            f1 = f1_score(y_test, y_pred, average='weighted')
+
+            st.text("Reporte de clasificación:")
+            st.text(report)
+            st.text(f"Weighted F1-score: {f1:.4f}")
+
+            # Guardar modelo
+            joblib.dump(model_rf, "modelo_rf_sarcopenia.pkl")
+
+            # Gráfico de dependencia parcial
+            fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 5), dpi=150)
+            if len(selected_vars) == 1:
+                ax = [ax]
+
+            for idx, class_label in enumerate(model_rf.classes_):
+                PartialDependenceDisplay.from_estimator(
+                    model_rf,
+                    X_train,
+                    features=list(range(len(selected_vars))),
+                    feature_names=selected_vars_display,
+                    target=idx,
+                    ax=ax,
+                    line_kw={"label": class_label}
+                )
+
+            for i, axis in enumerate(ax):
+                axis.set_ylabel("Dependencia Parcial")
+                axis.set_xlabel(selected_vars_display[i])
+                axis.legend()
+                axis.set_ylim(0, 1)
+                axis.grid(True)
+
+            plt.suptitle("📈 Dependencia Parcial por categoría de sarcopenia", fontsize=16)
+            st.pyplot(fig)
+
+
+
+
 
 
 
