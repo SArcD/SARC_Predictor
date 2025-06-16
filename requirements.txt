@@ -7,7 +7,7 @@ altair
 altair_catplot
 xlsxwriter
 openpyxl
-scikit-learn
+#scikit-learn
 graphviz
 pydot
 pydotplus
@@ -20,5 +20,7 @@ plotly
 pillow
 xlrd
 networkx
-imbalanced-learn
+#imbalanced-learn
 joblib
+scikit-learn==1.2.2
+imbalanced-learn==0.10.1
