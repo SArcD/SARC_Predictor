@@ -1428,6 +1428,14 @@ try:
                 st.text(report)
                 st.text(f"Weighted F1-score: {f1:.4f}")
 
+                # Agrega esta sección justo antes del bucle de graficación
+                color_map = {
+                    'Sarcopenia Grave': '#d62728',       # Rojo
+                    'Sarcopenia Probable': '#1f77b4',    # Azul
+                    'Sarcopenia Sospechosa': '#2ca02c',  # Verde
+                    'Sin Sarcopenia': '#ff7f0e'          # Naranja
+                }
+                
                 # Gráficos de dependencia parcial
                 fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4), dpi=150)
 
@@ -1442,20 +1450,9 @@ try:
                         feature_names=selected_vars_display,
                         target=class_index,
                         ax=ax,
-                        line_kw={"label": class_name}
+                        line_kw={"label": class_name,
+                        "color": color_map.get(class_name, None)}
                     )
-
-                #for class_index, class_name in enumerate(le.classes_):
-                #    PartialDependenceDisplay.from_estimator(
-                #        model,
-                #        X_train,
-                #        features=selected_vars,  # usa columnas reales
-                #        feature_names=selected_vars_display,  # usa nombres amigables
-                #        target=class_index,
-                #        ax=ax,
-                #        line_kw={"label": class_name}
-                #    )
-
                 
                 for i, axis in enumerate(ax):
                     axis.set_xlabel(selected_vars_display[i])
