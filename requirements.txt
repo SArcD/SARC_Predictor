@@ -33,34 +33,13 @@
 #joblib==1.2.0
 #streamlit==1.26.0
 
-# Correcciones clave para compatibilidad
-setuptools==65.5.0
-wheel==0.40.0
-
-# Librerías principales
 streamlit==1.26.0
 pandas==1.5.3
 numpy==1.23.5
-matplotlib==3.7.1
-seaborn==0.12.2
-plotly==5.14.1
 scikit-learn==1.2.2
 imbalanced-learn==0.10.1
+matplotlib==3.7.1
+plotly==5.14.1
 joblib==1.2.0
 
-# Extras
-openpyxl
-xlsxwriter
-xlrd
-pillow
-fpdf
-networkx
-graphviz
-pydot
-pydotplus
-mlxtend
-pingouin
-matplotlib-venn
-altair
-altair-catplot
 
