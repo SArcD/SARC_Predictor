@@ -33,43 +33,32 @@
 #joblib==1.2.0
 #streamlit==1.26.0
 
-# Librerías esenciales para análisis
-numpy==1.23.5
+# Librerías base
 pandas==1.5.3
+numpy==1.23.5
 matplotlib==3.7.1
 seaborn==0.12.2
 plotly==5.14.1
-altair==4.2.2
-altair_catplot==0.1.9
-openpyxl==3.1.2
-xlsxwriter==3.1.9
-xlrd==2.0.1
-pillow==9.5.0
-
-# Machine learning
 scikit-learn==1.2.2
 imbalanced-learn==0.10.1
 joblib==1.2.0
-mlxtend==0.22.0
-skope-rules==1.0.1
+openpyxl
+xlsxwriter
+xlrd
+pillow
+fpdf
+networkx
+graphviz
+pydot
+pydotplus
+mlxtend
+pingouin
+matplotlib-venn
+altair
+altair-catplot
 
-# Visualización avanzada
-matplotlib-venn==0.11.9
-bokeh==3.1.1
-networkx==2.8.8
-graphviz==0.20.1
-pydot==1.4.2
-pydotplus==2.0.2
-
-# Estadística
-pingouin==0.5.3
-
-# PDF
-fpdf==1.7.2
-
-# Streamlit
+# Compatibilidad con Streamlit y rich
 streamlit==1.26.0
-
 pygments==2.15.1
 markdown-it-py==2.2.0
 mdurl==0.1.2
