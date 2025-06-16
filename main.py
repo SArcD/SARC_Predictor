@@ -1469,7 +1469,7 @@ try:
                 }
                 
                 # Gráficos de dependencia parcial
-                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4), dpi=150)
+                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.5), dpi=150)
 
                 if len(selected_vars) == 1:
                     ax = [ax]
