@@ -1360,79 +1360,78 @@ try:
         selected_vars = [inv_column_map[var] for var in selected_vars_display]
 
         if selected_vars:
-            # Entrenar modelo
+            # Preparar datos
             df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
-            X = df[selected_vars]
+
+            # Convertir a numérico forzadamente para evitar errores
+            X = df[selected_vars].apply(pd.to_numeric, errors='coerce')
             y = df['Clasificación Sarcopenia']
 
-            # Balancear con SMOTE
-            smote = SMOTE(random_state=42)
-            X_resampled, y_resampled = smote.fit_resample(X, y)
+            # Filtrar datos válidos
+            mask_valid = X.notnull().all(axis=1)
+            X = X[mask_valid]
+            y = y[mask_valid]
 
-            # Dividir
-            X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled)
+            try:
+                # Balancear con SMOTE
+                smote = SMOTE(random_state=42)
+                X_resampled, y_resampled = smote.fit_resample(X, y)
 
-            # Entrenar modelo
-            model_rf = RandomForestClassifier(
-                n_estimators=300,
-                max_depth=3,
-                min_samples_leaf=5,
-                min_samples_split=10,
-                random_state=42
-            )
-            model_rf.fit(X_train, y_train)
-
-            # Evaluación
-            y_pred = model_rf.predict(X_test)
-            report = classification_report(y_test, y_pred, output_dict=False)
-            f1 = f1_score(y_test, y_pred, average='weighted')
-
-            st.text("Reporte de clasificación:")
-            st.text(report)
-            st.text(f"Weighted F1-score: {f1:.4f}")
-
-            # Guardar modelo
-            joblib.dump(model_rf, "modelo_rf_sarcopenia.pkl")
-
-            # Gráfico de dependencia parcial
-            fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 5), dpi=150)
-            if len(selected_vars) == 1:
-                ax = [ax]
-
-            for idx, class_label in enumerate(model_rf.classes_):
-                #PartialDependenceDisplay.from_estimator(
-                #    model_rf,
-                #    X_train,
-                #    features=list(range(len(selected_vars))),
-                #    feature_names=selected_vars_display,
-                #    target=idx,
-                #    ax=ax,
-                #    line_kw={"label": class_label}
-                #)
-
-                PartialDependenceDisplay.from_estimator(
-                    model_rf,
-                    X_train,
-                    features=selected_vars,  # usa los nombres reales
-                    feature_names=selected_vars_display,  # nombres amigables para mostrar
-                    target=idx,
-                    ax=ax,
-                    line_kw={"label": class_label}
+                # División de datos
+                X_train, X_test, y_train, y_test = train_test_split(
+                    X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled
                 )
 
+                # Entrenar modelo
+                model_rf = RandomForestClassifier(
+                    n_estimators=300,
+                    max_depth=3,
+                    min_samples_leaf=5,
+                    min_samples_split=10,
+                    random_state=42
+                )
+                model_rf.fit(X_train, y_train)
 
+                # Evaluación
+                y_pred = model_rf.predict(X_test)
+                report = classification_report(y_test, y_pred, output_dict=False)
+                f1 = f1_score(y_test, y_pred, average='weighted')
 
-            
-            for i, axis in enumerate(ax):
-                axis.set_ylabel("Dependencia Parcial")
-                axis.set_xlabel(selected_vars_display[i])
-                axis.legend()
-                axis.set_ylim(0, 1)
-                axis.grid(True)
+                st.text("Reporte de clasificación:")
+                st.text(report)
+                st.text(f"Weighted F1-score: {f1:.4f}")
 
-            plt.suptitle("📈 Dependencia Parcial por categoría de sarcopenia", fontsize=16)
-            st.pyplot(fig)
+                # Guardar modelo
+                joblib.dump(model_rf, "modelo_rf_sarcopenia.pkl")
 
+                # Gráfico de dependencia parcial
+                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 5), dpi=150)
+                if len(selected_vars) == 1:
+                    ax = [ax]
+
+                for idx, class_label in enumerate(model_rf.classes_):
+                    PartialDependenceDisplay.from_estimator(
+                        model_rf,
+                        X_train[selected_vars],  # datos numéricos válidos
+                        features=selected_vars,
+                        feature_names=selected_vars_display,
+                        target=idx,
+                        ax=ax,
+                        line_kw={"label": class_label}
+                    )
+
+                for i, axis in enumerate(ax):
+                    axis.set_ylabel("Dependencia Parcial")
+                    axis.set_xlabel(selected_vars_display[i])
+                    axis.legend()
+                    axis.set_ylim(0, 1)
+                    axis.grid(True)
+
+                plt.suptitle("📈 Dependencia Parcial por categoría de sarcopenia", fontsize=16)
+                st.pyplot(fig)
+
+            except Exception as e:
+                st.error(f"Ocurrió un error al entrenar el modelo o generar las gráficas: {e}")
 
 
 
