@@ -20,3 +20,5 @@ plotly
 pillow
 xlrd
 networkx
+imbalanced-learn
+joblib
