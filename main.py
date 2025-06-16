@@ -1414,17 +1414,29 @@ try:
                 if len(selected_vars) == 1:
                     ax = [ax]
 
+                #for class_index, class_name in enumerate(le.classes_):
+                #    PartialDependenceDisplay.from_estimator(
+                #        model,
+                #        X_train,
+                #        features=list(range(len(selected_vars))),
+                #        feature_names=selected_vars_display,
+                #        target=class_index,
+                #        ax=ax,
+                #        line_kw={"label": class_name}
+                #    )
+
                 for class_index, class_name in enumerate(le.classes_):
                     PartialDependenceDisplay.from_estimator(
                         model,
                         X_train,
-                        features=list(range(len(selected_vars))),
-                        feature_names=selected_vars_display,
+                        features=selected_vars,  # usa columnas reales
+                        feature_names=selected_vars_display,  # usa nombres amigables
                         target=class_index,
                         ax=ax,
                         line_kw={"label": class_name}
                     )
 
+                
                 for i, axis in enumerate(ax):
                     axis.set_xlabel(selected_vars_display[i])
                     axis.set_ylabel("Dependencia Parcial")
