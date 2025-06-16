@@ -1239,20 +1239,19 @@ try:
         # Diccionario de etiquetas amigables: nombre interno -> nombre visible
         column_labels = {
             'edad_am': 'Edad (años)',
-            'Peso': 'Peso (kg)',
+            'P117': 'Peso (kg)',
             'P118': 'Estatura (cm)',
             'P119': 'Talla sentada (cm)',
-            'Brazo': 'Brazo (cm)',
-            'Cintura': 'Cintura (cm)',
-            'Cadera': 'Cadera (cm)',
-            'Muslo': 'Muslo (cm)',
-            'Pantorrilla': 'Pantorrilla (cm)',
-            'P. Tricipital': 'Pliegue Tricipital (mm)',
-            'P. subescapular': 'Pliegue Subescapular (mm)',
-            'Biceps': 'Pliegue Bíceps (mm)',
-            'P. Pantorrilla': 'Pliegue Pantorrilla (mm)',
+            'P120': 'Brazo (cm)',
+            'P121': 'Cintura (cm)',
+            'P122': 'Cadera (cm)',
+            'P123': 'Muslo (cm)',
+            'P124': 'Pantorrilla (cm)',
+            'P125': 'Pliegue Tricipital (mm)',
+            'P126': 'Pliegue Subescapular (mm)',
+            'P127': 'Pliegue Bíceps (mm)',
+            'P128': 'Pliegue Pantorrilla (mm)',
             'P129': 'Pliegue Suprailiaco (mm)',
-            'P130': 'Pliegue Abdominal (mm)',
             'IMC': 'IMC',
             'Fuerza': 'Fuerza (kg)',
             'Marcha': 'Marcha (m/s)',
@@ -1263,13 +1262,21 @@ try:
         all_columns = list(column_labels.keys())
 
         # Sidebar para seleccionar variables
-        st.sidebar.header("🔎 Selecciona variables para comparar")
-        selected_labels = st.sidebar.multiselect(
-            label="Variables a graficar",
-            options=list(column_labels.values()),
-            default=list(column_labels.values())  # Puedes dejar vacío si prefieres no seleccionar todas por defecto
-        )
+        #st.sidebar.header("🔎 Selecciona variables para comparar")
+        #selected_labels = st.sidebar.multiselect(
+        #    label="Variables a graficar",
+        #    options=list(column_labels.values()),
+        #    default=list(column_labels.values())  # Puedes dejar vacío si prefieres no seleccionar todas por defecto
+        #)
 
+        # Mostrar selección de variables en el cuerpo central
+        st.markdown("## Selecciona las variables que deseas comparar")
+        selected_labels = st.multiselect(
+            label="Variables disponibles",
+            options=list(column_labels.values()),
+            default=list(column_labels.values())  # Puedes cambiar esto si prefieres dejarlo vacío al inicio
+        )
+        
         # Mapear etiquetas visibles a columnas reales
         selected_columns = [col for col, label in column_labels.items() if label in selected_labels]
 
