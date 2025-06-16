@@ -907,6 +907,11 @@ try:
             y = df_combined['IMME']
             Xg_train, Xg_test, yg_train, yg_test = train_test_split(X_global, y, test_size=0.2, random_state=42)
             modelo_global = DecisionTreeRegressor(random_state=42).fit(Xg_train, yg_train)
+            # Guardar y permitir descarga
+            import joblib
+            joblib.dump(modelo_global, "modelo_global_imme.pkl")
+            with open("modelo_global_imme.pkl", "rb") as f:
+                st.download_button("⬇️ Descargar modelo global entrenado", f, file_name="modelo_global_imme.pkl")
             st.session_state.modelo_global = modelo_global
             y_pred_global = modelo_global.predict(Xg_test)
             mse_global = mean_squared_error(yg_test, y_pred_global)
@@ -1469,7 +1474,7 @@ try:
                 }
                 
                 # Gráficos de dependencia parcial
-                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.7), dpi=300)
+                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.6), dpi=300)
 
                 if len(selected_vars) == 1:
                     ax = [ax]
