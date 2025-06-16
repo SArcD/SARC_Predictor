@@ -1325,12 +1325,13 @@ try:
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import classification_report, f1_score
         from sklearn.inspection import PartialDependenceDisplay
-        import joblib
+        from sklearn.preprocessing import LabelEncoder
         from imblearn.over_sampling import SMOTE
 
-        st.title("📊 Modelo Random Forest con gráficas de dependencia")
+        # Título
+        st.title("📊 Modelo Random Forest con Dependencia Parcial")
 
-        # Mapas de nombres
+        # Mapeo de nombres
         column_map = {
             'Fuerza': 'Fuerza (kg)',
             'Marcha': 'Marcha (m/s)',
@@ -1348,6 +1349,7 @@ try:
         }
         inv_column_map = {v: k for k, v in column_map.items()}
 
+        # Selección de variables
         selected_vars_display = st.multiselect(
             "Selecciona las variables predictoras:",
             options=list(column_map.values()),
@@ -1362,8 +1364,12 @@ try:
                 X = df[selected_vars]
                 y = df['Clasificación Sarcopenia']
 
+                # Codificar etiquetas
+                le = LabelEncoder()
+                y_encoded = le.fit_transform(y)
+
                 smote = SMOTE(random_state=42)
-                X_resampled, y_resampled = smote.fit_resample(X, y)
+                X_resampled, y_resampled = smote.fit_resample(X, y_encoded)
 
                 X_train, X_test, y_train, y_test = train_test_split(
                     X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled)
@@ -1375,14 +1381,14 @@ try:
                 model.fit(X_train, y_train)
 
                 y_pred = model.predict(X_test)
-                report = classification_report(y_test, y_pred)
+                report = classification_report(le.inverse_transform(y_test), le.inverse_transform(y_pred))
                 f1 = f1_score(y_test, y_pred, average='weighted')
 
                 st.text("Reporte de clasificación:")
                 st.text(report)
                 st.text(f"Weighted F1-score: {f1:.4f}")
 
-                # Colores personalizados (ajustar si cambian las clases)
+                # Colores personalizados
                 colores = {
                     "Sarcopenia Grave": "#d62728",
                     "Sarcopenia Probable": "#ff7f0e",
@@ -1390,7 +1396,8 @@ try:
                     "Sin Sarcopenia": "#2ca02c"
                 }
 
-                for idx, class_label in enumerate(model.classes_):
+                # Gráficas de dependencia parcial
+                for idx, class_label in enumerate(le.classes_):
                     fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4), dpi=150)
 
                     PartialDependenceDisplay.from_estimator(
@@ -1398,7 +1405,7 @@ try:
                         X_train,
                         features=selected_vars,
                         feature_names=selected_vars_display,
-                        target=idx,
+                        target=idx,  # Aquí sí puede ser numérico ahora
                         ax=ax,
                         line_kw={"label": class_label, "color": colores.get(class_label, None)}
                     )
@@ -1414,8 +1421,6 @@ try:
 
             except Exception as e:
                 st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
-
-
 
 
 
