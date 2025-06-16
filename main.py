@@ -1428,12 +1428,44 @@ try:
                 st.text(report)
                 st.text(f"Weighted F1-score: {f1:.4f}")
 
+                # Explicación de métricas
+                st.markdown("### 📘 ¿Cómo interpretar las métricas?")
+                st.markdown("""
+                Las siguientes métricas te ayudan a entender **cómo de bien el modelo identifica cada tipo de sarcopenia**:
+
+                - **Precisión (Precision)**: De todas las veces que el modelo predijo cierta clase, ¿cuántas veces acertó?  
+                  - Ejemplo: Si `Precisión = 0.80` en *Sarcopenia Grave*, significa que 8 de cada 10 veces que el modelo dijo "Sarcopenia Grave", acertó.
+                - **Sensibilidad o Exhaustividad (Recall)**: De todas las personas que **realmente tienen** esa clase, ¿a cuántas identificó correctamente el modelo?  
+                  - Ejemplo: Si `Recall = 0.60` en *Sarcopenia Sospechosa*, el modelo detectó 6 de cada 10 personas con esa condición.
+                - **F1-score**: Es un equilibrio entre precisión y sensibilidad. Si ambas son altas, el F1 también lo será.
+
+                #### 🔍 Guía rápida de interpretación:
+                - `> 0.85` → Excelente desempeño
+                - `0.70 - 0.85` → Buen desempeño, puede mejorar
+                - `0.50 - 0.70` → Desempeño moderado, se sugiere revisar variables o clases
+                - `< 0.50` → Débil, probablemente el modelo no distingue bien esta clase
+
+                """)
+
+                # Obtener importancias
+                importances = model.feature_importances_
+                var_importance = pd.Series(importances, index=selected_vars_display).sort_values(ascending=True)
+
+                # Graficar
+                fig_imp, ax_imp = plt.subplots(figsize=(8, 0.5 * len(var_importance)), dpi=150)
+                var_importance.plot(kind='barh', ax=ax_imp, color='skyblue', edgecolor='black')
+                ax_imp.set_title("Importancia relativa de cada variable", fontsize=12)
+                ax_imp.set_xlabel("Importancia")    
+                ax_imp.grid(axis='x', linestyle='--', alpha=0.7)
+                st.pyplot(fig_imp)
+
+                
                 # Agrega esta sección justo antes del bucle de graficación
                 color_map = {
                     'Sarcopenia Grave': '#d62728',       # Rojo
-                    'Sarcopenia Probable': '#1f77b4',    # Azul
+                    'Sin Sarcopenia': '#1f77b4',         # Azul
                     'Sarcopenia Sospechosa': '#2ca02c',  # Verde
-                    'Sin Sarcopenia': '#ff7f0e'          # Naranja
+                    'Sarcopenia Probable': '#ff7f0e'     # Naranja
                 }
                 
                 # Gráficos de dependencia parcial
