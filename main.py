@@ -1328,10 +1328,18 @@ try:
         from sklearn.preprocessing import LabelEncoder
         from imblearn.over_sampling import SMOTE
 
-        # Título
-        st.title("📊 Modelo Random Forest con Dependencia Parcial")
+        import streamlit as st
+        import pandas as pd
+        import matplotlib.pyplot as plt
+        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.model_selection import train_test_split
+        from sklearn.preprocessing import LabelEncoder
+        from sklearn.metrics import classification_report, f1_score
+        from sklearn.inspection import PartialDependenceDisplay
+        from imblearn.over_sampling import SMOTE
 
-        # Mapeo de nombres
+        st.subheader("📊 Predicción de sarcopenia con Random Forest + SMOTE")
+
         column_map = {
             'Fuerza': 'Fuerza (kg)',
             'Marcha': 'Marcha (m/s)',
@@ -1347,89 +1355,87 @@ try:
             'Biceps': 'Pliegue Bicipital',
             'P. Pantorrilla': 'Pliegue Pantorrilla'
         }
-        inv_column_map = {v: k for k, v in column_map.items()}
 
-        # Selección de variables
         selected_vars_display = st.multiselect(
             "Selecciona las variables predictoras:",
             options=list(column_map.values()),
             default=['Fuerza (kg)', 'Marcha (m/s)', 'IMME']
         )
 
-        if selected_vars_display:
+        inv_column_map = {v: k for k, v in column_map.items()}
+        selected_vars = [inv_column_map[var] for var in selected_vars_display]
+
+        if selected_vars:
             try:
-                selected_vars = [inv_column_map[v] for v in selected_vars_display]
+                # Convertir a numérico forzadamente
+                df = df_filtered.copy()
+                for col in selected_vars:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
 
-                df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
-                #X = df[selected_vars]
-                X = df[selected_vars].apply(pd.to_numeric, errors='coerce')  # convierte a numérico forzadamente
-                X.columns = selected_vars_display
-                df = df.assign(**X)
-                df = df.dropna(subset=selected_vars_display + ['Clasificación Sarcopenia'])
+                df = df.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
 
-                #X = df[selected_vars]
-                #X.columns = selected_vars_display  # Asigna nombres amigables
+                X = df[selected_vars]
+                y_raw = df['Clasificación Sarcopenia']
 
-                y = df['Clasificación Sarcopenia']
-
-                # Codificar etiquetas
+                # Codificar clases
                 le = LabelEncoder()
-                y_encoded = le.fit_transform(y)
+                y = le.fit_transform(y_raw)  # ahora y son enteros
 
+                # SMOTE
                 smote = SMOTE(random_state=42)
-                X_resampled, y_resampled = smote.fit_resample(X, y_encoded)
+                X_resampled, y_resampled = smote.fit_resample(X, y)
 
+                # Dividir
                 X_train, X_test, y_train, y_test = train_test_split(
-                    X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled)
+                    X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled
+                )
 
                 model = RandomForestClassifier(
-                    n_estimators=300, max_depth=3,
-                    min_samples_leaf=5, min_samples_split=10,
-                    random_state=42)
+                    n_estimators=300,
+                    max_depth=3,
+                    min_samples_leaf=5,
+                    min_samples_split=10,
+                    random_state=42
+                )
                 model.fit(X_train, y_train)
 
+                # Predicción
                 y_pred = model.predict(X_test)
-                report = classification_report(le.inverse_transform(y_test), le.inverse_transform(y_pred))
+                report = classification_report(y_test, y_pred, target_names=le.classes_)
                 f1 = f1_score(y_test, y_pred, average='weighted')
 
                 st.text("Reporte de clasificación:")
                 st.text(report)
                 st.text(f"Weighted F1-score: {f1:.4f}")
 
-                # Colores personalizados
-                colores = {
-                    "Sarcopenia Grave": "#d62728",
-                    "Sarcopenia Probable": "#ff7f0e",
-                    "Sarcopenia Sospechosa": "#1f77b4",
-                    "Sin Sarcopenia": "#2ca02c"
-                }
+                # Gráficos de dependencia parcial
+                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4), dpi=150)
 
-                # Gráficas de dependencia parcial
-                for idx, class_label in enumerate(le.classes_):
-                    fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4), dpi=150)
+                if len(selected_vars) == 1:
+                    ax = [ax]
 
+                for class_index, class_name in enumerate(le.classes_):
                     PartialDependenceDisplay.from_estimator(
                         model,
                         X_train,
-                        features=selected_vars,
+                        features=list(range(len(selected_vars))),
                         feature_names=selected_vars_display,
-                        target=idx,  # Aquí sí puede ser numérico ahora
+                        target=class_index,
                         ax=ax,
-                        line_kw={"label": class_label, "color": colores.get(class_label, None)}
+                        line_kw={"label": class_name}
                     )
 
-                    for i, axis in enumerate(ax):
-                        axis.set_ylabel("Dependencia Parcial")
-                        axis.set_xlabel(selected_vars_display[i])
-                        axis.legend()
-                        axis.grid(True)
+                for i, axis in enumerate(ax):
+                    axis.set_xlabel(selected_vars_display[i])
+                    axis.set_ylabel("Dependencia Parcial")
+                    axis.grid(True)
+                    axis.legend()
 
-                    plt.suptitle(f"📈 Dependencia Parcial: {class_label}", fontsize=14)
-                    st.pyplot(fig)
+                plt.suptitle("📈 Gráfica de dependencia parcial por clase", fontsize=14)
+                st.pyplot(fig)
 
             except Exception as e:
                 st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
-
 
 
 
