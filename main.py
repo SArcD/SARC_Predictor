@@ -1236,7 +1236,75 @@ try:
         st.subheader("Visualización Jerárquica de Sarcopenia")
         st.pyplot(fig)
 
+        # Diccionario de etiquetas amigables: nombre interno -> nombre visible
+        column_labels = {
+            'edad_am': 'Edad (años)',
+            'Peso': 'Peso (kg)',
+            'P118': 'Estatura (cm)',
+            'P119': 'Talla sentada (cm)',
+            'Brazo': 'Brazo (cm)',
+            'Cintura': 'Cintura (cm)',
+            'Cadera': 'Cadera (cm)',
+            'Muslo': 'Muslo (cm)',
+            'Pantorrilla': 'Pantorrilla (cm)',
+            'P. Tricipital': 'Pliegue Tricipital (mm)',
+            'P. subescapular': 'Pliegue Subescapular (mm)',
+            'Biceps': 'Pliegue Bíceps (mm)',
+            'P. Pantorrilla': 'Pliegue Pantorrilla (mm)',
+            'P129': 'Pliegue Suprailiaco (mm)',
+            'P130': 'Pliegue Abdominal (mm)',
+            'IMC': 'IMC',
+            'Fuerza': 'Fuerza (kg)',
+            'Marcha': 'Marcha (m/s)',
+            'IMME': 'IMME'
+        }
 
+        # Lista completa de variables seleccionables
+        all_columns = list(column_labels.keys())
+
+        # Sidebar para seleccionar variables
+        st.sidebar.header("🔎 Selecciona variables para comparar")
+        selected_labels = st.sidebar.multiselect(
+            label="Variables a graficar",
+            options=list(column_labels.values()),
+            default=list(column_labels.values())  # Puedes dejar vacío si prefieres no seleccionar todas por defecto
+        )
+
+        # Mapear etiquetas visibles a columnas reales
+        selected_columns = [col for col, label in column_labels.items() if label in selected_labels]
+
+        # Validar que exista la columna 'Clasificación Sarcopenia'
+        if 'Clasificación Sarcopenia' not in df_filtered.columns:
+            st.error("❌ El DataFrame no contiene la columna 'Clasificación Sarcopenia'.")
+        else:
+            # Generar un gráfico por variable seleccionada
+            for column in selected_columns:
+                fig = go.Figure()
+
+                # Agregar boxplot por grupo
+                for grupo, color in zip(
+                    ['Sin sarcopenia', 'Sarcopenia Sospechosa', 'Sarcopenia Probable', 'Sarcopenia Grave'],
+                    ['green', 'goldenrod', 'orange', 'firebrick']
+                ):
+                    data = df_filtered[df_filtered['Clasificación Sarcopenia'] == grupo][column].dropna()
+                    fig.add_trace(go.Box(
+                        y=data,
+                        name=grupo,
+                        boxpoints='outliers',
+                        notched=True,
+                        marker=dict(color=color)
+                    ))
+
+                fig.update_layout(
+                    title=f'Diagrama de caja - {column_labels[column]}',
+                    yaxis_title=column_labels[column],
+                    xaxis_title="Grupo de Sarcopenia",
+                    title_font=dict(size=20),
+                    yaxis=dict(tickfont=dict(size=14)),
+                    xaxis=dict(tickfont=dict(size=14)),
+                    height=500
+                )
+                st.plotly_chart(fig)
 
 
 
