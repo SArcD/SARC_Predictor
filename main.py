@@ -1399,20 +1399,41 @@ try:
 
                 # Graficar dependencia parcial
                 class_labels = model_rf.classes_
+                feature_indices = [X_train.columns.get_loc(col) for col in selected_vars]
+                # Obtener índices de las columnas seleccionadas
+                feature_indices = [X_train.columns.get_loc(col) for col in selected_vars]
+
+                # Gráfico de dependencia parcial
                 fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 5), dpi=150)
                 if len(selected_vars) == 1:
                     ax = [ax]
 
-                for idx, label in enumerate(class_labels):  # Usar índice como 'target'
+                for idx, label in enumerate(model_rf.classes_):
                     PartialDependenceDisplay.from_estimator(
                         model_rf,
                         X_train,
-                        features=selected_vars,
-                        feature_names=selected_vars_display,
+                        features=feature_indices,  # ← ahora usamos índices numéricos
+                        feature_names=selected_vars_display,  # etiquetas amigables
                         target=idx,
                         ax=ax,
                         line_kw={"label": str(label)}
                     )
+
+
+                #fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 5), dpi=150)
+                #if len(selected_vars) == 1:
+                #    ax = [ax]
+
+                #for idx, label in enumerate(class_labels):  # Usar índice como 'target'
+                #    PartialDependenceDisplay.from_estimator(
+                #        model_rf,
+                 #       X_train,
+                 #       features=selected_vars,
+                #        feature_names=selected_vars_display,
+                #        target=idx,
+                 #       ax=ax,
+               #         line_kw={"label": str(label)}
+               #     )
 
                 for i, axis in enumerate(ax):
                     axis.set_ylabel("Dependencia Parcial")
