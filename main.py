@@ -3,6 +3,23 @@ import pandas as pd
 import requests
 from io import BytesIO
 
+
+import joblib
+import requests
+import io
+
+@st.cache_resource(show_spinner=False)
+def cargar_modelo_desde_github(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        modelo = joblib.load(io.BytesIO(response.content))
+        return modelo
+    except Exception as e:
+        st.error(f"Ocurrió un error al intentar cargar el archivo: {e}")
+        return None
+
+
 st.title("📊 Selector de Base de Datos desde GitHub")
 
 st.subheader("Carga de los datos")
