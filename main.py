@@ -1340,20 +1340,40 @@ try:
 
         st.subheader("📊 Predicción de sarcopenia con Random Forest + SMOTE")
 
+     #   column_map = {
+     #       'Fuerza': 'Fuerza (kg)',
+     #       'Marcha': 'Marcha (m/s)',
+     #       'IMME': 'IMME',
+     #       'IMC': 'IMC',
+     #       'Peso': 'Peso (kg)',
+     #       'Cintura': 'Cintura (cm)',
+     #       'Muslo': 'Muslo (cm)',
+     #       'Pantorrilla': 'Pantorrilla (cm)',
+     #       'Brazo': 'Brazo (cm)',
+     #       'P. Tricipital': 'Pliegue Tricipital',
+     #       'P. subescapular': 'Pliegue Subescapular',
+     #       'Biceps': 'Pliegue Bicipital',
+     #       'P. Pantorrilla': 'Pliegue Pantorrilla'
+     #   }
+
         column_map = {
+            'P117': 'Peso (kg)',
+            'P118': 'Estatura (cm)',
+            'P119': 'Talla sentada (cm)',
+            'P120': 'Brazo (cm)',
+            'P121': 'Cintura (cm)',
+            'P122': 'Cadera (cm)',
+            'P123': 'Muslo (cm)',
+            'P124': 'Pantorrilla (cm)',
+            'P125': 'Pliegue Tricipital (mm)',
+            'P126': 'Pliegue Subescapular (mm)',
+            'P127': 'Pliegue Bíceps (mm)',
+            'P128': 'Pliegue Pantorrilla (mm)',
+            'P129': 'Pliegue Suprailiaco (mm)',
+            'IMC': 'IMC',
             'Fuerza': 'Fuerza (kg)',
             'Marcha': 'Marcha (m/s)',
-            'IMME': 'IMME',
-            'IMC': 'IMC',
-            'Peso': 'Peso (kg)',
-            'Cintura': 'Cintura (cm)',
-            'Muslo': 'Muslo (cm)',
-            'Pantorrilla': 'Pantorrilla (cm)',
-            'Brazo': 'Brazo (cm)',
-            'P. Tricipital': 'Pliegue Tricipital',
-            'P. subescapular': 'Pliegue Subescapular',
-            'Biceps': 'Pliegue Bicipital',
-            'P. Pantorrilla': 'Pliegue Pantorrilla'
+            'IMME': 'IMME'
         }
 
         selected_vars_display = st.multiselect(
