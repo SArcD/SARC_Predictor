@@ -1318,111 +1318,77 @@ try:
 ###################################
     with st.expander("Modelos predictivos"):
 
-        import streamlit as st
-        import pandas as pd
         import matplotlib.pyplot as plt
+        import pandas as pd
+        import seaborn as sns
         from sklearn.ensemble import RandomForestClassifier
         from sklearn.model_selection import train_test_split
+        from sklearn.preprocessing import LabelEncoder
         from sklearn.inspection import PartialDependenceDisplay
-        from sklearn.metrics import classification_report, f1_score
-        from imblearn.over_sampling import SMOTE
 
-        # Título
-        st.subheader("📊 Análisis de Sarcopenia con Random Forest y Dependencia Parcial")
+# Simular estructura de datos para ejemplo (en tu app usarás df_filtered real)
+# Supongamos que df_filtered ya está cargado en el entorno
+# Variables seleccionadas
+        selected_vars = ['Fuerza', 'Marcha', 'IMME']
+        selected_vars_display = ['Fuerza (kg)', 'Marcha (m/s)', 'IMME']
 
-        # Columnas de interés
-        column_map = {
-            'Fuerza': 'Fuerza (kg)',
-            'Marcha': 'Marcha (m/s)',
-            'IMME': 'IMME'
-        }
+        # Filtrado de dato    s        
+        df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
+        X = df[selected_vars]
 
-        # Selección de variables predictoras
-        selected_vars_display = st.multiselect(
-            "Selecciona las variables predictoras para el modelo:",
-            options=list(column_map.values()),
-            default=list(column_map.values())
+        # Codificar etiquetas
+        le = LabelEncoder()
+        y = le.fit_transform(df['Clasificación Sarcopenia'])
+        class_labels = le.classes_
+
+        # Dividir datos
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, stratify=y, random_state=42
         )
 
-        # Inversión del mapa
-        inv_column_map = {v: k for k, v in column_map.items()}
-        selected_vars = [inv_column_map[var] for var in selected_vars_display]
+        # Modelo Random Forest
+        model_rf = RandomForestClassifier(
+            n_estimators=300,
+            max_depth=3,
+            min_samples_leaf=5,
+            min_samples_split=10,
+            random_state=42
+        )
+        model_rf.fit(X_train, y_train)
 
-        # Entrenar modelo si se han seleccionado variables
-        if selected_vars:
-            try:
-                # Preparar datos
-                df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
-                X = df[selected_vars]
-                y = df['Clasificación Sarcopenia']
+        # Importancia de características
+        importances = pd.Series(model_rf.feature_importances_, index=selected_vars)
+        importances_df = importances.reset_index()
+        importances_df.columns = ['Variable', 'Importancia']
 
-                # Balanceo con SMOTE
-                smote = SMOTE(random_state=42)
-                X_resampled, y_resampled = smote.fit_resample(X, y)
+        # Gráficas de dependencia parcial para todas las clases
+        figs = []
+        for idx, class_label in enumerate(class_labels):
+            fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4), dpi=150)
+            if len(selected_vars) == 1:
+                ax = [ax]
+    
+            PartialDependenceDisplay.from_estimator(
+                model_rf,
+                X,
+                features=selected_vars,
+                feature_names=selected_vars_display,
+                target=idx,
+                ax=ax,
+                line_kw={"label": class_label}
+            )
 
-                # División entrenamiento/prueba
-                X_train, X_test, y_train, y_test = train_test_split(
-                    X_resampled, y_resampled, test_size=0.3, random_state=42, stratify=y_resampled
-                )
+            for i, axis in enumerate(ax):
+                axis.set_title(f"{selected_vars_display[i]}")
+                axis.set_ylabel("Dependencia Parcial")
+                axis.set_xlabel(selected_vars_display[i])
+                axis.legend()
+                axis.grid(True)
 
-                # Modelo Random Forest
-                model = RandomForestClassifier(
-                    n_estimators=300,
-                    max_depth=3,
-                    min_samples_leaf=5,
-                    min_samples_split=10,
-                    random_state=42
-                )
-                model.fit(X_train, y_train)
+            fig.suptitle(f"Dependencia Parcial - {class_label}")
+            figs.append(fig)
 
-                # Predicción y evaluación
-                y_pred = model.predict(X_test)
-                report = classification_report(y_test, y_pred)
-                f1 = f1_score(y_test, y_pred, average='weighted')
-
-                st.text("Reporte de clasificación:")
-                st.text(report)
-                st.text(f"Weighted F1-score: {f1:.4f}")
-
-                # Colores personalizados por clase
-                colors = {
-                    "Sin Sarcopenia": "#1f77b4",
-                    "Sarcopenia Sospechosa": "#ff7f0e",
-                    "Sarcopenia Probable": "#2ca02c",
-                    "Sarcopenia Grave": "#d62728"
-                }
-
-                # Graficar dependencia parcial
-                class_names = model.classes_
-                for idx, class_label in enumerate(class_names):
-                    fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 5), dpi=150)
-
-                    if len(selected_vars) == 1:
-                        ax = [ax]
-
-                    PartialDependenceDisplay.from_estimator(
-                        model,
-                        X_train,
-                        features=selected_vars,
-                        feature_names=selected_vars_display,
-                        target=idx,
-                        ax=ax,
-                        line_kw={"label": class_label, "color": colors.get(class_label, None)}
-                    )
-
-                    fig.suptitle(f"📈 Dependencia parcial para: {class_label}", fontsize=16)
-                    for i, axis in enumerate(ax):
-                        axis.set_ylabel("Dependencia Parcial")
-                        axis.set_xlabel(selected_vars_display[i])
-                        axis.legend()
-                        axis.grid(True)
-
-                    st.pyplot(fig)
-
-            except Exception as e:
-                st.error(f"Ocurrió un error durante el entrenamiento o la visualización: {e}")
-        else:
-            st.info("Selecciona al menos una variable predictora para continuar.")
+            importances_df
 
 
 
