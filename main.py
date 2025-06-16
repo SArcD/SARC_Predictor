@@ -994,7 +994,8 @@ try:
             variables_input = []
 
             if modelo_seleccionado == "Mejor combinación global":
-                modelo = st.session_state.modelo_global
+                #modelo = st.session_state.modelo_global
+                modelo = cargar_modelo_desde_github("https://raw.githubusercontent.com/SArcD/SARC_Predictor/main/modelo_global_imme.pkl")
                 variables_input = list(st.session_state.mejor_combinacion)
 
             elif modelo_seleccionado.startswith("Mejor combinación con"):
