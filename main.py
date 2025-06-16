@@ -1173,7 +1173,7 @@ try:
 
         # Asignar "Sin Sarcopenia" a quienes no fueron clasificados
         df_filtered['Clasificación Sarcopenia'] = df_filtered['Clasificación Sarcopenia'].fillna('Sin Sarcopenia')
-
+        #df_filtered
         
         # Mostrar resultados
         st.subheader("Resultados de Clasificación de Sarcopenia")
@@ -1181,6 +1181,7 @@ try:
             st.write(df_resultado)
         else:
             st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
+        df_filtered
 
 
         #df_combined
