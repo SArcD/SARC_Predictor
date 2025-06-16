@@ -1361,7 +1361,10 @@ try:
                 selected_vars = [inv_column_map[v] for v in selected_vars_display]
 
                 df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
+                #X = df[selected_vars]
                 X = df[selected_vars]
+                X.columns = selected_vars_display  # Asigna nombres amigables
+
                 y = df['Clasificación Sarcopenia']
 
                 # Codificar etiquetas
