@@ -1400,16 +1400,29 @@ try:
                 ax = [ax]
 
             for idx, class_label in enumerate(model_rf.classes_):
+                #PartialDependenceDisplay.from_estimator(
+                #    model_rf,
+                #    X_train,
+                #    features=list(range(len(selected_vars))),
+                #    feature_names=selected_vars_display,
+                #    target=idx,
+                #    ax=ax,
+                #    line_kw={"label": class_label}
+                #)
+
                 PartialDependenceDisplay.from_estimator(
                     model_rf,
                     X_train,
-                    features=list(range(len(selected_vars))),
-                    feature_names=selected_vars_display,
+                    features=selected_vars,  # usa los nombres reales
+                    feature_names=selected_vars_display,  # nombres amigables para mostrar
                     target=idx,
                     ax=ax,
                     line_kw={"label": class_label}
                 )
 
+
+
+            
             for i, axis in enumerate(ax):
                 axis.set_ylabel("Dependencia Parcial")
                 axis.set_xlabel(selected_vars_display[i])
