@@ -1362,8 +1362,13 @@ try:
 
                 df = df_filtered.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
                 #X = df[selected_vars]
-                X = df[selected_vars]
-                X.columns = selected_vars_display  # Asigna nombres amigables
+                X = df[selected_vars].apply(pd.to_numeric, errors='coerce')  # convierte a numérico forzadamente
+                X.columns = selected_vars_display
+                df = df.assign(**X)
+                df = df.dropna(subset=selected_vars_display + ['Clasificación Sarcopenia'])
+
+                #X = df[selected_vars]
+                #X.columns = selected_vars_display  # Asigna nombres amigables
 
                 y = df['Clasificación Sarcopenia']
 
