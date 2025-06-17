@@ -859,6 +859,27 @@ try:
         variables = ["sexo",'P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
              'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
 
+        nombres_amigables = {
+        'P117': 'Peso (kg)',
+        'P118': 'Estatura (cm)',
+        'P119': 'Talla sentada (cm)',
+        'P120': 'Brazo (cm)',
+        'P121': 'Cintura (cm)',
+        'P122': 'Cadera (cm)',
+        'P123': 'Muslo (cm)',
+        'P124': 'Pantorrilla (cm)',
+        'P125': 'Pliegue Tricipital (mm)',
+        'P126': 'Pliegue Subescapular (mm)',
+        'P127': 'Pliegue Bíceps (mm)',
+        'P128': 'Pliegue Pantorrilla (mm)',
+        'P129': 'Pliegue Suprailiaco (mm)',
+        'IMC': 'IMC',
+        'P113': 'Fuerza de prensión',
+        'P112_vel': 'Velocidad de marcha',
+        'sexo': 'Sexo (Mujer/Hombre)'
+            }
+
+
         st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
 
         # Número de variables por combinación
@@ -913,10 +934,16 @@ try:
             filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
             sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
 
+            #df_resultados = pd.DataFrame([
+            #    {'Variables': ', '.join(k), 'MSE': v}
+            #    for k, v in sorted_results
+            #])
+
             df_resultados = pd.DataFrame([
-                {'Variables': ', '.join(k), 'MSE': v}
-                for k, v in sorted_results
+            {'Variables': ', '.join([nombres_amigables.get(var, var) for var in k]), 'MSE': v}
+            for k, v in sorted_results
             ])
+
 
             st.dataframe(df_resultados, use_container_width=True)
         else:
