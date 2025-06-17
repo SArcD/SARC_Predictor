@@ -1333,11 +1333,24 @@ try:
         total_pacientes = df_filtered.shape[0]
         #total_pacientes
         # Contar pacientes por clasificación
+        #conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
+        #sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
+        #probable = conteos.get('Sarcopenia Probable', 0)
+        #grave = conteos.get('Sarcopenia Grave', 0)
+        #saludables = total_pacientes - sospechosa
+
+
+        # Contar pacientes por clasificación (totales acumulativos)
         conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
-        sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
-        probable = conteos.get('Sarcopenia Probable', 0)
-        grave = conteos.get('Sarcopenia Grave', 0)
-        saludables = total_pacientes - sospechosa
+        total_grave = conteos.get('Sarcopenia Grave', 0)
+        total_probable = conteos.get('Sarcopenia Probable', 0)
+        total_sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
+
+        # Desglose excluyente para evitar dobles conteos
+        grave = total_grave
+        probable = total_probable - grave
+        sospechosa = total_sospechosa - probable - grave
+        saludables = total_pacientes - (sospechosa + probable + grave)
     
         # Crear figura
         # === Crear gráfico con matplotlib ===
