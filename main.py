@@ -936,9 +936,26 @@ try:
             # Datos para la mejor combinación con n variables
             X_n = df_combined[mejor_combinacion_n]
             Xn_train, Xn_test, yn_train, yn_test = train_test_split(X_n, y, test_size=0.2, random_state=42)
-            modelo_n = DecisionTreeRegressor(random_state=42).fit(Xn_train, yn_train)
+            modelo_n = DecisionTreeRegressor(random_state=42).fit(Xn_train, yn_train)       
             y_pred_n = modelo_n.predict(Xn_test)
             mse_n = mean_squared_error(yn_test, y_pred_n)
+
+            import joblib
+            import os
+
+            modelo_filename = f"modelo_n_variables_{selected_n}.pkl"
+            joblib.dump(modelo_n, modelo_filename)
+
+            # Mostrar botón de descarga
+            with open(modelo_filename, 'rb') as f:
+                st.download_button(
+                    label=f"⬇️ Descargar modelo con {selected_n} variables",
+                    data=f,
+                    file_name=modelo_filename,
+                    mime='application/octet-stream'
+                )
+
+            
 
             # Crear DataFrames para comparación
             df_comparacion_global = pd.DataFrame({
