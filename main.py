@@ -1288,7 +1288,7 @@ try:
             '% Eliminados': [pct_elim1, pct_elim2, pct_elim3]
         })
         st.subheader("Resumen de cribado por etapas")
-        st.dataframe(resumen.style.format({'% Eliminados':'{:.1f}%'}))
+        st.dataframe(resumen.style.format({'% Eliminados':'{:.1f}%'}), use_container_width=True)
 
         
         # Combinar resultados
@@ -1313,13 +1313,13 @@ try:
         #df_filtered
         
         # Mostrar resultados
-        st.subheader("Resultados de Clasificación de Sarcopenia")
-        if not df_resultado.empty:
-            #st.write(df_resultado)
-            st.dataframe(df_resultado, use_container_width=True)
-        else:
-            st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
-        df_filtered
+        #st.subheader("Resultados de Clasificación de Sarcopenia")
+        #if not df_resultado.empty:
+        #    #st.write(df_resultado)
+        #    st.dataframe(df_resultado, use_container_width=True)
+        #else:
+        #    st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
+        ##df_filtered
 
 
         #df_combined
