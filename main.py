@@ -1099,10 +1099,26 @@ try:
                     )
 
             # Botón para predecir
+            #if st.button("Predecir IMME"):
+            #    input_df = pd.DataFrame([input_values])
+            #    pred = modelo.predict(input_df)[0]
+            #    st.success(f"🧠 IMME estimado: **{pred:.2f}**")
+
+
+            # Botón para predecir
             if st.button("Predecir IMME"):
-                input_df = pd.DataFrame([input_values])
-                pred = modelo.predict(input_df)[0]
-                st.success(f"🧠 IMME estimado: **{pred:.2f}**")
+                st.session_state.prediccion_valor = None  # Limpia previa
+
+                try:
+                    input_df = pd.DataFrame([input_values])
+                    pred = modelo.predict(input_df)[0]
+                    st.session_state.prediccion_valor = pred
+                except Exception as e:
+                    st.error(f"❌ Ocurrió un error al hacer la predicción: {e}")
+
+# Mostrar resultado solo si se generó una predicción
+if st.session_state.get("prediccion_valor") is not None:
+    st.success(f"🧠 IMME estimado: **{st.session_state.prediccion_valor:.2f}**")
 
 
     
