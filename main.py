@@ -916,7 +916,7 @@ try:
             df_resultados = pd.DataFrame([
                 {'Variables': ', '.join(k), 'MSE': v}
                 for k, v in sorted_results
-            ])
+            ], use_container_width=True)
 
             st.dataframe(df_resultados)
         else:
@@ -1036,8 +1036,7 @@ try:
                     mime='application/octet-stream'
                 )
 
-            
-
+        
             # Crear DataFrames para comparación
             df_comparacion_global = pd.DataFrame({
                 'IMME Real': yg_test,
@@ -1180,13 +1179,6 @@ try:
                     )
 
             # Botón para predecir
-            #if st.button("Predecir IMME"):
-            #    input_df = pd.DataFrame([input_values])
-            #    pred = modelo.predict(input_df)[0]
-            #    st.success(f"🧠 IMME estimado: **{pred:.2f}**")
-
-
-            # Botón para predecir
             if st.button("Predecir IMME"):
                 st.session_state.prediccion_valor = None  # Limpia previa
 
@@ -1201,9 +1193,6 @@ try:
             if st.session_state.get("prediccion_valor") is not None:
                 st.success(f"🧠 IMME estimado: **{st.session_state.prediccion_valor:.2f}**")
 
-
-    
-        
         else:
                 st.warning("⚠️ No hay combinaciones disponibles con ese número de variables.")
 
