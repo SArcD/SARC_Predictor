@@ -1347,10 +1347,26 @@ try:
         total_sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
 
         # Desglose excluyente para evitar dobles conteos
-        grave = total_grave
-        probable = total_probable - grave
-        sospechosa = total_sospechosa - probable - grave
-        saludables = total_pacientes - (sospechosa + probable + grave)
+        #grave = total_grave
+        #probable = total_probable - grave
+        #sospechosa = total_sospechosa - probable - grave
+        #saludables = total_pacientes - (sospechosa + probable + grave)
+
+
+        grave = df_resultado[df_resultado['Clasificación Sarcopenia'] == 'Sarcopenia Grave'].shape[0]
+        probable = df_resultado[
+            (df_resultado['Clasificación Sarcopenia'] == 'Sarcopenia Probable') &
+            (~df_resultado.index.isin(df_resultado[df_resultado['Clasificación Sarcopenia'] == 'Sarcopenia Grave'].index))
+        ].shape[0]
+        sospechosa = df_resultado[
+            (df_resultado['Clasificación Sarcopenia'] == 'Sarcopenia Sospechosa') &
+            (~df_resultado.index.isin(
+                df_resultado[df_resultado['Clasificación Sarcopenia'].isin(['Sarcopenia Grave', 'Sarcopenia Probable'])].index
+            ))
+        ].shape[0]
+
+        saludables = total_pacientes - (grave + probable + sospechosa)
+
     
         # Crear figura
         # === Crear gráfico con matplotlib ===
