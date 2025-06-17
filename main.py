@@ -1116,9 +1116,9 @@ try:
                 except Exception as e:
                     st.error(f"❌ Ocurrió un error al hacer la predicción: {e}")
 
-# Mostrar resultado solo si se generó una predicción
-if st.session_state.get("prediccion_valor") is not None:
-    st.success(f"🧠 IMME estimado: **{st.session_state.prediccion_valor:.2f}**")
+            # Mostrar resultado solo si se generó una predicción
+            if st.session_state.get("prediccion_valor") is not None:
+                st.success(f"🧠 IMME estimado: **{st.session_state.prediccion_valor:.2f}**")
 
 
     
