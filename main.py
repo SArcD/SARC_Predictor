@@ -927,7 +927,11 @@ try:
         # Mostrar resultados si ya existen
         if errores_combinaciones and mejor_combinacion:
             st.markdown("### 🏆 Mejor combinación global:")
-            st.markdown(f"- **Variables**: `{mejor_combinacion}`")
+            #st.markdown(f"- **Variables**: `{mejor_combinacion}`")
+
+            vars_amigables = [nombres_amigables.get(var, var) for var in mejor_combinacion]
+            st.markdown(f"- **Variables**: `{', '.join(vars_amigables)}`")
+
             st.markdown(f"- **Error cuadrático medio (MSE)**: `{mejor_error:.4f}`")
 
             st.markdown(f"### 📊 Combinaciones con exactamente {selected_n} variables:")
