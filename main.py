@@ -888,6 +888,40 @@ try:
             st.session_state.mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
             st.session_state.mejor_error = errores_combinaciones[st.session_state.mejor_combinacion]
 
+            # Calcular mejor combinación con `selected_n` variables
+            filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
+            sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
+
+            if sorted_results:
+                st.session_state.mejor_combinacion_n = list(sorted_results[0][0])
+            else:
+                st.session_state.mejor_combinacion_n = None
+
+        # Recuperar combinaciones desde session_state
+        errores_combinaciones = st.session_state.get("errores_combinaciones", {})
+        mejor_combinacion = st.session_state.get("mejor_combinacion", None)
+        mejor_error = st.session_state.get("mejor_error", None)
+        mejor_combinacion_n = st.session_state.get("mejor_combinacion_n", None)
+
+        # Mostrar resultados si ya existen
+        if errores_combinaciones and mejor_combinacion:
+            st.markdown("### 🏆 Mejor combinación global:")
+            st.markdown(f"- **Variables**: `{mejor_combinacion}`")
+            st.markdown(f"- **Error cuadrático medio (MSE)**: `{mejor_error:.4f}`")
+
+            st.markdown(f"### 📊 Combinaciones con exactamente {selected_n} variables:")
+            filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
+            sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
+
+            df_resultados = pd.DataFrame([
+                {'Variables': ', '.join(k), 'MSE': v}
+                for k, v in sorted_results
+            ])
+
+            st.dataframe(df_resultados)
+        else:
+            st.info("Presiona el botón para calcular combinaciones óptimas.")
+        
 
 
         ###########################33
