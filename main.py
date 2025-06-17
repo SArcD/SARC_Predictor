@@ -916,7 +916,7 @@ try:
             df_resultados = pd.DataFrame([
                 {'Variables': ', '.join(k), 'MSE': v}
                 for k, v in sorted_results
-            ], use_container_width=True)
+            ])
 
             st.dataframe(df_resultados, use_container_width=True)
         else:
