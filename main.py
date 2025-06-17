@@ -1690,8 +1690,8 @@ try:
                 #plt.suptitle("📈 Gráfica de dependencia parcial por clase", fontsize=14)
                 #st.pyplot(fig)
 
-            #except Exception as e:
-             #   st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
+            except Exception as e:
+                st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
 
 
 
