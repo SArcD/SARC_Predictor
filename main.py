@@ -918,7 +918,7 @@ try:
                 for k, v in sorted_results
             ], use_container_width=True)
 
-            st.dataframe(df_resultados)
+            st.dataframe(df_resultados, use_container_width=True)
         else:
             st.info("Presiona el botón para calcular combinaciones óptimas.")
         
