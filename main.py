@@ -1507,22 +1507,6 @@ try:
 
         st.subheader("📊 Predicción de sarcopenia con Random Forest + SMOTE")
 
-     #   column_map = {
-     #       'Fuerza': 'Fuerza (kg)',
-     #       'Marcha': 'Marcha (m/s)',
-     #       'IMME': 'IMME',
-     #       'IMC': 'IMC',
-     #       'Peso': 'Peso (kg)',
-     #       'Cintura': 'Cintura (cm)',
-     #       'Muslo': 'Muslo (cm)',
-     #       'Pantorrilla': 'Pantorrilla (cm)',
-     #       'Brazo': 'Brazo (cm)',
-     #       'P. Tricipital': 'Pliegue Tricipital',
-     #       'P. subescapular': 'Pliegue Subescapular',
-     #       'Biceps': 'Pliegue Bicipital',
-     #       'P. Pantorrilla': 'Pliegue Pantorrilla'
-     #   }
-
         column_map = {
             'P117': 'Peso (kg)',
             'P118': 'Estatura (cm)',
@@ -1626,44 +1610,88 @@ try:
                 ax_imp.grid(axis='x', linestyle='--', alpha=0.7)
                 st.pyplot(fig_imp)
 
-                
+                ##############################################################################################3#    
+                # --- OPCIÓN 4: Mostrar gráfica de dependencia parcial solo al presionar botón ---
+                if st.button("📈 Generar gráficas de dependencia parcial por clase"):
+                    try:
+                        color_map = {
+                            'Sarcopenia Grave': '#d62728',
+                            'Sin Sarcopenia': '#1f77b4',
+                            'Sarcopenia Sospechosa': '#2ca02c',
+                            'Sarcopenia Probable': '#ff7f0e'
+                        }
+
+                        fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.6), dpi=300)
+                        if len(selected_vars) == 1:
+                            ax = [ax]
+
+                        for class_index, class_name in enumerate(le.classes_):
+                            PartialDependenceDisplay.from_estimator(
+                                model,
+                                X_train,
+                                features=list(range(len(selected_vars))),
+                                feature_names=selected_vars_display,
+                                target=class_index,
+                                ax=ax,
+                                line_kw={
+                                    "label": class_name,
+                                    "color": color_map.get(class_name, None)
+                                }
+                            )
+
+                        for i, axis in enumerate(ax):
+                            axis.set_xlabel(selected_vars_display[i])
+                            axis.set_ylabel("Dependencia Parcial")
+                            axis.grid(True)
+                            axis.legend()
+
+                        plt.suptitle("📈 Gráfica de dependencia parcial por clase", fontsize=14)
+                        st.pyplot(fig)
+
+                    except Exception as e:
+                        st.error(f"Ocurrió un error al generar las gráficas de dependencia parcial: {e}")
+
+
+
+
+                ################################################################################################
                 # Agrega esta sección justo antes del bucle de graficación
-                color_map = {
-                    'Sarcopenia Grave': '#d62728',       # Rojo
-                    'Sin Sarcopenia': '#1f77b4',         # Azul
-                    'Sarcopenia Sospechosa': '#2ca02c',  # Verde
-                    'Sarcopenia Probable': '#ff7f0e'     # Naranja
-                }
+                #color_map = {
+                #    'Sarcopenia Grave': '#d62728',       # Rojo
+                #    'Sin Sarcopenia': '#1f77b4',         # Azul
+                #    'Sarcopenia Sospechosa': '#2ca02c',  # Verde
+                #    'Sarcopenia Probable': '#ff7f0e'     # Naranja
+                #}
                 
                 # Gráficos de dependencia parcial
-                fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.6), dpi=300)
+                #fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.6), dpi=300)
 
-                if len(selected_vars) == 1:
-                    ax = [ax]
+                #if len(selected_vars) == 1:
+                #    ax = [ax]
 
-                for class_index, class_name in enumerate(le.classes_):
-                    PartialDependenceDisplay.from_estimator(
-                        model,
-                        X_train,
-                        features=list(range(len(selected_vars))),
-                        feature_names=selected_vars_display,
-                        target=class_index,
-                        ax=ax,
-                        line_kw={"label": class_name,
-                        "color": color_map.get(class_name, None)}
-                    )
+                #for class_index, class_name in enumerate(le.classes_):
+                #    PartialDependenceDisplay.from_estimator(
+                #        model,
+                #        X_train,
+                #        features=list(range(len(selected_vars))),
+                #        feature_names=selected_vars_display,
+                #        target=class_index,
+                #        ax=ax,
+                #        line_kw={"label": class_name,
+                #        "color": color_map.get(class_name, None)}
+                #    )
                 
-                for i, axis in enumerate(ax):
-                    axis.set_xlabel(selected_vars_display[i])
-                    axis.set_ylabel("Dependencia Parcial")
-                    axis.grid(True)
-                    axis.legend()
+                #for i, axis in enumerate(ax):
+                #    axis.set_xlabel(selected_vars_display[i])
+                #    axis.set_ylabel("Dependencia Parcial")
+                #    axis.grid(True)
+                #    axis.legend()
 
-                plt.suptitle("📈 Gráfica de dependencia parcial por clase", fontsize=14)
-                st.pyplot(fig)
+                #plt.suptitle("📈 Gráfica de dependencia parcial por clase", fontsize=14)
+                #st.pyplot(fig)
 
-            except Exception as e:
-                st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
+            #except Exception as e:
+             #   st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
 
 
 
