@@ -1331,7 +1331,7 @@ try:
         #df_total_sexo = df_filtered.shape[0]
         #total_pacientes = len(df_total_sexo)
         total_pacientes = df_filtered.shape[0]
-        total_pacientes
+        #total_pacientes
         # Contar pacientes por clasificación
         conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
         sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
