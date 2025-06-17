@@ -1315,7 +1315,8 @@ try:
         # Mostrar resultados
         st.subheader("Resultados de Clasificación de Sarcopenia")
         if not df_resultado.empty:
-            st.write(df_resultado)
+            #st.write(df_resultado)
+            st.dataframe(df_resultados, use_container_width=True)
         else:
             st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
         df_filtered
