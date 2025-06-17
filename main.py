@@ -876,7 +876,7 @@ try:
         'IMC': 'IMC',
         'P113': 'Fuerza de prensión',
         'P112_vel': 'Velocidad de marcha',
-        'sexo': 'Sexo (Mujer/Hombre)'
+        'sexo': 'Sexo'
             }
 
 
@@ -1188,7 +1188,7 @@ try:
                 'IMC': 'Índice de Masa Corporal',
                 'P113': 'Fuerza de prensión',
                 'P112_vel': 'Velocidad de marcha',
-                'sexo': 'Sexo (Mujer/Hombre)'
+                'sexo': 'Sexo'
             }
 
             # Formulario para ingresar valores
