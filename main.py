@@ -828,87 +828,134 @@ try:
         #df_combined
 
         #import streamlit as st
+        #from sklearn.tree import DecisionTreeRegressor
+        #from sklearn.model_selection import train_test_split
+        #from sklearn.metrics import mean_squared_error
+        #from itertools import combinations
+        #import pandas as pd
+
+        #st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
+
+        # Variables disponibles
+        #variables = ["sexo",'P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
+        #     'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
+
+        # Recalcular estatura si es necesario
+        #if 'P118' not in df_combined.columns:
+        #    df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
+
+
+        import streamlit as st
+        import pandas as pd
+        import numpy as np
         from sklearn.tree import DecisionTreeRegressor
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import mean_squared_error
         from itertools import combinations
-        import pandas as pd
-
-        st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
+        import joblib
+        import matplotlib.pyplot as plt
 
         # Variables disponibles
         variables = ["sexo",'P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
              'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
 
-        # Recalcular estatura si es necesario
+        st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
+
+        # Número de variables por combinación
+        selected_n = st.number_input("Selecciona el número de variables en cada combinación a mostrar", min_value=1, max_value=len(variables), value=3)    
+        max_combinaciones = 5
+
+        # Recalcular estatura si no existe
         if 'P118' not in df_combined.columns:
             df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
 
+
+        ###################3
+        if st.button("🔁 Calcular combinaciones"):
+            errores_combinaciones = {}
+            for r in range(1, max_combinaciones + 1):
+                for combinacion in combinations(variables, r):
+                    X = df_combined[list(combinacion)]
+                    y = df_combined['IMME']
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                    model = DecisionTreeRegressor(random_state=42)
+                    model.fit(X_train, y_train)
+                    y_pred = model.predict(X_test)
+                    mse = mean_squared_error(y_test, y_pred)
+                    errores_combinaciones[combinacion] = mse
+
+            st.session_state.errores_combinaciones = errores_combinaciones
+            st.session_state.mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
+            st.session_state.mejor_error = errores_combinaciones[st.session_state.mejor_combinacion]
+
+
+
+        ###########################33
         # Selección de longitud específica para combinaciones a mostrar
-        selected_n = st.number_input("Selecciona el número de variables en cada combinación a mostrar", min_value=1, max_value=len(variables), value=3)
+        #selected_n = st.number_input("Selecciona el número de variables en cada combinación a mostrar", min_value=1, max_value=len(variables), value=3)
 
         # Máximo tamaño a combinar en evaluación general
-        max_combinaciones = 5
+        #max_combinaciones = 5
 
 
-        if 'errores_combinaciones' not in st.session_state:
-            st.session_state.errores_combinaciones = {}
-            st.session_state.mejor_combinacion = None
-            st.session_state.mejor_error = None
-            st.session_state.resultados_filtrados = None
-            st.session_state.modelo_global = None
-            st.session_state.modelo_n = None
+        #if 'errores_combinaciones' not in st.session_state:
+        #    st.session_state.errores_combinaciones = {}
+        #    st.session_state.mejor_combinacion = None
+        #    st.session_state.mejor_error = None
+        #    st.session_state.resultados_filtrados = None
+        #    st.session_state.modelo_global = None
+        #    st.session_state.modelo_n = None
 
-        # Calcula combinaciones
-        errores_combinaciones = {}
-        for r in range(1, max_combinaciones + 1):
-            for combinacion in combinations(variables, r):
-                X = df_combined[list(combinacion)]
-                y = df_combined['IMME']
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-                model = DecisionTreeRegressor(random_state=42)
-                model.fit(X_train, y_train)
-                y_pred = model.predict(X_test)
-                mse = mean_squared_error(y_test, y_pred)
-                errores_combinaciones[combinacion] = mse
+        ## Calcula combinaciones
+        #errores_combinaciones = {}
+        #for r in range(1, max_combinaciones + 1):
+        #    for combinacion in combinations(variables, r):
+        #        X = df_combined[list(combinacion)]
+        #        y = df_combined['IMME']
+        #        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        #        model = DecisionTreeRegressor(random_state=42)
+        #        model.fit(X_train, y_train)
+        #        y_pred = model.predict(X_test)
+        #        mse = mean_squared_error(y_test, y_pred)
+        #        errores_combinaciones[combinacion] = mse
 
-        # Guardar resultados en session_state
-        st.session_state.errores_combinaciones = errores_combinaciones
-        st.session_state.mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
-        st.session_state.mejor_error = errores_combinaciones[st.session_state.mejor_combinacion]
+        ## Guardar resultados en session_state
+        #st.session_state.errores_combinaciones = errores_combinaciones
+        #st.session_state.mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
+        #st.session_state.mejor_error = errores_combinaciones[st.session_state.mejor_combinacion]#
 
-        # Usar mejor combinación almacenada
-        mejor_combinacion = st.session_state.mejor_combinacion
-        mejor_error = st.session_state.mejor_error
-        errores_combinaciones = st.session_state.errores_combinaciones
+        ## Usar mejor combinación almacenada
+        #mejor_combinacion = st.session_state.mejor_combinacion
+        #mejor_error = st.session_state.mejor_error
+        #errores_combinaciones = st.session_state.errores_combinaciones
 
 
-        # Mostrar la mejor combinación global
-        mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
-        mejor_error = errores_combinaciones[mejor_combinacion]
+        ## Mostrar la mejor combinación global
+        #mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
+        #mejor_error = errores_combinaciones[mejor_combinacion]
 
-        st.markdown(f"### 🏆 Mejor combinación global:")
-        st.markdown(f"- **Variables**: `{mejor_combinacion}`")
-        st.markdown(f"- **Error cuadrático medio (MSE)**: `{mejor_error:.4f}`")
+        #st.markdown(f"### 🏆 Mejor combinación global:")
+        #st.markdown(f"- **Variables**: `{mejor_combinacion}`")
+        #st.markdown(f"- **Error cuadrático medio (MSE)**: `{mejor_error:.4f}`")
 
-        # Mostrar combinaciones con el número exacto de variables elegido
-        st.markdown(f"### 📊 Combinaciones con exactamente {selected_n} variables:")
+        ## Mostrar combinaciones con el número exacto de variables elegido
+        #st.markdown(f"### 📊 Combinaciones con exactamente {selected_n} variables:")
 
-        filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
-        sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
+        #filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
+        #sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
 
-        df_resultados = pd.DataFrame([
-            {'Variables': ', '.join(k), 'MSE': v}
-            for k, v in sorted_results
-        ])
+        #df_resultados = pd.DataFrame([
+        #    {'Variables': ', '.join(k), 'MSE': v}
+        #    for k, v in sorted_results
+        #])
 
-        st.dataframe(df_resultados)
+        #st.dataframe(df_resultados)
 
-        # Obtener la mejor combinación con n variables seleccionadas por el usuario
-        if not df_resultados.empty:
-            mejor_combinacion_n = df_resultados.iloc[0]['Variables'].split(', ')
-        else:
-            mejor_combinacion_n = None
+        ## Obtener la mejor combinación con n variables seleccionadas por el usuario
+        #if not df_resultados.empty:
+        #    mejor_combinacion_n = df_resultados.iloc[0]['Variables'].split(', ')
+        #else:
+        #    mejor_combinacion_n = None
 
         
 
