@@ -335,7 +335,7 @@ try:
         variances = (features / features.mean()).dropna().var()
 
         variances=variances.sort_values(ascending=False)
-        variances
+        #variances
         variances_df = pd.DataFrame({'Variable': variances.index, 'Normalized Variance': variances.values})
         #import matplotlib.pyplot as plt
 
