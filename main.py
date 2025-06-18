@@ -2262,29 +2262,44 @@ elif opcion == "Formularios":
         archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
         if archivo:
             df_archivo = pd.read_excel(archivo)
-            columnas_requeridas = (
-                seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
-                else modelo.feature_names_in_
-            )
 
-            if not all(col in df_archivo.columns for col in columnas_requeridas):
-                st.error("❌ Faltan columnas requeridas.")
+            # Verificar presencia del identificador
+            if "Identificador" not in df_archivo.columns:
+                st.error("❌ La columna 'Identificador' es obligatoria en tu archivo.")
             else:
-                if modelo_seleccionado == "Seleccionar manualmente":
-                    modelo = DecisionTreeRegressor().fit(df_archivo[seleccion_manual], np.zeros(len(df_archivo)))
-                    pred = modelo.predict(df_archivo[seleccion_manual])
-                    rmse = 0.0
+                columnas_requeridas = (
+                    seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
+                    else modelo.feature_names_in_
+                )
+
+                # Verifica que todas las columnas del modelo estén presentes
+                if not all(col in df_archivo.columns for col in columnas_requeridas):
+                    st.error(f"❌ Faltan columnas requeridas: {', '.join([col for col in columnas_requeridas if col not in df_archivo.columns])}")
                 else:
-                    pred = modelo.predict(df_archivo[modelo.feature_names_in_])
-                    rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))
+                    if modelo_seleccionado == "Seleccionar manualmente":
+                        modelo = DecisionTreeRegressor().fit(df_archivo[seleccion_manual], np.zeros(len(df_archivo)))
+                        pred = modelo.predict(df_archivo[seleccion_manual])
+                        rmse = 0.0  # No hay verdad para comparar
+                    else:
+                        pred = modelo.predict(df_archivo[columnas_requeridas])
+                        rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))  # Estimación simbólica
 
-                df_archivo["IMME estimado"] = pred
-                st.dataframe(df_archivo)
+                    # Agrega la predicción
+                    df_archivo["IMME estimado"] = pred
 
-                output = io.BytesIO()
-                df_archivo.to_excel(output, index=False)
-                st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="imme_con_prediccion.xlsx")
-                st.success(f"📉 RMSE estimado: {rmse:.4f}")
+                    # Muestra solo Identificador + columnas utilizadas + predicción
+                    columnas_mostrar = ["Identificador"] + list(columnas_requeridas) + ["IMME estimado"]
+                    st.dataframe(df_archivo[columnas_mostrar])
+
+                    # Exportar resultados
+                    output = io.BytesIO()
+                    df_archivo[columnas_mostrar].to_excel(output, index=False)
+                    st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="imme_con_prediccion.xlsx")
+
+                    st.success(f"📉 RMSE estimado: {rmse:.4f}")
+
+
+
 
 
 
