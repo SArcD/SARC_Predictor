@@ -2218,6 +2218,7 @@ elif opcion == "Formularios":
             n_vars = len(seleccion_manual)
             modelo = None
 
+
     with tab_manual:
         if "pacientes_manual" not in st.session_state:
             st.session_state.pacientes_manual = []
@@ -2273,15 +2274,27 @@ elif opcion == "Formularios":
             st.markdown("### 🗂️ Pacientes registrados")
             st.dataframe(df_manual)
 
-            # Selector de paciente para editar
+            # Selector para editar o borrar
             identificadores = df_manual["Identificador"].tolist()
-            paciente_a_editar = st.selectbox("Selecciona un paciente para editar:", options=[""] + identificadores)
+            paciente_a_gestionar = st.selectbox("Selecciona un paciente para editar o borrar:", options=[""] + identificadores)
 
-            if paciente_a_editar and paciente_a_editar != "":
-                idx = df_manual[df_manual["Identificador"] == paciente_a_editar].index[0]
-                st.session_state.paciente_en_edicion = st.session_state.pacientes_manual[idx]
-                st.session_state.paciente_en_edicion_idx = idx
-                st.info(f"✏️ Editando al paciente con Identificador: {paciente_a_editar}")
+            col_editar, col_borrar = st.columns(2)
+            with col_editar:
+                if paciente_a_gestionar and paciente_a_gestionar != "":
+                    idx = df_manual[df_manual["Identificador"] == paciente_a_gestionar].index[0]
+                    if st.button("✏️ Editar paciente"):
+                        st.session_state.paciente_en_edicion = st.session_state.pacientes_manual[idx]
+                        st.session_state.paciente_en_edicion_idx = idx
+                        st.info(f"✏️ Editando al paciente con Identificador: {paciente_a_gestionar}")
+
+            with col_borrar:
+                if paciente_a_gestionar and paciente_a_gestionar != "":
+                    idx = df_manual[df_manual["Identificador"] == paciente_a_gestionar].index[0]
+                    if st.button("🗑️ Borrar paciente"):
+                        st.session_state.pacientes_manual.pop(idx)
+                        st.success(f"🗑️ Paciente '{paciente_a_gestionar}' eliminado.")
+                        st.session_state.paciente_en_edicion = None
+                        st.rerun()  # Refrescar interfaz para evitar errores
 
             if st.button("🔮 Predecir IMME para pacientes"):
                 if modelo_seleccionado == "Seleccionar manualmente":
@@ -2297,7 +2310,6 @@ elif opcion == "Formularios":
                 df_manual["IMME estimado"] = pred
                 st.dataframe(df_manual)
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
-
 
     
 
