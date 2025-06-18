@@ -2227,7 +2227,7 @@ elif opcion == "Formularios":
             seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
             else modelo.feature_names_in_
         )
-
+        input_values["Identificador"] = st.text_input("Identificador del paciente")
         for var in variables_utilizadas:
             label = nombres_amigables.get(var, var)
             if var == "sexo":
