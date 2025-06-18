@@ -2151,44 +2151,143 @@ elif opcion == "Proceso":
     
 elif opcion == "Formularios":
     st.subheader("📤 Exportar modelo o resultados")
-    st.write("Aquí colocas botones para descargar modelos, DataFrames, etc.")
-    def formulario_prediccion_imme(contexto="pred_1"):
 
-        st.markdown("### ✍️ Introduce los valores para las siguientes variables:")
+    import streamlit as st
+    import pandas as pd
+    import numpy as np
+    from sklearn.tree import DecisionTreeRegressor
+    from sklearn.metrics import mean_squared_error
+    import joblib
+    import requests
+    import io
+
+    # Diccionario de nombres amigables
+    nombres_amigables = {
+        'P117': 'Peso (kg)',
+        'P118': 'Estatura (cm)',
+        'P119': 'Talla sentada (cm)',
+        'P120': 'Brazo (cm)',
+        'P121': 'Cintura (cm)',
+        'P122': 'Cadera (cm)',
+        'P123': 'Muslo (cm)',
+        'P124': 'Pantorrilla (cm)',
+        'P125': 'Pliegue Tricipital (mm)',
+        'P126': 'Pliegue Subescapular (mm)',
+        'P127': 'Pliegue Bíceps (mm)',
+        'P128': 'Pliegue Pantorrilla (mm)',
+        'P129': 'Pliegue Suprailiaco (mm)',
+        'IMC': 'IMC',
+        'P113': 'Fuerza de prensión',
+        'P112_vel': 'Velocidad de marcha',
+        'sexo': 'Sexo'
+    }
+
+    variables_disponibles = list(nombres_amigables.keys())
+
+    @st.cache_data
+    def cargar_modelo_desde_url(url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            return joblib.load(io.BytesIO(response.content))
+        else:
+            st.error("Error al cargar el modelo.")
+            return None
+
+    modelos_dict = {
+        "Mejor combinación global": ("https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_global_imme.pkl", None),
+        "Combinación con 2 variables": ("https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_n_variables_2.pkl", 2),
+        "Combinación con 3 variables": ("https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_n_variables_3.pkl", 3),
+        "Combinación con 4 variables": ("https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_n_variables_4.pkl", 4),
+        "Seleccionar manualmente": (None, None)
+    }
+
+    st.subheader("📤 Formularios para predecir IMME")
+    tab_manual, tab_archivo = st.tabs(["🧍 Ingreso manual", "📁 Subir archivo"])
+
+    with st.sidebar:
+        modelo_seleccionado = st.selectbox("Modelo para usar", list(modelos_dict.keys()))
+
+    modelo_url, n_vars = modelos_dict[modelo_seleccionado]
+    modelo = None
+
+    if modelo_seleccionado != "Seleccionar manualmente":
+        modelo = cargar_modelo_desde_url(modelo_url)
+    else:
+        seleccion_manual = st.multiselect("Variables manuales", options=variables_disponibles)
+        if seleccion_manual:
+            n_vars = len(seleccion_manual)
+            modelo = None
+
+    with tab_manual:
+        if "pacientes_manual" not in st.session_state:
+            st.session_state.pacientes_manual = []
+
         input_values = {}
+        variables_utilizadas = (
+            seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
+            else modelo.feature_names_in_
+        )
 
-        for var in variables_input:
-            unique_key = f"{contexto}_input_{var}"
-
-            if var == 'sexo':
-                sexo_valor = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
-                input_values[var] = 1.0 if sexo_valor == "Hombre" else 0.0
+        for var in variables_utilizadas:
+            label = nombres_amigables.get(var, var)
+            if var == "sexo":
+                input_values[var] = 1.0 if st.selectbox(label, ["Mujer", "Hombre"]) == "Hombre" else 0.0
             else:
-                label = nombres_amigables.get(var, var)
-                input_values[var] = st.number_input(
-                    label=label,
-                    key=unique_key,
-                    value=0.0
-                )
+                input_values[var] = st.number_input(label, value=0.0)
 
-        if st.button(f"Predecir IMME ({contexto})", key=f"{contexto}_predict_btn"):
-            try:
-                input_df = pd.DataFrame([input_values])
-                pred = modelo.predict(input_df)[0]
-                st.session_state[f"{contexto}_prediccion_valor"] = pred
-            except Exception as e:
-                st.error(f"❌ Ocurrió un error: {e}")
+        if st.button("➕ Agregar paciente"):
+            st.session_state.pacientes_manual.append(input_values)
 
-        if st.session_state.get(f"{contexto}_prediccion_valor") is not None:
-            st.success(f"🧠 IMME estimado: **{st.session_state[f'{contexto}_prediccion_valor']:.2f}**")
+        if st.session_state.pacientes_manual:
+            df_manual = pd.DataFrame(st.session_state.pacientes_manual)
+            st.markdown("### Pacientes registrados")
+            st.dataframe(df_manual)
 
-    variables_input = list(st.session_state.mejor_combinacion)
-    modelo = cargar_modelo_desde_github("https://...modelo_global.pkl")
-    formulario_prediccion_imme(contexto="pred_1")
+            if st.button("🔮 Predecir IMME para pacientes"):
+                if modelo_seleccionado == "Seleccionar manualmente":
+                    X_manual = df_manual[seleccion_manual]
+                    modelo = DecisionTreeRegressor().fit(X_manual, np.zeros(len(X_manual)))
+                    pred = modelo.predict(X_manual)
+                    rmse = 0.0
+                else:
+                    columnas_utilizadas = modelo.feature_names_in_
+                    pred = modelo.predict(df_manual[columnas_utilizadas])
+                    rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))
 
-    variables_input = list(st.session_state.mejor_combinacion_n)
-    modelo = st.session_state.modelo_n
-    formulario_prediccion_imme(contexto="pred_2")
+                df_manual["IMME estimado"] = pred
+                st.dataframe(df_manual)
+                st.success(f"📉 RMSE estimado: {rmse:.4f}")
+
+    with tab_archivo:
+        archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
+        if archivo:
+            df_archivo = pd.read_excel(archivo)
+            columnas_requeridas = (
+                seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
+                else modelo.feature_names_in_
+            )
+
+            if not all(col in df_archivo.columns for col in columnas_requeridas):
+                st.error("❌ Faltan columnas requeridas.")
+            else:
+                if modelo_seleccionado == "Seleccionar manualmente":
+                    modelo = DecisionTreeRegressor().fit(df_archivo[seleccion_manual], np.zeros(len(df_archivo)))
+                    pred = modelo.predict(df_archivo[seleccion_manual])
+                    rmse = 0.0
+                else:
+                    pred = modelo.predict(df_archivo[modelo.feature_names_in_])
+                    rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))
+
+                df_archivo["IMME estimado"] = pred
+                st.dataframe(df_archivo)
+
+                output = io.BytesIO()
+                df_archivo.to_excel(output, index=False)
+                st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="imme_con_prediccion.xlsx")
+                st.success(f"📉 RMSE estimado: {rmse:.4f}")
+
+
+
 
 
 
