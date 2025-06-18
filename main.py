@@ -1595,6 +1595,21 @@ try:
                 report = classification_report(y_test, y_pred, target_names=le.classes_)
                 f1 = f1_score(y_test, y_pred, average='weighted')
 
+                # === DESCARGAR MODELO ENTRENADO ===
+                import joblib    
+                import io
+
+                modelo_bytes = io.BytesIO()
+                joblib.dump(model, modelo_bytes)
+                modelo_bytes.seek(0)
+
+                st.download_button(
+                    label="⬇️ Descargar modelo entrenado (Random Forest - Sarcopenia)",
+                    data=modelo_bytes,
+                    file_name="modelo_sarcopenia_rf.pkl",
+                    mime="application/octet-stream"
+                )
+
                 st.text("Reporte de clasificación:")
                 st.text(report)
                 st.text(f"Weighted F1-score: {f1:.4f}")
