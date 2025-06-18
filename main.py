@@ -2221,27 +2221,67 @@ elif opcion == "Formularios":
     with tab_manual:
         if "pacientes_manual" not in st.session_state:
             st.session_state.pacientes_manual = []
+        if "paciente_en_edicion" not in st.session_state:
+            st.session_state.paciente_en_edicion = None
+
+        st.markdown("### ✍️ Introducción manual de datos")
 
         input_values = {}
         variables_utilizadas = (
             seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
             else modelo.feature_names_in_
         )
-        input_values["Identificador"] = st.text_input("Identificador del paciente")
+
+        input_values["Identificador"] = st.text_input("Identificador del paciente", 
+            value=(
+                st.session_state.paciente_en_edicion["Identificador"]
+                if st.session_state.paciente_en_edicion else ""
+            )
+        )
+
         for var in variables_utilizadas:
             label = nombres_amigables.get(var, var)
-            if var == "sexo":
-                input_values[var] = 1.0 if st.selectbox(label, ["Mujer", "Hombre"]) == "Hombre" else 0.0
-            else:
-                input_values[var] = st.number_input(label, value=0.0)
+            key_input = f"{var}_manual"
 
-        if st.button("➕ Agregar paciente"):
-            st.session_state.pacientes_manual.append(input_values)
+            if var == "sexo":
+                input_values[var] = (
+                    1.0 if st.selectbox(label, ["Mujer", "Hombre"], 
+                        key=key_input,
+                        index=1 if (st.session_state.paciente_en_edicion and st.session_state.paciente_en_edicion[var] == 1.0) else 0
+                    ) == "Hombre" else 0.0
+                )
+            else:
+                input_values[var] = st.number_input(label, value=(
+                    st.session_state.paciente_en_edicion[var]
+                    if st.session_state.paciente_en_edicion else 0.0
+                ), key=key_input)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("➕ Agregar paciente"):
+                st.session_state.pacientes_manual.append(input_values.copy())
+                st.session_state.paciente_en_edicion = None
+        with col2:
+            if st.session_state.paciente_en_edicion is not None:
+                if st.button("✅ Guardar edición"):
+                    idx = st.session_state.paciente_en_edicion_idx
+                    st.session_state.pacientes_manual[idx] = input_values.copy()
+                    st.session_state.paciente_en_edicion = None
 
         if st.session_state.pacientes_manual:
             df_manual = pd.DataFrame(st.session_state.pacientes_manual)
-            st.markdown("### Pacientes registrados")
+            st.markdown("### 🗂️ Pacientes registrados")
             st.dataframe(df_manual)
+
+            # Selector de paciente para editar
+            identificadores = df_manual["Identificador"].tolist()
+            paciente_a_editar = st.selectbox("Selecciona un paciente para editar:", options=[""] + identificadores)
+
+            if paciente_a_editar and paciente_a_editar != "":
+                idx = df_manual[df_manual["Identificador"] == paciente_a_editar].index[0]
+                st.session_state.paciente_en_edicion = st.session_state.pacientes_manual[idx]
+                st.session_state.paciente_en_edicion_idx = idx
+                st.info(f"✏️ Editando al paciente con Identificador: {paciente_a_editar}")
 
             if st.button("🔮 Predecir IMME para pacientes"):
                 if modelo_seleccionado == "Seleccionar manualmente":
@@ -2257,6 +2297,9 @@ elif opcion == "Formularios":
                 df_manual["IMME estimado"] = pred
                 st.dataframe(df_manual)
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
+
+
+    
 
     with tab_archivo:
         archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
