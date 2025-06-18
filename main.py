@@ -2271,8 +2271,16 @@ elif opcion == "Formularios":
 
         if st.session_state.pacientes_manual:
             df_manual = pd.DataFrame(st.session_state.pacientes_manual)
-            st.markdown("### 🗂️ Pacientes registrados")
-            st.dataframe(df_manual)
+
+            # 🔽 Aquí insertas el bloque para renombrar
+            columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
+            df_mostrar = df_manual.rename(columns=columnas_amigables)
+
+            st.markdown("### Pacientes registrados")
+            st.dataframe(df_mostrar)  # Mostrar con nombres amigables
+            
+            #st.markdown("### 🗂️ Pacientes registrados")
+            #st.dataframe(df_manual)
 
             # Selector para editar o borrar
             identificadores = df_manual["Identificador"].tolist()
@@ -2308,6 +2316,7 @@ elif opcion == "Formularios":
                     rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))
 
                 df_manual["IMME estimado"] = pred
+
                 st.dataframe(df_manual)
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
