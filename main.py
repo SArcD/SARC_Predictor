@@ -8,8 +8,73 @@ opcion = st.sidebar.radio(
 
 # Contenido condicional
 if opcion == "Introducción":
-    st.subheader("🔍 Entrenamiento del modelo")
-    st.write("Aquí va el código de entrenamiento del modelo...")
+    st.title("Sobre SARC-Predictor")
+    st.markdown("""
+    <div style="text-align: justify;">
+       
+    Esta aplicación es resultado del proyecto de estancia posdoctoral **"Identificación 
+    de las etapas y tipos de sarcopenia mediante modelos predictivos como herramienta 
+    de apoyo en el diagnóstico a partir de parámetros antropométricos"**, desarrollado 
+    por el Doctor en Ciencias (Astrofísica) Santiago Arceo Díaz, bajo la dirección de 
+    la Doctora Xóchitl Rosío Angélica Trujillo Trujillo, y con la ayuda de los colaboradores mencionados en esta sección. Esta estancia es gracias a la 
+    colaboración entre el entre el **Consejo Nacional de Humanidades Ciencia y Tecnología ([**CONAHCYT**](https://conahcyt.mx/)) y la Universidad de Colima ([**UCOL**](https://portal.ucol.mx/cuib/))**
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.subheader("Muestra")
+    st.markdown("""
+    <div style="text-align: justify">
+                   
+    Los datos utilizados para los modelos fueron proveidos por el **Dr. Sergio Sánchez García** y personal del **Instituto Mexicano del Seguro Social**, a partir de las respuestas recolectadas del **"Cuadernillo de Obesidad, Sarcopenia y Fragilidad en Adultos Mayores Derechohabientes del Instituto Mexicano del Seguro Social de las Delegaciones Sur y Norte de la Ciudad de México"** (en sus ediciones de 2019 y 2022). A partir de las medidas antropométricas registradas, se crean modelos para predecir la incidencia de sarcopenia en los usuarios registrados (tanto en personas adultas mayores sanas como en aquellas que padecen de comorbilidades como la hipertensión, diabetes mellitus o artritis).  
+            
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.subheader("Algoritmos y lenguaje de programación")
+    st.markdown("""
+    <div style = "text-align: justify">
+                   
+    Elegimos el lenguaje de programación [**Python**](https://docs.python.org/es/3/tutorial/) y las plataformas [**Streamlit**](https://streamlit.io/) y [**GitHub**](https://github.com/). Estas opciones permiten una fácil visualización y manipulación de la aplicación, además de almacenar los algoritmos en la nube. Las técnicas utilizadas para el análisis de los datos y la creación de modelos de aproximación se derivan de prácticas usuales para la depuración de datos, la creación de árboles de ajuste, la técnica de clustering jerárquico y Random Forest. **La aplicación es de libre acceso y uso gratuito para cualquier personal de atención primaria de pacientes geriátricos.**
+    </div>
+    """, unsafe_allow_html=True)
+
+    #st.title("Acerca de Sarc-open-IA")
+
+    st.subheader("Objetivo")
+    st.markdown("""
+    <div style="text-align: justify">
+                               
+    El objetivo de esta aplicación es crear modelos para la predicción de sacorpenia a partir de medidas antropométricas, tomando en cuenta la posible presencia de comorbilidades. Adicionalmente, estos modelos pueden generarse a partir de distintas combinaciones de variables antropométricas, permitiendo generar un diagnóstico en situaciones en las que alguna de las variables mas comunes, no están disponibles debido a limitaciones de recursos.
+    </div>             
+    """,unsafe_allow_html=True)
+
+    st.subheader("Ventajas y características")
+
+    st.markdown("""
+    <div style="text-align: justify">
+                   
+    - **Facilitar uso:** Queríamos que nuestra herramienta fuera fácil de usar para el personal médico, incluso si no estaban familiarizados con la inteligencia artificial o la programación. Para lograrlo, elegimos el lenguaje de programación [**Python**](https://docs.python.org/es/3/tutorial/) y las plataformas [**Streamlit**](https://streamlit.io/) y [**GitHub**](https://github.com/). Estas opciones permiten una fácil visualización y manipulación de la aplicación, además de almacenar los algoritmos en la nube.
+
+    - **Interfaz amigable:** El resultado es una interfaz gráfica que permite a los médicos ingresar los datos antropométricos de los pacientes y ver gráficas útiles para el análisis estadístico. También ofrece un diagnóstico en tiempo real de la sarcopenia, y todo esto se hace utilizando cajas de texto y deslizadores para ingresar y manipular los datos.
+
+    - **Accesibilidad total:** El personal médico puede descargar de  forma segura las gráficas y los archivos generados por la aplicación. Además, pueden acceder a ella desde cualquier dispositivo con conexión a internet, ya sea un teléfono celular, una computadora, tablet o laptop.
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.subheader("Método")
+    st.markdown("""
+    <div style="text-align:justify">
+                   
+    Los datos utiliados para el entrenamiento de los modelos provienen de las ediciones de los años 2019 y 2022 del **"Cuadernillo de Obesidad, Sarcopenia y Fragilidad en Adultos Mayores Derechohabientes del Instituto Mexicano del Seguro Social de las Delegaciones Sur y Norte de la Ciudad de México"**. Con los datos recolectados, se programó un algoritmo que aplica clustering jerárquico aglomerativo para clasficar pacientes en conjuntos que se caracterizan su similitud en las medidas antropométricas. En el caso del Índice de Masa Muscular Esquelética Apendicular, se crearon modelos de ajuste que calculan esta variable a partir de las circunferencias de pantorrilla, brazo, 
+                
+                 septiembre y octubre el año 2023 en una muestra de adultos mayores que residen en la Zona Metropolitana, Colima, Villa de Álvarez, México, se procedió al desarrollo de modelos predictivos mediante el algoritmo [**Random Forest**](https://cienciadedatos.net/documentos/py08_random_forest_python). En este caso, se crearon modelos que permiten estimar la [**masa muscular**](https://www.scielo.cl/scielo.php?pid=S0717-75182008000400003&script=sci_arttext&tlng=en) (medida en kilogramos) y el [**porcentaje corporal de grasa**](https://ve.scielo.org/scielo.php?pid=S0004-06222007000400008&script=sci_arttext) a partir de distintas medidas antropométricas. 
+       
+    Los modelos generados muestran un grado aceptable de coincidencia con las mediciones de estos parámetros, que típicamente requieren de balanzas de bioimpedancia y/o absorciometría de rayos X de energía dual. Una vez con las aproximaciones para masa muscular y porcentaje de grasa corporal, se estima el grado de riesgo de padecer sarcopenia para cada paciente mediante el uso del algoritmo de clustering jerarquico. 
+       
+    Estas condiciones de diagnóstico fueron propuestas con el objetivo de minimizar la cantidad de parámetros antropométricos y establecer puntos de corte que puedan ser validados por personal médico capacitado. **Este enfoque se asemeja a lo que se conoce en inteligencia artificial como un sistema experto, ya que los modelos resultantes requieren validación por parte de especialistas.**
+    </div>
+    """,unsafe_allow_html=True)
+
 
 elif opcion == "Proceso":
     st.subheader("📉 Gráficas e interpretación")
