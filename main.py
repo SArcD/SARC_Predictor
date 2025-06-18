@@ -1039,77 +1039,7 @@ elif opcion == "Proceso":
             else:
                 st.info("Presiona el botón para calcular combinaciones óptimas.")
         
-
-
-        ###########################33
-        # Selección de longitud específica para combinaciones a mostrar
-        #selected_n = st.number_input("Selecciona el número de variables en cada combinación a mostrar", min_value=1, max_value=len(variables), value=3)
-
-        # Máximo tamaño a combinar en evaluación general
-        #max_combinaciones = 5
-
-
-        #if 'errores_combinaciones' not in st.session_state:
-        #    st.session_state.errores_combinaciones = {}
-        #    st.session_state.mejor_combinacion = None
-        #    st.session_state.mejor_error = None
-        #    st.session_state.resultados_filtrados = None
-        #    st.session_state.modelo_global = None
-        #    st.session_state.modelo_n = None
-
-        ## Calcula combinaciones
-        #errores_combinaciones = {}
-        #for r in range(1, max_combinaciones + 1):
-        #    for combinacion in combinations(variables, r):
-        #        X = df_combined[list(combinacion)]
-        #        y = df_combined['IMME']
-        #        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        #        model = DecisionTreeRegressor(random_state=42)
-        #        model.fit(X_train, y_train)
-        #        y_pred = model.predict(X_test)
-        #        mse = mean_squared_error(y_test, y_pred)
-        #        errores_combinaciones[combinacion] = mse
-
-        ## Guardar resultados en session_state
-        #st.session_state.errores_combinaciones = errores_combinaciones
-        #st.session_state.mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
-        #st.session_state.mejor_error = errores_combinaciones[st.session_state.mejor_combinacion]#
-
-        ## Usar mejor combinación almacenada
-        #mejor_combinacion = st.session_state.mejor_combinacion
-        #mejor_error = st.session_state.mejor_error
-        #errores_combinaciones = st.session_state.errores_combinaciones
-
-
-        ## Mostrar la mejor combinación global
-        #mejor_combinacion = min(errores_combinaciones, key=errores_combinaciones.get)
-        #mejor_error = errores_combinaciones[mejor_combinacion]
-
-        #st.markdown(f"### 🏆 Mejor combinación global:")
-        #st.markdown(f"- **Variables**: `{mejor_combinacion}`")
-        #st.markdown(f"- **Error cuadrático medio (MSE)**: `{mejor_error:.4f}`")
-
-        ## Mostrar combinaciones con el número exacto de variables elegido
-        #st.markdown(f"### 📊 Combinaciones con exactamente {selected_n} variables:")
-
-        #filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
-        #sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
-
-        #df_resultados = pd.DataFrame([
-        #    {'Variables': ', '.join(k), 'MSE': v}
-        #    for k, v in sorted_results
-        #])
-
-        #st.dataframe(df_resultados)
-
-        ## Obtener la mejor combinación con n variables seleccionadas por el usuario
-        #if not df_resultados.empty:
-        #    mejor_combinacion_n = df_resultados.iloc[0]['Variables'].split(', ')
-        #else:
-        #    mejor_combinacion_n = None
-
         
-
             import matplotlib.pyplot as plt
             import pandas as pd
             import numpy as np
@@ -2222,6 +2152,45 @@ elif opcion == "Proceso":
 elif opcion == "Formularios":
     st.subheader("📤 Exportar modelo o resultados")
     st.write("Aquí colocas botones para descargar modelos, DataFrames, etc.")
+    def formulario_prediccion_imme(contexto="pred_1"):
+
+        st.markdown("### ✍️ Introduce los valores para las siguientes variables:")
+        input_values = {}
+
+        for var in variables_input:
+            unique_key = f"{contexto}_input_{var}"
+
+            if var == 'sexo':
+                sexo_valor = st.selectbox("Sexo", options=["Mujer", "Hombre"], key=unique_key)
+                input_values[var] = 1.0 if sexo_valor == "Hombre" else 0.0
+            else:
+                label = nombres_amigables.get(var, var)
+                input_values[var] = st.number_input(
+                    label=label,
+                    key=unique_key,
+                    value=0.0
+                )
+
+        if st.button(f"Predecir IMME ({contexto})", key=f"{contexto}_predict_btn"):
+            try:
+                input_df = pd.DataFrame([input_values])
+                pred = modelo.predict(input_df)[0]
+                st.session_state[f"{contexto}_prediccion_valor"] = pred
+            except Exception as e:
+                st.error(f"❌ Ocurrió un error: {e}")
+
+        if st.session_state.get(f"{contexto}_prediccion_valor") is not None:
+            st.success(f"🧠 IMME estimado: **{st.session_state[f'{contexto}_prediccion_valor']:.2f}**")
+
+    variables_input = list(st.session_state.mejor_combinacion)
+    modelo = cargar_modelo_desde_github("https://...modelo_global.pkl")
+    formulario_prediccion_imme(contexto="pred_1")
+
+    variables_input = list(st.session_state.mejor_combinacion_n)
+    modelo = st.session_state.modelo_n
+    formulario_prediccion_imme(contexto="pred_2")
+
+
 
 elif opcion == "Equipo de trabajo":
     st.subheader("Equipo de Trabajo")
