@@ -2177,8 +2177,8 @@ elif opcion == "Formularios":
         'P128': 'Pliegue Pantorrilla (mm)',
         'P129': 'Pliegue Suprailiaco (mm)',
         'IMC': 'IMC',
-        'P113': 'Fuerza de prensión',
-        'P112_vel': 'Velocidad de marcha',
+        'P113': 'Fuerza (kg)',
+        'P112_vel':  'Marcha (m/s)',
         'sexo': 'Sexo'
     }
 
@@ -2362,9 +2362,9 @@ elif opcion == "Formularios":
         # Cargar modelos
         modelo_hombre = cargar_modelo_desde_url(url_modelo_hombre)
         modelo_mujer = cargar_modelo_desde_url(url_modelo_mujer)
-
+ 'Marcha (m/s)'
         # Verificar columnas requeridas
-        columnas_sarcopenia = ['Fuerza de prensión', 'Velocidad de marcha', "IMME"]
+        columnas_sarcopenia = ['Fuerza (kg)', 'Marcha (m/s)', "IMME"]
         if all(col in df_manual.columns for col in columnas_sarcopenia):
             clasificaciones = []
             for _, fila in df_manual.iterrows():
