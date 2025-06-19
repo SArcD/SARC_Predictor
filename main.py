@@ -1515,6 +1515,7 @@ elif opcion == "Proceso":
                         height=500
                     )
                     st.plotly_chart(fig)
+            st.session_state.df_filtered = df_filtered
 
 
 
