@@ -2257,21 +2257,22 @@ elif opcion == "Formularios":
                     if st.session_state.paciente_en_edicion else 0.0
                 ), key=key_input)
 
-        # Asegurar que marcha (P112_vel) esté incluida aunque no esté en el modelo de IMME
-        if "P112_vel" not in variables_utilizadas:
-            label = nombres_amigables.get("P112_vel", "P112_vel")
-            key_input = "P112_vel_manual"
-            input_values["P112_vel"] = st.number_input(
-                label,
-                value=(
-                    st.session_state.paciente_en_edicion["P112_vel"]
-                    if st.session_state.paciente_en_edicion and "P112_vel" in st.session_state.paciente_en_edicion
-                    else 0.0
-                ),
-                key=key_input
-            )
+        # Incluir SIEMPRE marcha (P112_vel)
+        label_marcha = nombres_amigables.get("P112_vel", "P112_vel")
+        key_input_marcha = "P112_vel_manual"
+        input_values["P112_vel"] = st.number_input(
+            label_marcha,
+            value=(
+                st.session_state.paciente_en_edicion["P112_vel"]
+                if st.session_state.paciente_en_edicion and "P112_vel" in st.session_state.paciente_en_edicion
+                else 0.0
+            ),
+            key=key_input_marcha
+        )
 
 
+
+        
         col1, col2 = st.columns(2)
         with col1:
             if st.button("➕ Agregar paciente"):
@@ -2332,7 +2333,14 @@ elif opcion == "Formularios":
 
                 df_manual["IMME estimado"] = pred
 
-                st.dataframe(df_manual)
+                #st.dataframe(df_manual)
+                #df_manual["IMME estimado"] = pred
+
+                # Mostrar tabla con nombres amigables actualizados
+                columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
+                df_mostrar = df_manual.rename(columns=columnas_amigables)
+                st.dataframe(df_mostrar)
+
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
     ##############################
