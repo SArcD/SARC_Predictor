@@ -2434,7 +2434,96 @@ elif opcion == "Formularios":
                     st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
     with tab_sarcopenia:
-        st.markdown("### 🧠 Predicción de sarcopenia con entrada manual y entrenamiento en tiempo real")
+#        st.markdown("### 🧠 Predicción de sarcopenia con entrada manual y entrenamiento en tiempo real")
+#
+#        # Variables que usará el modelo
+#        column_map = {
+#            'Fuerza': 'Fuerza (kg)',
+#            'Marcha': 'Marcha (m/s)',
+#            'IMME': 'IMME'
+#        }
+#
+#        # Selección de variables
+#        selected_vars_display = st.multiselect(
+#            "Selecciona las variables predictoras para entrenar el modelo:",
+#            options=list(column_map.values()),
+#            default=['Fuerza (kg)', 'Marcha (m/s)', 'IMME']
+#        )
+#        inv_column_map = {v: k for k, v in column_map.items()}
+#        selected_vars = [inv_column_map[var] for var in selected_vars_display]
+
+#        # Formulario de entrada manual
+#        if "pacientes_sarcopenia" not in st.session_state:
+#            st.session_state.pacientes_sarcopenia = []
+
+#        nuevo_paciente = {}
+#        nuevo_paciente["Identificador"] = st.text_input("Identificador del paciente", key="id_sarc")
+
+#        for var in selected_vars:
+#            nuevo_paciente[var] = st.number_input(f"Ingrese {column_map[var]}", key=f"{var}_sarc")
+
+#        if st.button("➕ Agregar paciente para predicción de sarcopenia"):
+#            st.session_state.pacientes_sarcopenia.append(nuevo_paciente.copy())
+#            st.success("Paciente agregado para predicción.")
+
+#        if st.session_state.pacientes_sarcopenia:
+#            df_sarc = pd.DataFrame(st.session_state.pacientes_sarcopenia)
+#            st.markdown("### 👥 Pacientes registrados")
+#            st.dataframe(df_sarc)
+
+#            if st.button("🔮 Entrenar modelo y predecir sarcopenia"):
+#                try:
+#                    #df_train = df_filtered.copy()
+#                    if "df_filtered" in st.session_state:
+#                        df_train = st.session_state.df_filtered.copy()
+#                    else:
+#                        st.warning("No se encontró el DataFrame 'df_filtered'. Asegúrate de generar los datos antes.")
+#                        st.stop()
+
+#                    for col in selected_vars:
+#                        df_train[col] = pd.to_numeric(df_train[col], errors='coerce')
+
+#                    df_train = df_train.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
+
+#                    X = df_train[selected_vars]
+#                    y_raw = df_train['Clasificación Sarcopenia']
+
+#                    # Codificar etiquetas
+#                    from sklearn.preprocessing import LabelEncoder
+#                    le = LabelEncoder()
+#                    y = le.fit_transform(y_raw)
+
+#                    # SMOTE para balancear
+#                    from imblearn.over_sampling import SMOTE
+#                    smote = SMOTE(random_state=42)
+#                    X_resampled, y_resampled = smote.fit_resample(X, y)
+
+#                    # Entrenar modelo
+#                    from sklearn.ensemble import RandomForestClassifier
+#                    model = RandomForestClassifier(
+#                        n_estimators=300,
+#                        max_depth=3,
+#                        min_samples_leaf=5,
+#                        min_samples_split=10,
+#                        random_state=42
+#                    )
+#                    model.fit(X_resampled, y_resampled)
+
+#                    # Predicción para los nuevos pacientes
+#                    X_pred = df_sarc[selected_vars]
+#                    y_pred = model.predict(X_pred)
+#                    y_pred_labels = le.inverse_transform(y_pred)
+
+#                    df_sarc["Predicción Sarcopenia"] = y_pred_labels
+#                    st.markdown("### 🧪 Resultados de predicción")
+#                    st.dataframe(df_sarc)
+
+#                except Exception as e:
+#                    st.error(f"Ocurrió un error durante la predicción: {e}")
+
+
+#with st.expander("🧠 Predicción de sarcopenia con entrada manual y entrenamiento en tiempo real"):
+        st.markdown("### 📋 Formulario para predicción de sarcopenia")
 
         # Variables que usará el modelo
         column_map = {
@@ -2452,28 +2541,76 @@ elif opcion == "Formularios":
         inv_column_map = {v: k for k, v in column_map.items()}
         selected_vars = [inv_column_map[var] for var in selected_vars_display]
 
-        # Formulario de entrada manual
+        # Inicializar lista de pacientes
         if "pacientes_sarcopenia" not in st.session_state:
             st.session_state.pacientes_sarcopenia = []
 
-        nuevo_paciente = {}
-        nuevo_paciente["Identificador"] = st.text_input("Identificador del paciente", key="id_sarc")
+        # Iniciar paciente nuevo o cargar edición
+        if "edicion_sarcopenia" in st.session_state:
+            nuevo_paciente = st.session_state.edicion_sarcopenia
+            editando = True
+            st.info(f"✏️ Editando paciente: {nuevo_paciente['Identificador']}")
+        else:
+            nuevo_paciente = {}
+            nuevo_paciente["Identificador"] = st.text_input("Identificador del paciente", key="id_sarc")
+            editando = False
 
+        # Inputs
         for var in selected_vars:
-            nuevo_paciente[var] = st.number_input(f"Ingrese {column_map[var]}", key=f"{var}_sarc")
+            key_input = f"{var}_sarc"
+            valor = (
+                nuevo_paciente[var]
+                if editando and var in nuevo_paciente
+                else 0.0
+            )
+            nuevo_paciente[var] = st.number_input(f"Ingrese {column_map[var]}", key=key_input, value=valor)
 
-        if st.button("➕ Agregar paciente para predicción de sarcopenia"):
-            st.session_state.pacientes_sarcopenia.append(nuevo_paciente.copy())
-            st.success("Paciente agregado para predicción.")
+        # Botones para agregar o guardar edición
+        col_add, col_save = st.columns(2)
+        with col_add:
+            if not editando:
+                if st.button("➕ Agregar paciente para predicción de sarcopenia"):
+                    st.session_state.pacientes_sarcopenia.append(nuevo_paciente.copy())
+                    st.success("Paciente agregado.")
+                    st.rerun()
+        with col_save:
+            if editando:
+                if st.button("✅ Guardar cambios"):
+                    st.session_state.pacientes_sarcopenia[st.session_state.edicion_idx_sarcopenia] = nuevo_paciente.copy()
+                    del st.session_state.edicion_sarcopenia
+                    del st.session_state.edicion_idx_sarcopenia
+                    st.success("Cambios guardados.")
+                    st.rerun()
 
+        # Mostrar pacientes registrados
         if st.session_state.pacientes_sarcopenia:
             df_sarc = pd.DataFrame(st.session_state.pacientes_sarcopenia)
             st.markdown("### 👥 Pacientes registrados")
             st.dataframe(df_sarc)
 
+            # Selector para edición o eliminación
+            identificadores = df_sarc["Identificador"].tolist()
+            paciente_seleccionado = st.selectbox("Selecciona un paciente para editar o borrar:", [""] + identificadores)
+
+            col_edit, col_delete = st.columns(2)
+            with col_edit:
+                if paciente_seleccionado and paciente_seleccionado != "":
+                    idx = df_sarc[df_sarc["Identificador"] == paciente_seleccionado].index[0]
+                    if st.button("✏️ Editar paciente seleccionado"):
+                        st.session_state.edicion_sarcopenia = st.session_state.pacientes_sarcopenia[idx]
+                        st.session_state.edicion_idx_sarcopenia = idx
+                        st.rerun()
+            with col_delete:
+                if paciente_seleccionado and paciente_seleccionado != "":
+                    idx = df_sarc[df_sarc["Identificador"] == paciente_seleccionado].index[0]
+                    if st.button("🗑️ Borrar paciente seleccionado"):
+                        st.session_state.pacientes_sarcopenia.pop(idx)
+                        st.success(f"Paciente '{paciente_seleccionado}' eliminado.")
+                        st.rerun()
+
+            # Entrenar modelo y predecir
             if st.button("🔮 Entrenar modelo y predecir sarcopenia"):
                 try:
-                    #df_train = df_filtered.copy()
                     if "df_filtered" in st.session_state:
                         df_train = st.session_state.df_filtered.copy()
                     else:
@@ -2509,7 +2646,7 @@ elif opcion == "Formularios":
                     )
                     model.fit(X_resampled, y_resampled)
 
-                    # Predicción para los nuevos pacientes
+                    # Predicción
                     X_pred = df_sarc[selected_vars]
                     y_pred = model.predict(X_pred)
                     y_pred_labels = le.inverse_transform(y_pred)
@@ -2520,6 +2657,7 @@ elif opcion == "Formularios":
 
                 except Exception as e:
                     st.error(f"Ocurrió un error durante la predicción: {e}")
+
 
 
 
