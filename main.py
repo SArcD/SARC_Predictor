@@ -523,7 +523,7 @@ elif opcion == "Proceso":
                 'P130': 'Circunferencia de muñeca',
                 'P118': 'Circunferencia de cadera'
             }
-            st.markdown("""Si separamos la muestra de acuerdo al sexo de los participantes, podemos observar que los parámetros tienen varianzas distintas. **La siguiente gráfica muestra las varianzas normalizadas para hombres y mujeres**""")
+            st.markdown("""Si separamos la muestra de acuerdo al sexo de los participantes, podemos observar que los parámetros tienen varianzas distintas. **La siguiente gráfica muestra las varianzas normalizadas para hombres y mujeres**. Para entrenar los modelos predictivos, solo consideramos parámetros con una varianza normalizada mayor a 0.01""")
             
             
             #column_labels_en = {
@@ -594,6 +594,7 @@ elif opcion == "Proceso":
             #import streamlit as st
             import plotly.graph_objects as go
             import plotly.subplots as sp
+            st.markdown("""La siguiente figura muestra los historgamas con la distribución de valores para cada uno de los parámetros. La muestra original se ha separado en los subconjuntos de hombres y mujeres. En algunos casos, los dos subconjuntos tienen la misma distribución (los histogramas se empalman). En otros casos, cada histograma tiene picos en zonas distintas, reflejando las variaciones esperadas de acuerdo al sexo del paciente.""")
 
             # Diccionario de etiquetas en español
             column_labels = {
