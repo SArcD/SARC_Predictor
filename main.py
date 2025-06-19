@@ -2362,7 +2362,7 @@ elif opcion == "Formularios":
         # Cargar modelos
         modelo_hombre = cargar_modelo_desde_url(url_modelo_hombre)
         modelo_mujer = cargar_modelo_desde_url(url_modelo_mujer)
- 'Marcha (m/s)'
+ 
         # Verificar columnas requeridas
         columnas_sarcopenia = ['Fuerza (kg)', 'Marcha (m/s)', "IMME"]
         if all(col in df_manual.columns for col in columnas_sarcopenia):
