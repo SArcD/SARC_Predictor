@@ -2331,7 +2331,7 @@ elif opcion == "Formularios":
                     pred = modelo.predict(df_manual[columnas_utilizadas])
                     rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))
 
-                df_manual["IMME estimado"] = pred
+                df_manual["IMME"] = pred
 
                 #st.dataframe(df_manual)
                 #df_manual["IMME estimado"] = pred
