@@ -2150,7 +2150,6 @@ elif opcion == "Proceso":
         st.error(f"Ocurrió un error al intentar cargar el archivo: {e}")
     
 elif opcion == "Formularios":
-    st.subheader("📤 Exportar modelo o resultados")
 
     import streamlit as st
     import pandas as pd
@@ -2201,22 +2200,6 @@ elif opcion == "Formularios":
         "Seleccionar manualmente": (None, None)
     }
 
-
-    # Carga de modelos de sarcopenia
-    import urllib.request
-
-    url_modelo_hombre = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_sarcopenia_rfhombre.pkl"
-    url_modelo_mujer = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_sarcopenia_rfmujer.pkl"
-
-    @st.cache_resource
-    def cargar_modelo_sarcopenia(url):
-        with urllib.request.urlopen(url) as response:
-            return joblib.load(response)
-
-    modelo_hombre = cargar_modelo_sarcopenia(url_modelo_hombre)
-    modelo_mujer = cargar_modelo_sarcopenia(url_modelo_mujer)
-
-    
     st.subheader("📤 Formularios para predecir IMME")
     tab_manual, tab_archivo = st.tabs(["🧍 Ingreso manual", "📁 Subir archivo"])
 
@@ -2349,20 +2332,18 @@ elif opcion == "Formularios":
 
                 df_manual["IMME"] = pred
 
-                # Predecir clasificación de sarcopenia
-                columnas_sarcopenia = ['P113', 'P112_vel', 'IMME']
-                if all(col in df_manual.columns for col in columnas_sarcopenia):
-                    clasificaciones = []
-                    for _, fila in df_manual.iterrows():
-                        sexo = fila["sexo"]
-                        entrada = fila[columnas_sarcopenia].values.reshape(1, -1)
-                        modelo_uso = modelo_hombre if sexo == 1.0 else modelo_mujer
-                        clasificaciones.append(modelo_uso.predict(entrada)[0])
-                    df_manual["Clasificación de sarcopenia"] = clasificaciones
-                else:
-                    st.warning("⚠️ No se pudo calcular la clasificación de sarcopenia. Asegúrate de haber capturado 'Fuerza (P113)', 'Marcha (P112_vel)' e 'IMME'.")
-        
+                # Mostrar tabla con nombres amigables actualizados
+                columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
+                df_mostrar = df_manual.rename(columns=columnas_amigables)
+                st.dataframe(df_mostrar)
 
+
+                st.success(f"📉 RMSE estimado: {rmse:.4f}")
+
+
+
+
+    
                 # Mostrar tabla con nombres amigables actualizados
                 #columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
                 #df_mostrar = df_manual.rename(columns=columnas_amigables)
