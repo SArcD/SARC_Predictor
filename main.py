@@ -152,13 +152,13 @@ elif opcion == "Proceso":
                 startangle=90,
                 colors=['skyblue', 'lightpink']
             )
-            ax.set_title('Proporción de Hombres vs Mujeres')
+            ax.set_title('Proporción de hombres y mujeres en la muestra')
             ax.axis('equal')
 
             # Mostrar en Streamlit
             st.pyplot(fig_1)
         #-----------------------------------------------------------------------------------
-
+            st.markdown("""La muestra se compone de pacientes que presentan **comorbilidades comunes en la población mexicana**. La siguiente Figura muestra la distribución de las comorbilidades mas frecuentes en la muestra. La segunda barra horizontal muestra la distribución de las comorbilidades menores. **Los modelos predictivos para sarcopenia se entrenaron solo con los pacientes sin comorbilidades**""")
             import matplotlib.pyplot as plt
             import numpy as np
             import streamlit as st
