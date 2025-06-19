@@ -2179,7 +2179,7 @@ elif opcion == "Formularios":
         'IMC': 'IMC',
         'P113': 'Fuerza (kg)',
         'P112_vel':  'Marcha (m/s)',
-        'sexo': 'Sexo'
+        'sexo': 'sexo'
     }
 
     variables_disponibles = list(nombres_amigables.keys())
