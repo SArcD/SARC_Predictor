@@ -130,6 +130,7 @@ elif opcion == "Proceso":
 
         # Mostrar vista previa opcional en un expander
         with st.expander("📂 Ver datos cargados"):
+            st.markdown("""La siguiente tabla muestra un **resumen** de los datos que se utilizaron para el entrenamiento de los modelos. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS""")
             #st.dataframe(datos)
             st.dataframe(datos.describe())
             import matplotlib.pyplot as plt
