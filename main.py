@@ -252,6 +252,10 @@ elif opcion == "Proceso":
         #st.pyplot(fig_2)
 #------------------------------Comparación por sexo
 
+
+            st.markdown("""La siguiente Figura muestra la distribución de comorbilidades de acuerdo al sexo de los integrantes de la muestra (así como el numero de hombres y mujeres que componen cada subconjunto).""")
+            
+        
             import matplotlib.pyplot as plt
             import numpy as np
             import pandas as pd
