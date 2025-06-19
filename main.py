@@ -368,6 +368,7 @@ elif opcion == "Proceso":
         #st.pyplot(fig_3)
 
         with st.expander("Varianzas"):
+            st.markdown("""Una manera de simplificar los modelos es eliminar los parámetros que tienen poco poder preditivo. Esto puede hacerse mediante la varianza (que mide la variabilidad que tiene un parametro entre un grupo de pacientes). Los parámetros con las varianzas mas grandes son también aquellos que permiten distinguir a un paciente de los demás. Como nuestro objetivo es clasificar, resulta conveniente conservar solo los parámetros con las varinzas mas grandes. Para que las unidades no sean un factor que artificialmente hagan parecer que un parámetros tiene una varianza mas grande, se normalizaron los valores antes de calcular la varianza de cada parámetro. La siguiente figura muestra la gráfica de varianzas normalizadas.""")
             # Definir las columnas que deben ser iguales a 0
             columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
                     'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']
