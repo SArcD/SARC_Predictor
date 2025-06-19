@@ -578,8 +578,8 @@ elif opcion == "Proceso":
 
                 ax.set_yticks(y_pos)
                 ax.set_yticklabels(merged_df.index)
-                ax.set_xlabel('Normalized Variance')
-                ax.set_title('Comparison of Normalized Variances by Sex')
+                ax.set_xlabel('Varianza normalizada')
+                ax.set_title('Comparación de las varianzas normalizadas, de acuerdo al sexo')
                 ax.invert_yaxis()
                 ax.grid(axis='x', linestyle='--', alpha=0.7)
                 ax.legend()
