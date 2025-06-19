@@ -2385,10 +2385,10 @@ elif opcion == "Formularios":
                         rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))  # Estimación simbólica
 
                     # Agrega la predicción
-                    df_archivo["IMME estimado"] = pred
+                    df_archivo["IMME"] = pred
 
                     # Muestra solo Identificador + columnas utilizadas + predicción
-                    columnas_mostrar = ["Identificador"] + list(columnas_requeridas) + ["IMME estimado"]
+                    columnas_mostrar = ["Identificador"] + list(columnas_requeridas) + ["IMME"]
                     st.dataframe(df_archivo[columnas_mostrar])
 
                     # Exportar resultados
