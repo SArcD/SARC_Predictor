@@ -2626,7 +2626,7 @@ elif opcion == "Formularios":
         # Botones
         col1, col2 = st.columns(2)
         with col1:
-            if not editando and st.button("➕ Agregar paciente"):
+            if not editando and st.button("➕ Agrega paciente"):
                 st.session_state.pacientes_sarcopenia.append(nuevo_paciente.copy())
                 st.success("Paciente agregado.")
                 st.rerun()
