@@ -504,24 +504,46 @@ elif opcion == "Proceso":
     
             # --- 4. Diccionario de nombres en inglés
             column_labels_en = {
-                'P112_vel': 'Gait Speed',
-                'P113': 'Grip Strength',
-                'P125': 'Triceps Skinfold',
-                'P126': 'Subscapular Skinfold',
-                'P128': 'Calf Circumference',
-                'P127': 'Biceps Skinfold',
-                'P117': 'Weight',
-                'IMC': 'BMI',
-                'P123': 'Thigh Circumference',
-                'P121': 'Waist Circumference',
-                'P120': 'Arm Circumference',
-                'P124': 'Calf Skinfold',
-                'P122': 'Abdomen Circumference',
-                'P119': 'Chest Circumference',
-                'P129': 'Neck Circumference',
-                'P130': 'Wrist Circumference',
-                'P118': 'Hip Circumference'
+                'P112_vel': 'Velocidad de marcha',
+                'P113': 'Fuerza de agarre',
+                'P125': 'Pliegue cutáneo de triceps',
+                'P126': 'Pliegue subescapular',
+                'P128': 'Circunferencia de pantorrilla',
+                'P127': 'Pliegue cutáneo de biceps',
+                'P117': 'Peso',
+                'IMC': 'Índice de masa corporal',
+                'P123': 'Circunferencia de muslo',
+                'P121': 'Circunferencia de cintura',
+                'P120': 'Circunferencia de brazo',
+                'P124': 'Pliegue cutáneo de pantorrilla',
+                'P122': 'Circunferencia de abdomen',
+                'P119': 'Circunferencia de pecho',
+                'P129': 'Circunferencia de cuello',
+                'P130': 'Circunferencia de muñeca',
+                'P118': 'Circunferencia de cadera'
             }
+            
+            
+            
+            #column_labels_en = {
+            #    'P112_vel': 'Gait Speed',
+            #    'P113': 'Grip Strength',
+            #    'P125': 'Triceps Skinfold',
+            #    'P126': 'Subscapular Skinfold',
+            #    'P128': 'Calf Circumference',
+            #    'P127': 'Biceps Skinfold',
+            #    'P117': 'Weight',
+            #    'IMC': 'BMI',
+            #    'P123': 'Thigh Circumference',
+            #    'P121': 'Waist Circumference',
+            #    'P120': 'Arm Circumference',
+            #    'P124': 'Calf Skinfold',
+            #    'P122': 'Abdomen Circumference',
+            #    'P119': 'Chest Circumference',
+            #    'P129': 'Neck Circumference',
+            #    'P130': 'Wrist Circumference',
+            #    'P118': 'Hip Circumference'
+            #}
 
             # --- 5. Traducir nombres
             variances_hombres.index = variances_hombres.index.map(lambda x: column_labels_en.get(x, x))    
