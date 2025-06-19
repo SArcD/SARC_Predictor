@@ -75,8 +75,8 @@ if opcion == "Introducción":
 
 
 elif opcion == "Proceso":
-    st.subheader("📉 Gráficas e interpretación")
-    st.write("Aquí van los gráficos, importancias, etc.")
+    #st.subheader("📉 Gráficas e interpretación")
+    #st.write("Aquí van los gráficos, importancias, etc.")
 
 
 
