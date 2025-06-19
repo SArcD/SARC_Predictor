@@ -2432,6 +2432,89 @@ elif opcion == "Formularios":
 
                     st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
+    with tab_sarcopenia:
+        st.markdown("### 🧠 Predicción de sarcopenia con entrada manual y entrenamiento en tiempo real")
+
+        # Variables que usará el modelo
+        column_map = {
+            'Fuerza': 'Fuerza (kg)',
+            'Marcha': 'Marcha (m/s)',
+            'IMME': 'IMME'
+        }
+
+        # Selección de variables
+        selected_vars_display = st.multiselect(
+            "Selecciona las variables predictoras para entrenar el modelo:",
+            options=list(column_map.values()),
+            default=['Fuerza (kg)', 'Marcha (m/s)', 'IMME']
+        )
+        inv_column_map = {v: k for k, v in column_map.items()}
+        selected_vars = [inv_column_map[var] for var in selected_vars_display]
+
+        # Formulario de entrada manual
+        if "pacientes_sarcopenia" not in st.session_state:
+            st.session_state.pacientes_sarcopenia = []
+
+        nuevo_paciente = {}
+        nuevo_paciente["Identificador"] = st.text_input("Identificador del paciente", key="id_sarc")
+
+        for var in selected_vars:
+            nuevo_paciente[var] = st.number_input(f"Ingrese {column_map[var]}", key=f"{var}_sarc")
+
+        if st.button("➕ Agregar paciente para predicción de sarcopenia"):
+            st.session_state.pacientes_sarcopenia.append(nuevo_paciente.copy())
+            st.success("Paciente agregado para predicción.")
+
+        if st.session_state.pacientes_sarcopenia:
+            df_sarc = pd.DataFrame(st.session_state.pacientes_sarcopenia)
+            st.markdown("### 👥 Pacientes registrados")
+            st.dataframe(df_sarc)
+
+            if st.button("🔮 Entrenar modelo y predecir sarcopenia"):
+                try:
+                    df_train = df_filtered.copy()
+                    for col in selected_vars:
+                        df_train[col] = pd.to_numeric(df_train[col], errors='coerce')
+
+                    df_train = df_train.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
+
+                    X = df_train[selected_vars]
+                    y_raw = df_train['Clasificación Sarcopenia']
+
+                    # Codificar etiquetas
+                    from sklearn.preprocessing import LabelEncoder
+                    le = LabelEncoder()
+                    y = le.fit_transform(y_raw)
+
+                    # SMOTE para balancear
+                    from imblearn.over_sampling import SMOTE
+                    smote = SMOTE(random_state=42)
+                    X_resampled, y_resampled = smote.fit_resample(X, y)
+
+                    # Entrenar modelo
+                    from sklearn.ensemble import RandomForestClassifier
+                    model = RandomForestClassifier(
+                        n_estimators=300,
+                        max_depth=3,
+                        min_samples_leaf=5,
+                        min_samples_split=10,
+                        random_state=42
+                    )
+                    model.fit(X_resampled, y_resampled)
+
+                    # Predicción para los nuevos pacientes
+                    X_pred = df_sarc[selected_vars]
+                    y_pred = model.predict(X_pred)
+                    y_pred_labels = le.inverse_transform(y_pred)
+
+                    df_sarc["Predicción Sarcopenia"] = y_pred_labels
+                    st.markdown("### 🧪 Resultados de predicción")
+                    st.dataframe(df_sarc)
+
+                except Exception as e:
+                    st.error(f"Ocurrió un error durante la predicción: {e}")
+
+
 
 
 
