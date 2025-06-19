@@ -2590,7 +2590,8 @@ elif opcion == "Formularios":
             'P121': 'Cintura (cm)',
             'P122': 'Cadera (cm)',
             'P123': 'Muslo (cm)',
-            'P124': 'Pantorrilla (cm)'
+            'P124': 'Pantorrilla (cm)',
+            'IMC': 'IMC',
         }
 
         posibles_variables = [col for col in df_base.columns if col in column_map]
@@ -2643,8 +2644,9 @@ elif opcion == "Formularios":
         # Tabla de pacientes
         if st.session_state.pacientes_sarcopenia:
             df_sarc = pd.DataFrame(st.session_state.pacientes_sarcopenia)
+            df_sarc_display = df_sarc.rename(columns=column_map)
             st.markdown("### 👥 Pacientes registrados")
-            st.dataframe(df_sarc)
+            st.dataframe(df_sarc_display)
 
             seleccion = st.selectbox("Selecciona un paciente para editar o borrar:", [""] + df_sarc["Identificador"].tolist())
 
@@ -2705,8 +2707,9 @@ elif opcion == "Formularios":
                     y_labels = le.inverse_transform(y_pred)
 
                     df_sarc["Predicción Sarcopenia"] = y_labels
+                    df_sarc_display = df_sarc.rename(columns=column_map)
                     st.markdown("### 🧪 Resultados de predicción")
-                    st.dataframe(df_sarc)
+                    st.dataframe(df_sarc_display)
 
                     # Reporte de desempeño
                     st.markdown("### 📈 Desempeño del modelo (solo con las variables seleccionadas)")
