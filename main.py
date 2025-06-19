@@ -2257,6 +2257,21 @@ elif opcion == "Formularios":
                     if st.session_state.paciente_en_edicion else 0.0
                 ), key=key_input)
 
+        # Asegurar que marcha (P112_vel) esté incluida aunque no esté en el modelo de IMME
+        if "P112_vel" not in variables_utilizadas:
+            label = nombres_amigables.get("P112_vel", "P112_vel")
+            key_input = "P112_vel_manual"
+            input_values["P112_vel"] = st.number_input(
+                label,
+                value=(
+                    st.session_state.paciente_en_edicion["P112_vel"]
+                    if st.session_state.paciente_en_edicion and "P112_vel" in st.session_state.paciente_en_edicion
+                    else 0.0
+                ),
+                key=key_input
+            )
+
+
         col1, col2 = st.columns(2)
         with col1:
             if st.button("➕ Agregar paciente"):
