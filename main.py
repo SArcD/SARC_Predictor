@@ -2340,6 +2340,10 @@ elif opcion == "Formularios":
                 columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
                 df_mostrar = df_manual.rename(columns=columnas_amigables)
                 st.dataframe(df_mostrar)
+                #columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
+                #df_mostrar = df_manual.rename(columns=columnas_amigables)
+                #st.dataframe(df_mostrar)
+
 
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
@@ -2364,7 +2368,9 @@ elif opcion == "Formularios":
         modelo_mujer = cargar_modelo_desde_url(url_modelo_mujer)
  
         # Verificar columnas requeridas
-        columnas_sarcopenia = ['Fuerza (kg)', 'Marcha (m/s)', "IMME"]
+        #columnas_sarcopenia = ['Fuerza (kg)', 'Marcha (m/s)', "IMME"]
+        columnas_sarcopenia = ['P113', 'P112_vel', 'IMME']
+
         if all(col in df_manual.columns for col in columnas_sarcopenia):
             clasificaciones = []
             for _, fila in df_manual.iterrows():
