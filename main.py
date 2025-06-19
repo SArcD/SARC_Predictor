@@ -2473,7 +2473,13 @@ elif opcion == "Formularios":
 
             if st.button("🔮 Entrenar modelo y predecir sarcopenia"):
                 try:
-                    df_train = df_filtered.copy()
+                    #df_train = df_filtered.copy()
+                    if "df_filtered" in st.session_state:
+                        df_train = st.session_state.df_filtered.copy()
+                    else:
+                        st.warning("No se encontró el DataFrame 'df_filtered'. Asegúrate de generar los datos antes.")
+                        st.stop()
+
                     for col in selected_vars:
                         df_train[col] = pd.to_numeric(df_train[col], errors='coerce')
 
