@@ -133,6 +133,7 @@ elif opcion == "Proceso":
             st.markdown("""La siguiente tabla muestra un **resumen** de los datos que se utilizaron para el entrenamiento de los modelos. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS""")
             #st.dataframe(datos)
             st.dataframe(datos.describe())
+            st.markdown("""La siguiente Figura muestra las proporciones de hombres y mujeres dentro de la muestra utilizada para el entrenamiento de los modelos.""")
             import matplotlib.pyplot as plt
             import streamlit as st
 
