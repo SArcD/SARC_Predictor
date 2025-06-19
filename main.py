@@ -2364,7 +2364,7 @@ elif opcion == "Formularios":
         modelo_mujer = cargar_modelo_desde_url(url_modelo_mujer)
 
         # Verificar columnas requeridas
-        columnas_sarcopenia = ["Fuerza", "marcha", "IMME estimado"]
+        columnas_sarcopenia = ['Fuerza de prensión', 'Velocidad de marcha', "IMME"]
         if all(col in df_manual.columns for col in columnas_sarcopenia):
             clasificaciones = []
             for _, fila in df_manual.iterrows():
