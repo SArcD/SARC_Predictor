@@ -2320,6 +2320,42 @@ elif opcion == "Formularios":
                 st.dataframe(df_manual)
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
+    ##############################
+
+        import joblib
+        import urllib.request
+
+        # URL de los modelos
+        url_modelo_hombre = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_sarcopenia_rfhombre.pkl"
+        url_modelo_mujer = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_sarcopenia_rfmujer.pkl"
+
+        # Función para cargar modelo desde URL
+        @st.cache_resource
+        def cargar_modelo_desde_url(url):
+            with urllib.request.urlopen(url) as response:
+                modelo = joblib.load(response)
+            return modelo
+
+        # Cargar modelos
+        modelo_hombre = cargar_modelo_desde_url(url_modelo_hombre)
+        modelo_mujer = cargar_modelo_desde_url(url_modelo_mujer)
+
+        # Verificar columnas requeridas
+        columnas_sarcopenia = ["Fuerza", "marcha", "IMME estimado"]
+        if all(col in df_manual.columns for col in columnas_sarcopenia):
+            clasificaciones = []
+            for _, fila in df_manual.iterrows():
+                sexo = fila["sexo"]
+                entrada = fila[columnas_sarcopenia].values.reshape(1, -1)
+                modelo_uso = modelo_hombre if sexo == 1.0 else modelo_mujer
+                prediccion = modelo_uso.predict(entrada)[0]
+                clasificaciones.append(prediccion)
+
+            df_manual["Clasificación de sarcopenia"] = clasificaciones
+        else:
+            st.warning("⚠️ No se pudo calcular la clasificación de sarcopenia. Asegúrate de haber capturado 'Fuerza', 'marcha' e 'IMME'.")
+
+
     
 
     with tab_archivo:
