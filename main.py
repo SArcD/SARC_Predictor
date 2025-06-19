@@ -114,7 +114,7 @@ elif opcion == "Proceso":
     En el siguiente menú puede elegir entre las bases de datos disponibles""")
     # Seleccionar el año de la base de datos
     selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
-
+    st.markdown("""**Nota: En su versión actual el entrenamiento de los modelos debe hacerse con la base de datos de 2019, ya que es la mas amplia de las que están disponibles**""")
     # Definir la ruta del archivo en función de la selección
     if selected_year == "2022":
         file_path = "Base 2022 Santiago Arceo.xls"
