@@ -1283,7 +1283,7 @@ elif opcion == "Proceso":
 
 
 
-        with st.expander("** Incidencia de sarcopenia en la muestra: agrupación de pacientes mediante clustering jerárquico **"):
+        with st.expander(" **Incidencia de sarcopenia en la muestra: agrupación de pacientes mediante clustering jerárquico** "):
             
             import streamlit as st
             import pandas as pd
