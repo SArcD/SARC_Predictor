@@ -594,7 +594,7 @@ elif opcion == "Proceso":
             #import streamlit as st
             import plotly.graph_objects as go
             import plotly.subplots as sp
-            st.markdown("""La siguiente figura muestra los historgamas con la distribución de valores para cada uno de los parámetros. La muestra original se ha separado en los subconjuntos de hombres y mujeres. En algunos casos, los dos subconjuntos tienen la misma distribución (los histogramas se empalman). En otros casos, cada histograma tiene picos en zonas distintas, reflejando las variaciones esperadas de acuerdo al sexo del paciente.""")
+            st.markdown("""La siguiente figura muestra los historgamas con la distribución de valores para cada uno de los parámetros. La muestra original se ha separado en los subconjuntos de hombres y mujeres. En algunos casos, los dos subconjuntos tienen la misma distribución (los histogramas se empalman, como ocurre para la velocidad de marcha, el IMC y las circunferencias de muslo y pantorrilla). En otros casos, cada histograma tiene picos en zonas distintas, reflejando las variaciones esperadas de acuerdo al sexo del paciente (ver por ejemplo la fuerza de presión palmar y algunos de los pliegues cutáneos).""")
 
             # Diccionario de etiquetas en español
             column_labels = {
@@ -711,7 +711,7 @@ elif opcion == "Proceso":
             from sklearn.preprocessing import MinMaxScaler
             import numpy as np
             import pandas as pd
-    
+                st.markdown("""El siguiente paso en la simplificación consitió en buscar aquellas variables que pudieran estar muy correlacionadas en tre sí ya que si dos variables lo están entonces solo necesitamos conservar una para incluirla en los modelos. La siguiente figura muestra la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representan la magnitud de la correlacción. **Para nuestra lista final de variables conservamos solo variables que no estuvieran correlacionadas entre si con mas de 0.70 de correlación**.""")
             # --- Columnas seleccionadas ---
             selected_columns = ['P112_vel','P113', 'P125', 'P128', 'P127','P126','IMC','P121','P123','P120', 'P124']
 
