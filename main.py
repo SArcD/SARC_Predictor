@@ -1372,6 +1372,9 @@ elif opcion == "Proceso":
                 '% Eliminados': [pct_elim1, pct_elim2, pct_elim3]
             })
             st.subheader("Resumen de cribado por etapas")
+            st.markdown(""" 
+            En la siguiente tabla se muestran los porcentajes de pacientes descartados en cada etapa del proceso de cribado.           
+            """)
             st.dataframe(resumen.style.format({'% Eliminados':'{:.1f}%'}), use_container_width=True)
 
         
@@ -1485,6 +1488,12 @@ elif opcion == "Proceso":
 
             # === Mostrar en Streamlit ===
             st.subheader("Visualización Jerárquica de Sarcopenia")
+            st.markdown
+            (
+            """
+            La siguiente gráfica muestra las proporciones de pacientes que fueron clasificados en cada una de las categorías de riesgo por el algoritmo de clustering jerárquico. Los porcentajes corresponden al total de la muestra de pacientes del sexo seleccionado y que no presentan comorbilidades.
+            """
+            )
             st.pyplot(fig)
 
             # Diccionario de etiquetas amigables: nombre interno -> nombre visible
@@ -1521,7 +1530,7 @@ elif opcion == "Proceso":
         #)
 
         # Mostrar selección de variables en el cuerpo central
-            st.markdown("## Selecciona las variables que deseas comparar")
+            st.markdown("**Selecciona los parámetros que deseas comparar. Las gráficas de caja comparan los parámetros seleccionados para los pacientes de cada una de las categorías de riesgo.**")
             selected_labels = st.multiselect(
                 label="Variables disponibles",
                 options=list(column_labels.values()),
