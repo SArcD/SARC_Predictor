@@ -129,7 +129,7 @@ elif opcion == "Proceso":
         st.success(f"✅ Datos de la base {selected_year} cargados con éxito.")
 
         # Mostrar vista previa opcional en un expander
-        with st.expander("📂 Ver datos cargados"):
+        with st.expander("**Descripción de la base de datos**"):
             st.markdown("""La siguiente tabla muestra un **resumen** de los datos que se utilizaron para el entrenamiento de los modelos. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS""")
             #st.dataframe(datos)
             st.dataframe(datos.describe())
