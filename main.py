@@ -1003,8 +1003,9 @@ elif opcion == "Proceso":
             
             Pasos a seguir: 
             - seleccione el número de variables con las que desea construir su modelo de calculo (**el modelo completo usa 5 variables**).
-            - Al presionar el botón le tomará un tiempo a la aplicación pero al terminar mostrará una tabla en la que **podrá ver las combinaciones de variables para predecir el IMME y el RMSE asociado a cada modelo**.
-            - Debajo de la tabla de combinaciones podrá poner a prueba su modelo: llene el formualario con los valores para los parámetros de su modelo y presione el botón. Debajo aparecerá la prediccion del IMME y dos graficas de error (la de la izquierda compara el modelo de 5 variables con la predicción de la fórmula de Ramírez, mientras que la de la derecha compara su modelo personalizado). El color de los puntos corresponde a el error asociado (verde significa poco error mientras que rojo corresponde a un error mayor).
+            - Al presionar el botón le tomará un tiempo a la aplicación pero al terminar mostrará la combinación de parámetros que produce el modelo con el RMSE (error estandar promedio) mas pequeño. También, mostrará una tabla en la que **podrá ver las combinaciones de variables para predecir el IMME y el RMSE asociado**.
+            - Debaho de la tabla de combinaciones de parámetros se mostrarán dos gráficas para el RMSE. La gráfica de la izquierda compara el modelo de 5 variables con la predicción de la fórmula de Ramírez, mientras que la de la derecha compara su modelo personalizado. El color de los puntos corresponde a el error asociado (verde significa un error pequeño mientras que rojo corresponde a uno mayor).
+            - Debajo de las gráficas podrá poner a prueba su modelo: llene el formulario con los valores para los parámetros de su modelo y presione el botón "Predecir IMME". Debajo aparecerá la prediccion del IMME .
             """)
             # Número de variables por combinación
             selected_n = st.number_input("**Selecciona el número de variables en cada combinación a mostrar**", min_value=1, max_value=len(variables), value=3)    
