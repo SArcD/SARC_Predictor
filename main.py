@@ -999,7 +999,9 @@ elif opcion == "Proceso":
 
 
             st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
-            st.markdown(""" - seleccione el número de variables con las que desea construir su modelo de calculo (**el modelo completo usa 5 variables**).
+            st.markdown(""" Pasos a seguir: 
+            
+            - seleccione el número de variables con las que desea construir su modelo de calculo (**el modelo completo usa 5 variables**).
             - Al presionar el botón le tomará un tiempo a la aplicación pero al terminar mostrará una tabla en la que **podrá ver las combinaciones de variables para predecir el IMME y el RMSE asociado a cada modelo**.
             """)
             # Número de variables por combinación
