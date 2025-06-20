@@ -1488,8 +1488,7 @@ elif opcion == "Proceso":
 
             # === Mostrar en Streamlit ===
             st.subheader("Visualización Jerárquica de Sarcopenia")
-            st.markdown
-            (
+            st.markdown(
             """
             La siguiente gráfica muestra las proporciones de pacientes que fueron clasificados en cada una de las categorías de riesgo por el algoritmo de clustering jerárquico. Los porcentajes corresponden al total de la muestra de pacientes del sexo seleccionado y que no presentan comorbilidades.
             """
