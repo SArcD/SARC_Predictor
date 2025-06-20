@@ -999,9 +999,11 @@ elif opcion == "Proceso":
 
 
             st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
-
+            st.markdown(""" - seleccione el número de variables con las que desea construir su modelo de calculo (**el modelo completo usa 5 variables**).
+            - Al presionar el botón le tomará un tiempo a la aplicación pero al terminar mostrará una tabla en la que **podrá ver las combinaciones de variables para predecir el IMME y el RMSE asociado a cada modelo**.
+            """)
             # Número de variables por combinación
-            selected_n = st.number_input("Selecciona el número de variables en cada combinación a mostrar", min_value=1, max_value=len(variables), value=3)    
+            selected_n = st.number_input("**Selecciona el número de variables en cada combinación a mostrar**", min_value=1, max_value=len(variables), value=3)    
             max_combinaciones = 5
 
             # Recalcular estatura si no existe
