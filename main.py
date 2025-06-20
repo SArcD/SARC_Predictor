@@ -1283,20 +1283,26 @@ elif opcion == "Proceso":
 
 
 
-        with st.expander("Agrupación por clusters"):
+        with st.expander("** Incidencia de sarcopenia en la muestra: agrupación de pacientes mediante clustering jerárquico **"):
+            
             import streamlit as st
             import pandas as pd
             import numpy as np
             from sklearn.preprocessing import StandardScaler
             from sklearn.cluster import AgglomerativeClustering
-
+            st.markdown("""En esta sección se utiliza el algoritmo de clustering jerárquico para agrupar pacientes de acuerdo a sus parámetros antropométricos. Siguiendo el algoritmo propuesuesto por el EWGSOP2 se realiza un cribado secuencial de pacientes de acuerdo con su fuerza de presión de agarre, su índice de masa musculo-esquelética apendicular (calculado a partir del modelo de randon forest) y su velocidad de marcha. Al finalizar el proceso se comparan los grupos de pacientes clasificados en 4 categorías:
+            -Saludables: definidos como pacientes sin comorbilidades y cuyos valores para la fuerza presión palmar, IMME y velocidad de marcha están todos por arriba de los puntos de corte.
+            - Sarcopenia sospechosa: contiene pacientes cuya fuerza de agarre está por debajo del segundo quintil del rango completo de valores medidos.
+            - Sarcopenia probable: pacientes con fuerza de agarre e IMME por debajo del segundo quintil del rango completo de valores medidos.
+            - Sarcopenia grave: pacientes con fuerza de agarre, IMME y velocidad de marcha por debajo del segundo quintil del rango completo de valores medidos.
+            """)
         
             # Selección de sexo
-            sexo = st.radio("Selecciona el sexo para el análisis", ('Hombres', 'Mujeres'))
+            sexo = st.radio("**Selecciona el sexo para el análisis**", ('Hombres', 'Mujeres'))
             df_filtered = df_combined[df_combined['sexo'] == (0 if sexo == 'Mujeres' else 1)]
 
             # Selección del número de cluster    s        
-            num_clusters = st.number_input("Número de clústeres", min_value=2, max_value=10, value=4)
+            num_clusters = st.number_input("**Número de clústers (la opción por default es 4)**", min_value=2, max_value=10, value=4)
 
             # Renombrar columnas necesarias
             df_filtered = df_filtered.rename(columns={
