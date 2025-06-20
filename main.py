@@ -911,7 +911,7 @@ elif opcion == "Proceso":
 
                 st.subheader("Red de correlación")
             st.pyplot(st.session_state.fig_red_correlacion)
-            st.makdown("""En esta sección se muestran los modelos de Random Forest para calcular **el índice de masa muscular esquelética apendicular (IMME). Estos modelos se compararon con la formula propuesta por [Ramirez et al., 2015](https://www.scielo.org.mx/scielo.php?script=sci_arttext&pid=S0036-36342015000600003)**""")
+            st.markdown("""En esta sección se muestran los modelos de Random Forest para calcular **el índice de masa muscular esquelética apendicular (IMME). Estos modelos se compararon con la formula propuesta por [Ramirez et al., 2015](https://www.scielo.org.mx/scielo.php?script=sci_arttext&pid=S0036-36342015000600003)**""")
             # Calcular estatura en cm a partir de peso (P117) e IMC
             df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
     
