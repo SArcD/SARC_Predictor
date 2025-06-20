@@ -711,7 +711,7 @@ elif opcion == "Proceso":
             from sklearn.preprocessing import MinMaxScaler
             import numpy as np
             import pandas as pd
-                st.markdown("""El siguiente paso en la simplificación consitió en buscar aquellas variables que pudieran estar muy correlacionadas en tre sí ya que si dos variables lo están entonces solo necesitamos conservar una para incluirla en los modelos. La siguiente figura muestra la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representan la magnitud de la correlacción. **Para nuestra lista final de variables conservamos solo variables que no estuvieran correlacionadas entre si con mas de 0.70 de correlación**.""")
+            st.markdown("""El siguiente paso en la simplificación consitió en buscar aquellas variables que pudieran estar muy correlacionadas en tre sí ya que si dos variables lo están entonces solo necesitamos conservar una para incluirla en los modelos. La siguiente figura muestra la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representan la magnitud de la correlacción. **Para nuestra lista final de variables conservamos solo variables que no estuvieran correlacionadas entre si con mas de 0.70 de correlación**.""")
             # --- Columnas seleccionadas ---
             selected_columns = ['P112_vel','P113', 'P125', 'P128', 'P127','P126','IMC','P121','P123','P120', 'P124']
 
