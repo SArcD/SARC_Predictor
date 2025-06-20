@@ -1598,8 +1598,10 @@ elif opcion == "Proceso":
             from sklearn.inspection import PartialDependenceDisplay
             from imblearn.over_sampling import SMOTE
 
-            st.subheader("📊 Predicción de sarcopenia con Random Forest + SMOTE")
-
+            st.subheader("Predicción de sarcopenia con Random Forest")
+            st.markdown("""
+            En esta sección se presentan modelos con los cuales se puede calcular el nivel de riesgo de sarcopenia. Los modelos de Random forest se basan en el nivel de riesgo asignado para cada paciente en la sección anterior, siguiendo una estrategia de aprendizaje supervisado.
+            """)
             column_map = {
                 'P117': 'Peso (kg)',
                 'P118': 'Estatura (cm)',
