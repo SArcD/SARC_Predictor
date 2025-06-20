@@ -758,7 +758,9 @@ elif opcion == "Proceso":
             import networkx as nx
             import numpy as np
             import pandas as pd
+            st.markdown("""La siguiente figura muestra las redes de correlación entre parámetros, una forma alterna a la matriz de correlación. Cada nodo representa a un parámetro y el tipo de línea corresponde a la intesidad de la correlación (las lineas sólidas entre dos nodos representan una correlación mayor a 0.7, las entre cortadas representa correlaciones entre 0.5 y 0.7 y las punteadas correlaciones menores a 0.5. Además, el color de las redes corresponde a tanto hombres como mujeres (rosa), solo hombres (azul) y solo mujeres (naranja).""")
 
+            
             # 1. Definir las variables de interés
             selected_vars = ['P112_vel', 'P113', 'P117', 'P120','P121','P122','P123','P124','P125', 'P128', 'P127', 'P126', 'IMC']
             threshold = 0.3
