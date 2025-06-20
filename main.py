@@ -106,7 +106,7 @@ elif opcion == "Proceso":
             return None
 
 
-    st.title("📊 Selector de Base de Datos desde GitHub")
+    st.title("Depuración de datos y creación de modelos predictivos para la masa muscular y el riesgo de sarcopenia")
 
     st.subheader("Carga de los datos")
     
