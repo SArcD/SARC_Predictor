@@ -745,11 +745,11 @@ La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En
             variances = variances.sort_values(ascending=False)
 
             # Applying the variance threshold mask
-            sel = VarianceThreshold(threshold=0.005)
+            sel = VarianceThreshold(threshold=0.009)
             sel.fit(features / features.mean())
 
             # Creating a boolean mask based on the variance    
-            mask = variances >= 0.005
+            mask = variances >= 0.009
 
             # Applying the mask to create a reduced DataFrame
             reduced_df = features.loc[:, mask]
