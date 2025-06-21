@@ -149,7 +149,7 @@ elif opcion == "Proceso":
             # Mostrar en Streamlit
             st.pyplot(fig_1)
         #-----------------------------------------------------------------------------------
-            st.markdown("""La muestra se compone de pacientes con **comorbilidades comunes en la población mexicana (como la Diabetes Mellitus[https://www.gob.mx/salud/articulos/la-diabetes-y-sus-complicaciones] y la Hipertensión arterial[https://salud.gob.mx/unidades/cdi/documentos/DOCSAL7515.pdf])**. La **Figura 2** muestra la distribución de las comorbilidades en la muestra (la barra superior muestra las comorbilidades principales, mientras que la inferior muestra las comorbilidades secundarias). **Los modelos predictivos para sarcopenia se entrenaron solo con los pacientes sin comorbilidades**""")
+            st.markdown("""La muestra se compone de pacientes con **comorbilidades comunes en la población mexicana (como la [Diabetes Mellitus](https://www.gob.mx/salud/articulos/la-diabetes-y-sus-complicaciones) y la [Hipertensión arterial](https://salud.gob.mx/unidades/cdi/documentos/DOCSAL7515.pdf)**. La **Figura 2** muestra la distribución de las comorbilidades en la muestra (la barra superior muestra las comorbilidades principales, mientras que la inferior muestra las comorbilidades secundarias). **Los modelos predictivos para sarcopenia se entrenaron solo con los pacientes sin comorbilidades**""")
             import matplotlib.pyplot as plt
             import numpy as np
             import streamlit as st
