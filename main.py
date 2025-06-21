@@ -133,7 +133,7 @@ Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente s
             st.dataframe(datos.describe())
             st.markdown("""
 <div style='text-align: justify'>
-<strong>La Figura 1</strong> muestra las proporciones de hombres y mujeres dentro de la muestra utilizada para el entrenamiento de los modelos 
+<strong>La Figura 1</strong> muestra las proporciones de hombres y mujeres dentro de la muestra que se usó para el entrenamiento de los modelos 
 (<strong>que las proporciones sean de tamaños similares garantiza que los modelos tengan una exactitud similar al hacer predicciones tanto para hombres como para mujeres</strong>).
 </div>
 """, unsafe_allow_html=True)
@@ -366,7 +366,7 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
 
                 # Ajustes finales
                 ax.set_ylabel('Número de Pacientes')
-                ax.set_title('Distribución de Comorbilidades Principales por Sexo')
+                ax.set_title('Distribución de Comorbilidades Principales por sexo')
                 ax.grid(axis='y', linestyle='--', alpha=0.7)
                 ax.set_ylim(0, max(total_hombres, total_mujeres) * 1.2)
 
@@ -398,7 +398,7 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
 <div style='text-align: justify'>
 <strong>
 Una forma de simplificar los modelos es eliminar aquellos parámetros (variables) que no ayudan mucho a hacer predicciones.  
-Para saber cuáles son útiles, se puede usar la <u>varianza</u>, que mide qué tanto varía un parámetro entre distintos pacientes. Los parámetros con mayor varianza permiten distinguir mejor entre pacientes, lo cual es importante si queremos clasificar correctamente.
+Para saber cuáles son útiles, se puede usar la <a href='https://economipedia.com/definiciones/varianza.html' target='_blank'>varianza</a>, que mide qué tanto varía un parámetro entre distintos pacientes. Los parámetros con mayor varianza permiten distinguir mejor entre pacientes, lo cual es importante si queremos clasificar correctamente.
 
 Por eso, decidimos conservar únicamente los parámetros con mayor varianza.  
 Antes de hacer ese análisis, normalizamos los valores para que las unidades (por ejemplo, gramos, centímetros, años) no afectaran artificialmente los resultados.  
