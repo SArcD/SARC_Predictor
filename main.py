@@ -125,7 +125,7 @@ elif opcion == "Proceso":
 <div style='text-align: justify'>
 La <strong>Tabla 1</strong> muestra un <strong>resumen</strong> de los datos que se utilizaron para el <strong>entrenamiento de los modelos</strong>. 
 Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS 
-(escribir al correo de contacto <strong>sergio.sanchezga@imss.gob.mx</strong>).
+(escribir al correo de contacto <a href='mailto:sergio.sanchezga@imss.gob.mx'>sergio.sanchezga@imss.gob.mx</a>.
 </div>
 """, unsafe_allow_html=True)
 
