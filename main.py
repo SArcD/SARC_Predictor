@@ -1497,7 +1497,7 @@ Esta agrupación permite visualizar patrones clínicos y orientar decisiones pre
                 'Eliminados': [len(df_elim1), len(df_elim2), len(df_elim3)],
                 '% Eliminados': [pct_elim1, pct_elim2, pct_elim3]
             })
-            st.subheader("Resumen de cribado por etapas")
+            #st.subheader("Resumen de cribado por etapas")
 
             st.markdown("""
 ### Porcentaje de pacientes descartados por etapa
@@ -1617,14 +1617,18 @@ En la siguiente tabla se muestran los **porcentajes de pacientes descartados** e
             plt.title("Clasificación Jerárquica de Sarcopenia", fontsize=14)
 
             # === Mostrar en Streamlit ===
-            st.subheader("Visualización Jerárquica de Sarcopenia")
+            #st.subheader("Visualización Jerárquica de Sarcopenia")
+
+
             st.markdown("""
-### Clasificación de pacientes por categorías de riesgo
+<h4 style='text-align: justify;'>Clasificación de pacientes por categorías de riesgo</h4>
 
-La siguiente gráfica muestra las **proporciones de pacientes** clasificadas en cada una de las categorías de riesgo mediante el algoritmo de **clustering jerárquico**.
+<p style='text-align: justify;'>
+La gráfica siguiente muestra qué porcentaje de pacientes fue clasificado en cada una de las categorías de riesgo, según el análisis por <strong>clustering jerárquico</strong>.
 
-Los porcentajes corresponden al **total de la muestra** de pacientes del **sexo seleccionado** y **sin comorbilidades**.
-""")
+Se incluyen únicamente los pacientes del sexo seleccionado que <strong>no presentan comorbilidades</strong>.
+</p>
+""", unsafe_allow_html=True)
 
             st.pyplot(fig)
 
@@ -1733,8 +1737,15 @@ Los porcentajes corresponden al **total de la muestra** de pacientes del **sexo 
 
             st.subheader("Predicción de sarcopenia con Random Forest")
             st.markdown("""
-            En esta sección se presentan modelos con los cuales se puede calcular el nivel de riesgo de sarcopenia. Los modelos de Random forest se basan en el nivel de riesgo asignado para cada paciente en la sección anterior, siguiendo una estrategia de aprendizaje supervisado.
-            """)
+<h4 style='text-align: justify;'>Modelos para estimar riesgo de sarcopenia</h4>
+
+<p style='text-align: justify;'>
+A continuación se muestran los modelos que calculan el riesgo de sarcopenia. 
+Estos modelos de <strong>Random Forest</strong> se entrenaron con las categorías de riesgo
+definidas en la sección anterior, siguiendo un enfoque de <em>aprendizaje supervisado</em>.
+</p>
+""", unsafe_allow_html=True)
+
             column_map = {
                 'P117': 'Peso (kg)',
                 'P118': 'Estatura (cm)',
@@ -1823,23 +1834,35 @@ Los porcentajes corresponden al **total de la muestra** de pacientes del **sexo 
                     st.text(f"Weighted F1-score: {f1:.4f}")
 
                     # Explicación de métricas
-                    st.markdown("### 📘 ¿Cómo interpretar las métricas?")
+                    st.markdown("### ¿Cómo interpretar las métricas?")
+
                     st.markdown("""
-                    Las siguientes métricas te ayudan a entender **cómo de bien el modelo identifica cada tipo de sarcopenia**:
+<h4 style='text-align: justify;'>¿Qué tan bien clasifica el modelo?</h4>
 
-                    - **Precisión (Precision)**: De todas las veces que el modelo predijo cierta clase, ¿cuántas veces acertó?  
-                      - Ejemplo: Si `Precisión = 0.80` en *Sarcopenia Grave*, significa que 8 de cada 10 veces que el modelo dijo "Sarcopenia Grave", acertó.
-                    - **Sensibilidad o Exhaustividad (Recall)**: De todas las personas que **realmente tienen** esa clase, ¿a cuántas identificó correctamente el modelo?  
-                      - Ejemplo: Si `Recall = 0.60` en *Sarcopenia Sospechosa*, el modelo detectó 6 de cada 10 personas con esa condición.
-                    - **F1-score**: Es un equilibrio entre precisión y sensibilidad. Si ambas son altas, el F1 también lo será.
+<p style='text-align: justify;'>
+Las siguientes métricas permiten evaluar <strong>qué tan bien el modelo identifica cada tipo de sarcopenia</strong>:
+</p>
 
-                    #### 🔍 Guía rápida de interpretación:
-                    - `> 0.85` → Excelente desempeño
-                    - `0.70 - 0.85` → Buen desempeño, puede mejorar
-                    - `0.50 - 0.70` → Desempeño moderado, se sugiere revisar variables o clases
-                    - `< 0.50` → Débil, probablemente el modelo no distingue bien esta clase
+<ul style='text-align: justify;'>
+<li><strong>Precisión (Precision):</strong> Indica cuántas veces acertó el modelo al predecir una clase específica.<br>
+Ejemplo: Si la precisión para <em>Sarcopenia Grave</em> es 0.80, significa que 8 de cada 10 veces que el modelo dijo "Sarcopenia Grave", acertó.</li>
 
-                    """)
+<li><strong>Sensibilidad o Exhaustividad (Recall):</strong> Mide cuántos casos reales de una clase fueron correctamente detectados.<br>
+Ejemplo: Si el recall para <em>Sarcopenia Sospechosa</em> es 0.60, el modelo detectó 6 de cada 10 pacientes con esa condición.</li>
+
+<li><strong>F1-score:</strong> Resume precisión y sensibilidad en una sola métrica. Si ambas son altas, el F1 también lo será.</li>
+</ul>
+
+<h5 style='text-align: justify;'>🔍 Guía rápida de interpretación</h5>
+
+<ul style='text-align: justify;'>
+<li><code>> 0.85</code> → Excelente desempeño</li>
+<li><code>0.70 - 0.85</code> → Buen desempeño, con posibilidad de mejora</li>
+<li><code>0.50 - 0.70</code> → Desempeño moderado, conviene revisar las variables</li>
+<li><code>< 0.50</code> → Débil, el modelo tiene dificultades para distinguir esa clase</li>
+</ul>
+""", unsafe_allow_html=True)
+
 
                     # Obtener importancias
                     importances = model.feature_importances_
