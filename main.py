@@ -993,6 +993,23 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
                 st.subheader("Red de correlación")
             st.pyplot(st.session_state.fig_red_correlacion)
             st.markdown("""En esta sección se muestran los modelos de Random Forest para calcular **el índice de masa muscular esquelética apendicular (IMME)**. Estos modelos se compararon con la fórmula propuesta por **[Ramirez et al., 2015](https://www.scielo.org.mx/scielo.php?script=sci_arttext&pid=S0036-36342015000600003)**. El error cuadrático medio de nuestro modelo de Random Forest es de 0.06, respecto a la fórmula de Ramiréz. Adicionalmente, se pueden crear modelos que usan menos variables (lo cual puede ser útil para el personal de atención primaria en situaciones en las que no se puedan recolectar todas las variables que usa el modelo de Ramírez.""")
+st.markdown("""
+<div style='text-align: justify'>
+En esta sección se presentan los modelos de <strong>Random Forest</strong> desarrollados para calcular el 
+<strong>índice de masa muscular esquelética apendicular (IMME)</strong>.  
+
+Estos modelos se compararon con la fórmula propuesta por 
+<a href='https://www.scielo.org.mx/scielo.php?script=sci_arttext&pid=S0036-36342015000600003' target='_blank'><strong>Ramírez et al., 2015</strong></a>.  
+Nuestro modelo de Random Forest obtuvo un <strong>error cuadrático medio de 0.06</strong> en relación con dicha fórmula.  
+
+Además, es posible generar modelos más simples que utilizan un menor número de variables, lo cual puede ser especialmente útil para el personal de atención primaria, 
+en casos donde no se disponga de todos los datos requeridos por la fórmula original de Ramírez.
+</div>
+""", unsafe_allow_html=True)
+
+
+
+            
             # Calcular estatura en cm a partir de peso (P117) e IMC
             df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
     
