@@ -1297,33 +1297,42 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                     horizontal=True
                 )
 
-                # Obtener modelo y variables según selección
+########################################################
                 modelo = None
                 variables_input = []
 
                 if modelo_seleccionado == "Mejor combinación global":
-                    #modelo = st.session_state.modelo_global
-                    modelo = cargar_modelo_desde_github("https://raw.githubusercontent.com/SArcD/SARC_Predictor/main/modelo_global_imme.pkl")
-                    variables_input = list(st.session_state.mejor_combinacion)
+                    url_modelo_global = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_global_imme.pkl"
+                    modelo = cargar_modelo_desde_github(url_modelo_global)
+                    if modelo is None:
+                        st.warning("⚠️ No se pudo cargar el modelo global desde GitHub.")
+                        st.stop()
+                    variables_input = list(st.session_state.get("mejor_combinacion", []))
 
                 elif modelo_seleccionado.startswith("Mejor combinación con"):
-                    modelo = st.session_state.modelo_n
-                    variables_input = list(st.session_state.mejor_combinacion_n)
+                    url_modelo_n = f"https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_n_variables_{selected_n}.pkl"
+                    modelo = cargar_modelo_desde_github(url_modelo_n)
+                    if modelo is None:
+                        st.warning(f"⚠️ No se pudo cargar el modelo con {selected_n} variables desde GitHub.")
+                        st.stop()
+                    if st.session_state.get("mejor_combinacion_n"):
+                        variables_input = list(st.session_state.mejor_combinacion_n)
+                    else:
+                        st.warning("⚠️ Aún no se ha calculado la mejor combinación de variables.")
+                        st.stop()
 
                 else:
-                    # Elección manual con multiselect
-                    variables_disponibles = variables  # debe estar definido antes
                     seleccion_manual = st.multiselect(
                         f"Selecciona exactamente {selected_n} variables:",
-                        options=variables_disponibles,
+                        options=variables,
                         default=[],
                         key="manual_vars"
                     )
                     if len(seleccion_manual) != selected_n:
                         st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
+                        st.stop()
                     else:
                         variables_input = seleccion_manual
-                        # Entrenar modelo si es nuevo
                         if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
                             X_manual = df_combined[seleccion_manual]
                             y_manual = df_combined['IMME']
@@ -1332,6 +1341,45 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                             st.session_state.modelo_manual = modelo_manual
                             st.session_state.variables_manual = seleccion_manual
                         modelo = st.session_state.modelo_manual
+
+                
+#########################################################
+                
+                # Obtener modelo y variables según selección
+                #modelo = None
+                #variables_input = []
+
+                #if modelo_seleccionado == "Mejor combinación global":
+                #    #modelo = st.session_state.modelo_global
+                #    modelo = cargar_modelo_desde_github("https://raw.githubusercontent.com/SArcD/SARC_Predictor/main/modelo_global_imme.pkl")
+                #    variables_input = list(st.session_state.mejor_combinacion)
+
+                #elif modelo_seleccionado.startswith("Mejor combinación con"):
+                #    modelo = st.session_state.modelo_n
+                 #   variables_input = list(st.session_state.mejor_combinacion_n)
+
+                #else:
+                #    # Elección manual con multiselect
+                #    variables_disponibles = variables  # debe estar definido antes
+                #    seleccion_manual = st.multiselect(
+                #        f"Selecciona exactamente {selected_n} variables:",
+                #        options=variables_disponibles,
+                #        default=[],
+                #        key="manual_vars"
+                #    )
+                #    if len(seleccion_manual) != selected_n:
+                #        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
+                #    else:
+                #        variables_input = seleccion_manual
+               #         # Entrenar modelo si es nuevo
+               #         if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
+               #             X_manual = df_combined[seleccion_manual]
+               #             y_manual = df_combined['IMME']
+               #             X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(X_manual, y_manual, test_size=0.2, random_state=42)
+               #             modelo_manual = DecisionTreeRegressor(random_state=42).fit(X_train_m, y_train_m)
+               #             st.session_state.modelo_manual = modelo_manual
+               #             st.session_state.variables_manual = seleccion_manual
+               #         modelo = st.session_state.modelo_manual
 
                 # Diccionario de nombres amigables
                 nombres_amigables = {
