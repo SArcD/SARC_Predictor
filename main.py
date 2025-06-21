@@ -468,7 +468,7 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             variances = (features / features.mean()).dropna().var()
 
             variances=variances.sort_values(ascending=False)
-            variances
+            #variances
             variances_df = pd.DataFrame({'Variable': variances.index, 'Normalized Variance': variances.values})
             #import matplotlib.pyplot as plt
 
@@ -643,7 +643,19 @@ Para garantizar que los modelos predictivos se entrenen únicamente con variable
             #import streamlit as st
             import plotly.graph_objects as go
             import plotly.subplots as sp
-            st.markdown("""La siguiente figura muestra los historgamas con la distribución de valores para cada uno de los parámetros. La muestra original se ha separado en los subconjuntos de hombres y mujeres. En algunos casos, los dos subconjuntos tienen la misma distribución (los histogramas se empalman, como ocurre para la velocidad de marcha, el IMC y las circunferencias de muslo y pantorrilla). En otros casos, cada histograma tiene picos en zonas distintas, reflejando las variaciones esperadas de acuerdo al sexo del paciente (ver por ejemplo la fuerza de presión palmar y algunos de los pliegues cutáneos).""")
+            st.markdown("""
+<div style='text-align: justify'>
+La <strong>siguiente figura</strong> muestra los <strong>histogramas</strong> con la distribución de valores para cada uno de los parámetros.  
+La muestra original se ha separado en los subconjuntos de hombres y mujeres.  
+
+En algunos casos, los dos subconjuntos presentan distribuciones similares 
+(los histogramas se superponen, como ocurre en la <strong>velocidad de marcha</strong>, el <strong>IMC</strong> y las <strong>circunferencias de muslo y pantorrilla</strong>).  
+
+En otros casos, cada histograma muestra picos en zonas diferentes, lo que refleja variaciones esperadas según el sexo del paciente 
+(ver, por ejemplo, la <strong>fuerza de presión palmar</strong> y algunos de los <strong>pliegues cutáneos</strong>).
+</div>
+""", unsafe_allow_html=True)
+
 
             # Diccionario de etiquetas en español
             column_labels = {
