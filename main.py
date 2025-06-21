@@ -1322,12 +1322,33 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                         st.stop()
 
                 else:
+                    #seleccion_manual = st.multiselect(
+                     #   f"Selecciona exactamente {selected_n} variables:",
+                     #   options=variables,
+                    #    default=[],
+                    #    key="manual_vars"
+                    #)
+                    opciones_mostradas = [nombres_amigables[v] for v in variables]
+
                     seleccion_manual = st.multiselect(
                         f"Selecciona exactamente {selected_n} variables:",
-                        options=variables,
+                        options=opciones_mostradas,
                         default=[],
                         key="manual_vars"
                     )
+
+                    nombres_a_claves = {v: k for k, v in nombres_amigables.items()}
+                    variables_input = [nombres_a_claves[nombre] for nombre in seleccion_manual]
+
+                    if len(variables_input) != selected_n:
+                        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
+                    else:
+                        # Puedes usar variables_input (que son las claves como 'P117')
+                        st.success("Selección válida.")
+
+
+
+                    
                     if len(seleccion_manual) != selected_n:
                         st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
                         st.stop()
