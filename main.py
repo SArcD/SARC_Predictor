@@ -1498,9 +1498,13 @@ Esta agrupación permite visualizar patrones clínicos y orientar decisiones pre
                 '% Eliminados': [pct_elim1, pct_elim2, pct_elim3]
             })
             st.subheader("Resumen de cribado por etapas")
-            st.markdown(""" 
-            En la siguiente tabla se muestran los porcentajes de pacientes descartados en cada etapa del proceso de cribado.           
-            """)
+
+            st.markdown("""
+### Porcentaje de pacientes descartados por etapa
+
+En la siguiente tabla se muestran los **porcentajes de pacientes descartados** en cada etapa del proceso de cribado secuencial.
+""")
+
             st.dataframe(resumen.style.format({'% Eliminados':'{:.1f}%'}), use_container_width=True)
 
         
@@ -1614,11 +1618,14 @@ Esta agrupación permite visualizar patrones clínicos y orientar decisiones pre
 
             # === Mostrar en Streamlit ===
             st.subheader("Visualización Jerárquica de Sarcopenia")
-            st.markdown(
-            """
-            La siguiente gráfica muestra las proporciones de pacientes que fueron clasificados en cada una de las categorías de riesgo por el algoritmo de clustering jerárquico. Los porcentajes corresponden al total de la muestra de pacientes del sexo seleccionado y que no presentan comorbilidades.
-            """
-            )
+            st.markdown("""
+### Clasificación de pacientes por categorías de riesgo
+
+La siguiente gráfica muestra las **proporciones de pacientes** clasificadas en cada una de las categorías de riesgo mediante el algoritmo de **clustering jerárquico**.
+
+Los porcentajes corresponden al **total de la muestra** de pacientes del **sexo seleccionado** y **sin comorbilidades**.
+""")
+
             st.pyplot(fig)
 
             # Diccionario de etiquetas amigables: nombre interno -> nombre visible
