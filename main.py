@@ -643,12 +643,7 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
             st.markdown("""
 <div style='text-align: justify'>
 La <strong>Figura 6</strong> muestra los <strong>histogramas</strong> con la distribución de valores para cada uno de los parámetros.  
-La muestra original se ha separado en los subconjuntos de hombres y mujeres.  
-
-En algunos casos, los dos subconjuntos presentan distribuciones similares 
-(los histogramas se superponen, como ocurre en la <strong>velocidad de marcha</strong>, el <strong>IMC</strong> y las <strong>circunferencias de muslo y pantorrilla</strong>).  
-
-En otros casos, cada histograma muestra picos en zonas diferentes, lo que refleja variaciones esperadas según el sexo del paciente 
+La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En algunos casos, los dos subconjuntos presentan distribuciones similares (los histogramas se superponen, como ocurre en la <strong>velocidad de marcha</strong>, el <strong>IMC</strong> y las <strong>circunferencias de muslo y pantorrilla</strong>).  En otros casos, cada histograma muestra picos en zonas diferentes, lo que refleja variaciones esperadas según el sexo del paciente 
 (ver, por ejemplo, la <strong>fuerza de presión palmar</strong> y algunos de los <strong>pliegues cutáneos</strong>).
 </div>
 """, unsafe_allow_html=True)
@@ -771,8 +766,9 @@ En otros casos, cada histograma muestra picos en zonas diferentes, lo que reflej
             import pandas as pd
             st.markdown("""
 <div style='text-align: justify'>
-El siguiente paso en la simplificación consistió en identificar aquellas variables que pudieran estar altamente correlacionadas entre sí.  
-Cuando dos variables muestran una correlación elevada, es suficiente conservar solo una de ellas para entrenar los modelos.  La <strong>Figura 7</strong> la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representa la magnitud de la correlación. <strong>Para nuestra lista final de variables, conservamos solo aquellas que no estuvieran correlacionadas entre sí con más de 0.70 de correlación.</strong>
+El siguiente paso en la simplificación consistió en identificar aquellas variables que pudieran estar altamente 
+<a href='https://elmundodelosdatos.com/que-es-la-correlacion-y-como-interpretarla-correctamente/
+' target='_blank'>correlacionadas</a> entre sí. Cuando dos variables muestran una correlación elevada, es suficiente conservar solo una de ellas para entrenar los modelos.  La <strong>Figura 7</strong> la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representa la magnitud de la correlación. <strong>Para nuestra lista final de variables, conservamos solo aquellas que no estuvieran correlacionadas entre sí con más de 0.70 de correlación.</strong>
 </div>
 """, unsafe_allow_html=True)
 
