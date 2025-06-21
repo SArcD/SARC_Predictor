@@ -565,11 +565,8 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             }
             st.markdown("""
 <div style='text-align: justify'>
-<strong>
 Al analizar por separado a hombres y mujeres, se observa que algunos parámetros varían de forma diferente entre ambos grupos.  
-La <u>siguiente gráfica</u> muestra las varianzas normalizadas de cada parámetro, calculadas por sexo.  
-Para garantizar que los modelos predictivos se entrenen únicamente con variables útiles, solo se incluyeron aquellos parámetros cuya varianza normalizada fue mayor a 0.01.
-</strong>
+La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámetro, calculadas por sexo. Para garantizar que los modelos predictivos se entrenen únicamente con variables útiles, solo se incluyeron aquellos parámetros cuya varianza normalizada fue mayor a 0.01.
 </div>
 """, unsafe_allow_html=True)
 
@@ -621,10 +618,10 @@ Para garantizar que los modelos predictivos se entrenen únicamente con variable
                 y_pos = np.arange(len(merged_df))
 
                 # Barras de hombres
-                ax.barh(y_pos - bar_width/2, merged_df['Men'], height=bar_width, label='Men', color='steelblue', edgecolor='black')
+                ax.barh(y_pos - bar_width/2, merged_df['Men'], height=bar_width, label='Hombres', color='steelblue', edgecolor='black')
 
                 # Barras de mujeres
-                ax.barh(y_pos + bar_width/2, merged_df['Women'], height=bar_width, label='Women', color='lightcoral', edgecolor='black')
+                ax.barh(y_pos + bar_width/2, merged_df['Women'], height=bar_width, label='Mujeres', color='lightcoral', edgecolor='black')
 
                 ax.set_yticks(y_pos)
                 ax.set_yticklabels(merged_df.index)
@@ -645,7 +642,7 @@ Para garantizar que los modelos predictivos se entrenen únicamente con variable
             import plotly.subplots as sp
             st.markdown("""
 <div style='text-align: justify'>
-La <strong>Figura 5</strong> muestra los <strong>histogramas</strong> con la distribución de valores para cada uno de los parámetros.  
+La <strong>Figura 6</strong> muestra los <strong>histogramas</strong> con la distribución de valores para cada uno de los parámetros.  
 La muestra original se ha separado en los subconjuntos de hombres y mujeres.  
 
 En algunos casos, los dos subconjuntos presentan distribuciones similares 
@@ -721,7 +718,7 @@ En otros casos, cada histograma muestra picos en zonas diferentes, lo que reflej
 
                 # Configurar layout
                 fig_6.update_layout(
-                    title_text="Histogramas por Sexo (Hombres vs Mujeres)",
+                    title_text="Histogramas de parámetros separados por el sexo de los participantes",
                     height=900,
                     barmode='overlay',
                     showlegend=True,
@@ -775,12 +772,7 @@ En otros casos, cada histograma muestra picos en zonas diferentes, lo que reflej
             st.markdown("""
 <div style='text-align: justify'>
 El siguiente paso en la simplificación consistió en identificar aquellas variables que pudieran estar altamente correlacionadas entre sí.  
-Cuando dos variables muestran una correlación elevada, es suficiente conservar solo una de ellas para entrenar los modelos.  
-
-La siguiente figura muestra la matriz de correlación entre las variables.  
-La intensidad de los tonos azules o rojos representa la magnitud de la correlación.  
-
-<strong>Para nuestra lista final de variables, conservamos solo aquellas que no estuvieran correlacionadas entre sí con más de 0.70 de correlación.</strong>
+Cuando dos variables muestran una correlación elevada, es suficiente conservar solo una de ellas para entrenar los modelos.  La <strong>Figura 6</strong> la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representa la magnitud de la correlación. <strong>Para nuestra lista final de variables, conservamos solo aquellas que no estuvieran correlacionadas entre sí con más de 0.70 de correlación.</strong>
 </div>
 """, unsafe_allow_html=True)
 
