@@ -149,11 +149,17 @@ elif opcion == "Proceso":
             # Mostrar en Streamlit
             st.pyplot(fig_1)
         #-----------------------------------------------------------------------------------
+
             st.markdown("""
-            <div style='text-align: justify'>
-La muestra se compone de pacientes con <strong>comorbilidades comunes en la población mexicana (como la [Diabetes Mellitus](https://www.gob.mx/salud/articulos/la-diabetes-y-sus-complicaciones) y la [Hipertensión arterial](https://salud.gob.mx/unidades/cdi/documentos/DOCSAL7515.pdf)</strong>. La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en la muestra (la barra superior muestra las comorbilidades principales, mientras que la inferior muestra las comorbilidades secundarias). <strong>Los modelos predictivos para sarcopenia se entrenaron solo con los pacientes sin comorbilidades</strong>
+<div style='text-align: justify'>
+La muestra se compone de pacientes con <strong>comorbilidades comunes en la población mexicana</strong> (como la 
+<a href='https://www.gob.mx/salud/articulos/la-diabetes-y-sus-complicaciones' target='_blank'>Diabetes Mellitus</a> y la 
+<a href='https://salud.gob.mx/unidades/cdi/documentos/DOCSAL7515.pdf' target='_blank'>Hipertensión arterial</a>). 
+La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en la muestra (la barra superior muestra las comorbilidades principales, mientras que la inferior muestra las comorbilidades secundarias). 
+<strong>Los modelos predictivos para sarcopenia se entrenaron solo con los pacientes sin comorbilidades</strong>.
 </div>
 """, unsafe_allow_html=True)
+            
             import matplotlib.pyplot as plt
             import numpy as np
             import streamlit as st
