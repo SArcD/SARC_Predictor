@@ -393,7 +393,23 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
         
         with st.expander("**Modelo para la predicción del Índice de masa musculo-esquelética apendicular**"):
             st.subheader("Depuración de las variabes para los modelos predictivos")
-            st.markdown("""Una manera de simplificar los modelos es eliminar los parámetros que tienen poco poder preditivo. Esto puede hacerse mediante la varianza (que mide la variabilidad que tiene un parametro entre un grupo de pacientes). Los parámetros con las varianzas mas grandes son también aquellos que permiten distinguir a un paciente de los demás. Como nuestro objetivo es clasificar, resulta conveniente conservar solo los parámetros con las varinzas mas grandes. Para que las unidades no sean un factor que artificialmente hagan parecer que un parámetros tiene una varianza mas grande, se normalizaron los valores antes de calcular la varianza de cada parámetro. **La siguiente figura muestra la gráfica de varianzas normalizadas.**""")
+
+            st.markdown("""
+<div style='text-align: justify'>
+<strong>
+Una forma de simplificar los modelos es eliminar aquellos parámetros (variables) que no ayudan mucho a hacer predicciones.  
+Para saber cuáles son útiles, se puede usar la <u>varianza</u>, que mide qué tanto varía un parámetro entre distintos pacientes.  
+Los parámetros con mayor varianza permiten distinguir mejor entre pacientes, lo cual es importante si queremos clasificar correctamente.
+
+Por eso, decidimos conservar únicamente los parámetros con mayor varianza.  
+Antes de hacer ese análisis, normalizamos los valores para que las unidades (por ejemplo, gramos, centímetros, años) no afectaran artificialmente los resultados.  
+
+<strong>La Figura 4 muestra la gráfica con las varianzas normalizadas de cada parámetro.</strong>
+</strong>
+</div>
+""", unsafe_allow_html=True)
+
+            
             # Definir las columnas que deben ser iguales a 0
             columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
                     'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']
