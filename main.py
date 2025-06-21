@@ -1096,7 +1096,7 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
 <strong>Pasos a seguir:</strong>
 <ul>
     <li>Seleccione el número de variables con las que desea construir su modelo de cálculo 
-        (<strong>el modelo completo usa 5 variables</strong>).
+        (<strong>el modelo completo usa las mismas 5 variables que el de Ramírez</strong>).
     </li>
     <li>Al presionar el botón, la aplicación tardará unos segundos.  
         Al finalizar, se mostrará la combinación de parámetros que produce el modelo con el <strong>menor error cuadrático medio (RMSE)</strong>.  
@@ -1405,16 +1405,27 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
             from sklearn.preprocessing import StandardScaler
             from sklearn.cluster import AgglomerativeClustering
 
-            st.markdown(
-            """
-            En esta sección se utiliza el algoritmo de **clustering jerárquico** para agrupar pacientes de acuerdo a sus parámetros antropométricos. Siguiendo el algoritmo propuesuesto por el EWGSOP2 se realiza un cribado secuencial de pacientes de acuerdo con su fuerza de presión de agarre, su índice de masa musculo-esquelética apendicular (calculado a partir del modelo de randon forest) y su velocidad de marcha. Al finalizar el proceso se comparan los grupos de pacientes clasificados en 4 categorías:
-            
-            - **Saludables:** definidos como pacientes sin comorbilidades y cuyos valores para la fuerza presión palmar, IMME y velocidad de marcha están todos por arriba de los puntos de corte.
-            - **Sarcopenia sospechosa:** contiene pacientes cuya fuerza de agarre está por debajo del segundo quintil del rango completo de valores medidos.
-            - **Sarcopenia probable:** pacientes con fuerza de agarre e IMME por debajo del segundo quintil del rango completo de valores medidos.
-            - **Sarcopenia grave:** pacientes con fuerza de agarre, IMME y velocidad de marcha por debajo del segundo quintil del rango completo de valores medidos.
-            """
-            )
+            st.markdown("""
+### Agrupación de pacientes mediante clustering jerárquico
+
+En esta sección se utiliza el algoritmo de **clustering jerárquico** para agrupar pacientes de acuerdo con sus parámetros antropométricos.
+
+Siguiendo el algoritmo propuesto por el **EWGSOP2**, se realiza un cribado secuencial basado en:
+
+- **Fuerza de presión de agarre**
+- **Índice de masa músculo-esquelética apendicular (IMME)**, calculado mediante un modelo de *random forest*
+- **Velocidad de marcha**
+
+Al finalizar el proceso, los pacientes se clasifican en **cuatro grupos**:
+
+- 🟢 **Saludables**: Sin comorbilidades y con valores **por encima** de los puntos de corte en fuerza de agarre, IMME y velocidad de marcha.
+- 🟡 **Sarcopenia sospechosa**: Fuerza de agarre **por debajo** del segundo quintil del rango total de mediciones.
+- 🟠 **Sarcopenia probable**: Fuerza de agarre **e IMME por debajo** del segundo quintil.
+- 🔴 **Sarcopenia grave**: Fuerza de agarre, IMME **y velocidad de marcha por debajo** del segundo quintil.
+
+Esta agrupación permite visualizar patrones clínicos y orientar decisiones preventivas o terapéuticas.
+""")
+
         
             # Selección de sexo
             sexo = st.radio("**Selecciona el sexo para el análisis**", ('Hombres', 'Mujeres'))
