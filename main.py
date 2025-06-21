@@ -75,21 +75,12 @@ if opcion == "Introducción":
 
 
 elif opcion == "Proceso":
-    #st.subheader("📉 Gráficas e interpretación")
-    #st.write("Aquí van los gráficos, importancias, etc.")
-
-
-
-
-
 
     #########################################################
     import streamlit as st
     import pandas as pd
     import requests
     from io import BytesIO
-
-
     import joblib
     import requests
     import io
@@ -106,15 +97,15 @@ elif opcion == "Proceso":
             return None
 
 
-    st.title("Depuración de datos y creación de modelos predictivos para la masa muscular y el riesgo de sarcopenia")
+    st.title("Metodología para la creación de modelos predictivos sobre masa muscular y Sarcopenia")
 
-    st.subheader("Carga de los datos")
+    st.subheader("Cargar y seleccionar la base de datos")
     
     st.markdown("""
-    En el siguiente menú puede elegir entre las bases de datos disponibles""")
+    **En el siguiente menú puede elegir entre las bases de datos disponibles para el entrenamiento de los modelos predictivos**""")
     # Seleccionar el año de la base de datos
     selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
-    st.markdown("""**Nota: En su versión actual el entrenamiento de los modelos debe hacerse con la base de datos de 2019, ya que es la mas amplia de las que están disponibles**""")
+    st.markdown("""**Nota:** En su versión actual el entrenamiento de los modelos debe hacerse con la base de datos de 2019, ya que es la mas amplia de las dos que están disponibles (actualizado al 20-06-2025""")
     # Definir la ruta del archivo en función de la selección
     if selected_year == "2022":
         file_path = "Base 2022 Santiago Arceo.xls"
@@ -130,7 +121,7 @@ elif opcion == "Proceso":
 
         # Mostrar vista previa opcional en un expander
         with st.expander("**Descripción de la base de datos**"):
-            st.markdown("""La siguiente tabla muestra un **resumen** de los datos que se utilizaron para el entrenamiento de los modelos. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS""")
+            st.markdown("""La **Tabla 1** muestra un **resumen** de los datos que se utilizaron para el entrenamiento de los modelos. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS (escribir al correo de contacto [sergio.sanchezga@imss.gob.mx]) """)
             #st.dataframe(datos)
             st.dataframe(datos.describe())
             st.markdown("""La siguiente Figura muestra las proporciones de hombres y mujeres dentro de la muestra utilizada para el entrenamiento de los modelos.""")
