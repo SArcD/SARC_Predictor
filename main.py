@@ -381,8 +381,16 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
                 plt.tight_layout()
                 st.session_state.fig_comorbilidades_sexo = fig_3
             st.pyplot(st.session_state.fig_comorbilidades_sexo)
-        #st.pyplot(fig_3)
+            st.markdown("""
+            <div style='text-align: justify'>
+            <strong>
+            Actualmente se trabaja en modelos predictivos que tomen en cuenta las comorbilidades y los cambios que esto implicaría en los modelos predictivos de sarcopenia.  Si desea obtener más información, comuníquese al correo <a href='mailto:rosio@ucol.mx'>rosio@ucol.mx</a> y <a href='mailto:santiagoarceodiaz@gmail.com'>santiagoarceodiaz@gmail.com</a>. </strong>
+</div>
+""", unsafe_allow_html=True)
 
+
+
+        
         with st.expander("**Modelo para la predicción del Índice de masa musculo-esquelética apendicular**"):
             st.markdown("""Una manera de simplificar los modelos es eliminar los parámetros que tienen poco poder preditivo. Esto puede hacerse mediante la varianza (que mide la variabilidad que tiene un parametro entre un grupo de pacientes). Los parámetros con las varianzas mas grandes son también aquellos que permiten distinguir a un paciente de los demás. Como nuestro objetivo es clasificar, resulta conveniente conservar solo los parámetros con las varinzas mas grandes. Para que las unidades no sean un factor que artificialmente hagan parecer que un parámetros tiene una varianza mas grande, se normalizaron los valores antes de calcular la varianza de cada parámetro. **La siguiente figura muestra la gráfica de varianzas normalizadas.**""")
             # Definir las columnas que deben ser iguales a 0
