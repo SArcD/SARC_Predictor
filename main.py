@@ -121,7 +121,7 @@ elif opcion == "Proceso":
 
         # Mostrar vista previa opcional en un expander
         with st.expander("**Descripción de la base de datos**"):
-            st.markdown("""La **Tabla 1** muestra un **resumen** de los datos que se utilizaron para el entrenamiento de los modelos. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS (escribir al correo de contacto [sergio.sanchezga@imss.gob.mx]) """)
+            st.markdown("""La **Tabla 1** muestra un **resumen** de los datos que se utilizaron para el **entrenamiento de los modelos**. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS (escribir al correo de contacto **sergio.sanchezga@imss.gob.mx**) """)
             #st.dataframe(datos)
             st.dataframe(datos.describe())
             st.markdown("""La siguiente Figura muestra las proporciones de hombres y mujeres dentro de la muestra utilizada para el entrenamiento de los modelos.""")
