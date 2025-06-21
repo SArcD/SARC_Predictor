@@ -121,10 +121,23 @@ elif opcion == "Proceso":
 
         # Mostrar vista previa opcional en un expander
         with st.expander("**Descripción de la base de datos**"):
-            st.markdown("""La **Tabla 1** muestra un **resumen** de los datos que se utilizaron para el **entrenamiento de los modelos**. Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS (escribir al correo de contacto **sergio.sanchezga@imss.gob.mx**) """)
+            st.markdown("""
+<div style='text-align: justify'>
+La <strong>Tabla 1</strong> muestra un <strong>resumen</strong> de los datos que se utilizaron para el <strong>entrenamiento de los modelos</strong>. 
+Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS 
+(escribir al correo de contacto <strong>sergio.sanchezga@imss.gob.mx</strong>).
+</div>
+""", unsafe_allow_html=True)
+
             #st.dataframe(datos)
             st.dataframe(datos.describe())
-            st.markdown("""**La Figura 1** muestra las proporciones de hombres y mujeres dentro de la muestra utilizada para el entrenamiento de los modelos (**que las proporciones sean de tamaños similares garantiza que los modelos tengan una exactitud similar al hacer predicciones tanto para hombres como para mujeres**).""")
+            st.markdown("""
+<div style='text-align: justify'>
+<strong>La Figura 1</strong> muestra las proporciones de hombres y mujeres dentro de la muestra utilizada para el entrenamiento de los modelos 
+(<strong>que las proporciones sean de tamaños similares garantiza que los modelos tengan una exactitud similar al hacer predicciones tanto para hombres como para mujeres</strong>).
+</div>
+""", unsafe_allow_html=True)
+
             import matplotlib.pyplot as plt
             import streamlit as st
 
@@ -253,9 +266,11 @@ La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en l
         #st.pyplot(fig_2)
 #------------------------------Comparación por sexo
 
-
-            st.markdown("""La siguiente Figura muestra la distribución de comorbilidades de acuerdo al sexo de los integrantes de la muestra (así como el numero de hombres y mujeres que componen cada subconjunto).""")
-            
+            st.markdown("""
+<div style='text-align: justify'>
+Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la similitudes y diferencias en las comorbilidades mas comunes (Figura 3).
+</div>
+""", unsafe_allow_html=True)
         
             import matplotlib.pyplot as plt
             import numpy as np
