@@ -398,8 +398,7 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
 <div style='text-align: justify'>
 <strong>
 Una forma de simplificar los modelos es eliminar aquellos parámetros (variables) que no ayudan mucho a hacer predicciones.  
-Para saber cuáles son útiles, se puede usar la <u>varianza</u>, que mide qué tanto varía un parámetro entre distintos pacientes.  
-Los parámetros con mayor varianza permiten distinguir mejor entre pacientes, lo cual es importante si queremos clasificar correctamente.
+Para saber cuáles son útiles, se puede usar la <u>varianza</u>, que mide qué tanto varía un parámetro entre distintos pacientes. Los parámetros con mayor varianza permiten distinguir mejor entre pacientes, lo cual es importante si queremos clasificar correctamente.
 
 Por eso, decidimos conservar únicamente los parámetros con mayor varianza.  
 Antes de hacer ese análisis, normalizamos los valores para que las unidades (por ejemplo, gramos, centímetros, años) no afectaran artificialmente los resultados.  
@@ -564,7 +563,16 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
                 'P130': 'Circunferencia de muñeca',
                 'P118': 'Circunferencia de cadera'
             }
-            st.markdown("""Si separamos la muestra de acuerdo al sexo de los participantes, podemos observar que los parámetros tienen varianzas distintas. **La siguiente gráfica muestra las varianzas normalizadas para hombres y mujeres**. Para entrenar los modelos predictivos, solo consideramos parámetros con una varianza normalizada mayor a 0.01""")
+            st.markdown("""
+<div style='text-align: justify'>
+<strong>
+Al analizar por separado a hombres y mujeres, se observa que algunos parámetros varían de forma diferente entre ambos grupos.  
+La <u>siguiente gráfica</u> muestra las varianzas normalizadas de cada parámetro, calculadas por sexo.  
+Para garantizar que los modelos predictivos se entrenen únicamente con variables útiles, solo se incluyeron aquellos parámetros cuya varianza normalizada fue mayor a 0.01.
+</strong>
+</div>
+""", unsafe_allow_html=True)
+
             
             
             #column_labels_en = {
