@@ -772,7 +772,7 @@ En otros casos, cada histograma muestra picos en zonas diferentes, lo que reflej
             st.markdown("""
 <div style='text-align: justify'>
 El siguiente paso en la simplificación consistió en identificar aquellas variables que pudieran estar altamente correlacionadas entre sí.  
-Cuando dos variables muestran una correlación elevada, es suficiente conservar solo una de ellas para entrenar los modelos.  La <strong>Figura 6</strong> la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representa la magnitud de la correlación. <strong>Para nuestra lista final de variables, conservamos solo aquellas que no estuvieran correlacionadas entre sí con más de 0.70 de correlación.</strong>
+Cuando dos variables muestran una correlación elevada, es suficiente conservar solo una de ellas para entrenar los modelos.  La <strong>Figura 7</strong> la matriz de correlación entre las variables. La intensidad de los tonos azules o rojos representa la magnitud de la correlación. <strong>Para nuestra lista final de variables, conservamos solo aquellas que no estuvieran correlacionadas entre sí con más de 0.70 de correlación.</strong>
 </div>
 """, unsafe_allow_html=True)
 
@@ -822,7 +822,24 @@ Cuando dos variables muestran una correlación elevada, es suficiente conservar 
             import networkx as nx
             import numpy as np
             import pandas as pd
-            st.markdown("""La siguiente figura muestra las redes de correlación entre parámetros, una forma alterna a la matriz de correlación. Cada nodo representa a un parámetro y el tipo de línea corresponde a la intesidad de la correlación (las lineas sólidas entre dos nodos representan una correlación mayor a 0.7, las entre cortadas representa correlaciones entre 0.5 y 0.7 y las punteadas correlaciones menores a 0.5. Además, el color de las redes corresponde a tanto hombres como mujeres (rosa), solo hombres (azul) y solo mujeres (naranja).""")
+
+            st.markdown("""
+<div style='text-align: justify'>
+La siguiente figura muestra una representación alternativa a la matriz de correlación: <strong>las redes de correlación entre parámetros</strong>.  
+En esta figura, <strong>cada nodo representa un parámetro</strong>, y las líneas que los conectan indican el grado de correlación entre ellos.
+
+El <strong>tipo de línea</strong> refleja la intensidad de la correlación:  
+- <strong>Líneas sólidas</strong>: correlación mayor a 0.70  
+- <strong>Líneas entrecortadas</strong>: correlación entre 0.50 y 0.70  
+- <strong>Líneas punteadas</strong>: correlación menor a 0.50  
+
+Además, el <strong>color</strong> de cada red indica el grupo de pacientes al que pertenece:  
+- <span style='color:deeppink'><strong>Rosa</strong></span>: hombres y mujeres  
+- <span style='color:blue'><strong>Azul</strong></span>: solo hombres  
+- <span style='color:orange'><strong>Naranja</strong></span>: solo mujeres  
+</div>
+""", unsafe_allow_html=True)
+
 
             
             # 1. Definir las variables de interés
