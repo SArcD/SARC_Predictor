@@ -1321,13 +1321,34 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                         st.warning("⚠️ Aún no se ha calculado la mejor combinación de variables.")
                         st.stop()
 
+#                else:
+#                    #seleccion_manual = st.multiselect(
+#                     #   f"Selecciona exactamente {selected_n} variables:",
+#                     #   options=variables,
+#                    #    default=[],
+#                    #    key="manual_vars"
+#                    #)
+#                    opciones_mostradas = [nombres_amigables[v] for v in variables]
+
+#                    seleccion_manual = st.multiselect(
+#                        f"Selecciona exactamente {selected_n} variables:",
+#                        options=opciones_mostradas,
+#                        default=[],
+#                        key="manual_vars"
+#                    )
+
+#                    nombres_a_claves = {v: k for k, v in nombres_amigables.items()}
+#                    variables_input = [nombres_a_claves[nombre] for nombre in seleccion_manual]
+#
+#                    if len(variables_input) != selected_n:
+#                        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
+#                    else:
+#                        # Puedes usar variables_input (que son las claves como 'P117')
+#                        st.success("Selección válida.")
+
+
                 else:
-                    #seleccion_manual = st.multiselect(
-                     #   f"Selecciona exactamente {selected_n} variables:",
-                     #   options=variables,
-                    #    default=[],
-                    #    key="manual_vars"
-                    #)
+                    # Mostrar nombres amigables en el multiselect
                     opciones_mostradas = [nombres_amigables[v] for v in variables]
 
                     seleccion_manual = st.multiselect(
@@ -1337,31 +1358,45 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                         key="manual_vars"
                     )
 
+                    # Mapeo inverso: de nombres amigables a claves
                     nombres_a_claves = {v: k for k, v in nombres_amigables.items()}
                     variables_input = [nombres_a_claves[nombre] for nombre in seleccion_manual]
 
                     if len(variables_input) != selected_n:
                         st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
-                    else:
-                        # Puedes usar variables_input (que son las claves como 'P117')
-                        st.success("Selección válida.")
-
-
-
-                    
-                    if len(seleccion_manual) != selected_n:
-                        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
                         st.stop()
                     else:
-                        variables_input = seleccion_manual
-                        if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
-                            X_manual = df_combined[seleccion_manual]
+                        st.success("Selección válida.")
+                        # Entrenar el modelo si es la primera vez o si cambió la selección
+                        if "modelo_manual" not in st.session_state or st.session_state.variables_manual != variables_input:
+                            X_manual = df_combined[variables_input]
                             y_manual = df_combined['IMME']
                             X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(X_manual, y_manual, test_size=0.2, random_state=42)
                             modelo_manual = DecisionTreeRegressor(random_state=42).fit(X_train_m, y_train_m)
                             st.session_state.modelo_manual = modelo_manual
-                            st.session_state.variables_manual = seleccion_manual
+                            st.session_state.variables_manual = variables_input
+
                         modelo = st.session_state.modelo_manual
+
+
+                    
+
+
+
+                    
+#                    if len(seleccion_manual) != selected_n:
+#                        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
+#                        st.stop()
+#                    else:
+#                        variables_input = seleccion_manual
+#                        if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
+#                            X_manual = df_combined[seleccion_manual]
+#                            y_manual = df_combined['IMME']
+#                            X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(X_manual, y_manual, test_size=0.2, random_state=42)
+#                            modelo_manual = DecisionTreeRegressor(random_state=42).fit(X_train_m, y_train_m)
+#                            st.session_state.modelo_manual = modelo_manual
+#                            st.session_state.variables_manual = seleccion_manual
+#                        modelo = st.session_state.modelo_manual
 
                 
 #########################################################
