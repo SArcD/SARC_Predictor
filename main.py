@@ -2952,7 +2952,22 @@ elif opcion == "Formularios":
 
     with tab_sarcopenia_archivo:
         st.markdown("Predicción de sarcopenia desde archivo")
-
+        st.markdown("""
+        <div style='text-align: justify'>
+        <strong>¿Cómo usar esta pestaña?</strong><br><br>    
+        1️⃣ Verifica que tengas cargado o generado previamente el <strong>DataFrame base</strong> con los datos de entrenamiento de sarcopenia.<br>
+        2️⃣ Sube tu archivo en formato <strong>.csv</strong> o <strong>.xlsx</strong> que contenga los datos de los pacientes a los que deseas clasificar.<br>
+        &nbsp;&nbsp;&nbsp;• Asegúrate de que tu archivo tenga un <strong>Identificador</strong> por paciente y las columnas con las variables necesarias.<br>
+        3️⃣ Selecciona las variables predictoras que se usarán para entrenar el modelo y clasificar tus registros.<br>
+        4️⃣ Presiona <strong>🔮 Entrena modelo y predice sarcopenia para archivo</strong> para:<br>
+        &nbsp;&nbsp;&nbsp;• Ajustar un modelo Random Forest con los datos base.<br>
+        &nbsp;&nbsp;&nbsp;• Calcular métricas de desempeño (F1-score, reporte de clasificación).<br>
+        &nbsp;&nbsp;&nbsp;• Clasificar automáticamente a cada paciente de tu archivo cargado.<br>
+        5️⃣ Descarga tu archivo actualizado con la <strong>Predicción de Sarcopenia</strong> para cada registro.<br><br>
+        ⚠️ <em>Recuerda que el modelo se entrena dinámicamente con el DataFrame base y aplica la predicción a todos los pacientes del archivo que subas.</em>
+        </div>
+        """, unsafe_allow_html=True)
+        
         # Verifica que el DataFrame base esté disponible
         if "df_filtered" not in st.session_state:
             st.warning("Primero debes cargar o generar el DataFrame con los datos base.")
