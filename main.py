@@ -1321,32 +1321,6 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                         st.warning("⚠️ Aún no se ha calculado la mejor combinación de variables.")
                         st.stop()
 
-#                else:
-#                    #seleccion_manual = st.multiselect(
-#                     #   f"Selecciona exactamente {selected_n} variables:",
-#                     #   options=variables,
-#                    #    default=[],
-#                    #    key="manual_vars"
-#                    #)
-#                    opciones_mostradas = [nombres_amigables[v] for v in variables]
-
-#                    seleccion_manual = st.multiselect(
-#                        f"Selecciona exactamente {selected_n} variables:",
-#                        options=opciones_mostradas,
-#                        default=[],
-#                        key="manual_vars"
-#                    )
-
-#                    nombres_a_claves = {v: k for k, v in nombres_amigables.items()}
-#                    variables_input = [nombres_a_claves[nombre] for nombre in seleccion_manual]
-#
-#                    if len(variables_input) != selected_n:
-#                        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
-#                    else:
-#                        # Puedes usar variables_input (que son las claves como 'P117')
-#                        st.success("Selección válida.")
-
-
                 else:
                     # Mostrar nombres amigables en el multiselect
                     opciones_mostradas = [nombres_amigables[v] for v in variables]
@@ -1378,64 +1352,6 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
 
                         modelo = st.session_state.modelo_manual
 
-
-                    
-
-
-
-                    
-#                    if len(seleccion_manual) != selected_n:
-#                        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
-#                        st.stop()
-#                    else:
-#                        variables_input = seleccion_manual
-#                        if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
-#                            X_manual = df_combined[seleccion_manual]
-#                            y_manual = df_combined['IMME']
-#                            X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(X_manual, y_manual, test_size=0.2, random_state=42)
-#                            modelo_manual = DecisionTreeRegressor(random_state=42).fit(X_train_m, y_train_m)
-#                            st.session_state.modelo_manual = modelo_manual
-#                            st.session_state.variables_manual = seleccion_manual
-#                        modelo = st.session_state.modelo_manual
-
-                
-#########################################################
-                
-                # Obtener modelo y variables según selección
-                #modelo = None
-                #variables_input = []
-
-                #if modelo_seleccionado == "Mejor combinación global":
-                #    #modelo = st.session_state.modelo_global
-                #    modelo = cargar_modelo_desde_github("https://raw.githubusercontent.com/SArcD/SARC_Predictor/main/modelo_global_imme.pkl")
-                #    variables_input = list(st.session_state.mejor_combinacion)
-
-                #elif modelo_seleccionado.startswith("Mejor combinación con"):
-                #    modelo = st.session_state.modelo_n
-                 #   variables_input = list(st.session_state.mejor_combinacion_n)
-
-                #else:
-                #    # Elección manual con multiselect
-                #    variables_disponibles = variables  # debe estar definido antes
-                #    seleccion_manual = st.multiselect(
-                #        f"Selecciona exactamente {selected_n} variables:",
-                #        options=variables_disponibles,
-                #        default=[],
-                #        key="manual_vars"
-                #    )
-                #    if len(seleccion_manual) != selected_n:
-                #        st.warning(f"Selecciona exactamente {selected_n} variables para continuar.")
-                #    else:
-                #        variables_input = seleccion_manual
-               #         # Entrenar modelo si es nuevo
-               #         if "modelo_manual" not in st.session_state or st.session_state.variables_manual != seleccion_manual:
-               #             X_manual = df_combined[seleccion_manual]
-               #             y_manual = df_combined['IMME']
-               #             X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(X_manual, y_manual, test_size=0.2, random_state=42)
-               #             modelo_manual = DecisionTreeRegressor(random_state=42).fit(X_train_m, y_train_m)
-               #             st.session_state.modelo_manual = modelo_manual
-               #             st.session_state.variables_manual = seleccion_manual
-               #         modelo = st.session_state.modelo_manual
 
                 # Diccionario de nombres amigables
                 nombres_amigables = {
@@ -2704,78 +2620,67 @@ elif opcion == "Formularios":
 #            st.warning("⚠️ No se pudo calcular la clasificación de sarcopenia. Asegúrate de haber capturado 'Fuerza', 'marcha' e 'IMME'.")
 
     with tab_archivo:
-        st.subheader("📤 Predicción de IMME desde archivo con combinación óptima")
+        st.subheader("📂 Predicción de IMME desde archivo usando modelos preentrenados")
 
         archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
+
         if archivo:
             df_archivo = pd.read_excel(archivo)
 
+            # Validar que exista la columna Identificador
             if "Identificador" not in df_archivo.columns:
-                st.error("❌ La columna 'Identificador' es obligatoria.")
+                st.error("❌ Tu archivo debe tener una columna llamada 'Identificador'.")
                 st.stop()
 
-            df_train = st.session_state.get("df_filtered")
-            if df_train is None:
-                st.error("❌ No se encontró df_filtered en session_state.")
-                st.stop()
-
-            n_vars = st.number_input(
-                "Selecciona el número de variables para encontrar la combinación óptima:",
-                min_value=1, max_value=len(variables_disponibles), value=3,
-                key="n_vars_archivo_combo"
+            # Menú para elegir modelo preentrenado dentro de la pestaña
+            modelo_seleccionado = st.selectbox(
+                "Selecciona el modelo preentrenado:",
+                list(modelos_dict.keys())[:-1],  # Excluye 'Seleccionar manualmente'
+                key="modelo_preentrenado_archivo"
             )
 
-            if st.button("🔁 Calcular combinaciones óptimas desde df_filtered"):
-                from itertools import combinations
-                errores_combinaciones = {}
-                for comb in combinations(variables_disponibles, n_vars):
-                    if not all(col in df_train.columns for col in comb):
-                        continue
-                    X = df_train[list(comb)]
-                    y = df_train["IMME"]
-                    X_train, X_test, y_train, y_test = train_test_split(
-                    X, y, test_size=0.2, random_state=42
-                    )
-                    model = DecisionTreeRegressor(random_state=42)
-                    model.fit(X_train, y_train)
-                    mse = mean_squared_error(y_test, model.predict(X_test))
-                    errores_combinaciones[comb] = mse
+            modelo_url, _ = modelos_dict[modelo_seleccionado]
+            modelo = cargar_modelo_desde_url(modelo_url)
 
-                if errores_combinaciones:
-                    mejor_comb = min(errores_combinaciones, key=errores_combinaciones.get)
-                    st.session_state["mejor_comb_archivo"] = mejor_comb
-                    st.session_state["modelo_archivo"] = DecisionTreeRegressor(random_state=42).fit(
-                        df_train[list(mejor_comb)], df_train["IMME"]
-                    )
-                    st.success(f"Mejor combinación: {mejor_comb} (MSE: {errores_combinaciones[mejor_comb]:.4f})")
-                else:
-                    st.warning("No se encontraron combinaciones válidas en df_filtered.")
+            if modelo:
+                columnas_requeridas = list(modelo.feature_names_in_)
 
-            mejor_comb = st.session_state.get("mejor_comb_archivo")
-            modelo_archivo = st.session_state.get("modelo_archivo")
+                # Mostrar columnas requeridas en forma amigable
+                columnas_amigables = [nombres_amigables.get(col, col) for col in columnas_requeridas]
+                st.info(f"✅ Este modelo necesita estas columnas: `{', '.join(columnas_amigables)}`")
 
-            if mejor_comb and modelo_archivo:
-                # Verifica que el archivo tenga las columnas necesarias
-                if not all(col in df_archivo.columns for col in mejor_comb):
-                    faltan = [col for col in mejor_comb if col not in df_archivo.columns]
-                    st.error(f"❌ Faltan columnas en tu archivo: {', '.join(faltan)}")
+                # Verificar faltantes y mostrarlos de forma amigable
+                columnas_faltantes = [col for col in columnas_requeridas if col not in df_archivo.columns]
+                if columnas_faltantes:
+                    faltantes_amigables = [nombres_amigables.get(col, col) for col in columnas_faltantes]
+                    st.error(f"❌ Faltan columnas en tu archivo: {', '.join(faltantes_amigables)}")
                     st.stop()
 
-                st.markdown(f"### Predicción usando combinación óptima: `{mejor_comb}`")
-                X_input = df_archivo[list(mejor_comb)]
-                pred = modelo_archivo.predict(X_input)
+                # Si todo está bien, aplicar predicción
+                X_input = df_archivo[columnas_requeridas]
+                pred = modelo.predict(X_input)
                 df_archivo["IMME"] = pred
 
-                columnas_mostrar = ["Identificador"] + list(mejor_comb) + ["IMME"]
-                st.dataframe(df_archivo[columnas_mostrar])
+                # Preparar tabla para mostrar con nombres amigables
+                columnas_mostrar = ["Identificador"] + columnas_requeridas + ["IMME"]
+                columnas_mostrar_amigables = ["Identificador"] + columnas_amigables + ["IMME"]
 
+                df_mostrar = df_archivo[columnas_mostrar].copy()
+                df_mostrar.columns = columnas_mostrar_amigables
+
+                st.markdown("### 📊 Resultados de predicción")
+                st.dataframe(df_mostrar)
+
+                # Descargar archivo
+                import io
                 output = io.BytesIO()
-                df_archivo[columnas_mostrar].to_excel(output, index=False)
+                df_mostrar.to_excel(output, index=False)
                 st.download_button(
                     "⬇️ Descargar archivo con predicciones",
                     output.getvalue(),
                     file_name="imme_con_prediccion.xlsx"
                 )
+
 
 
     
