@@ -2627,12 +2627,12 @@ elif opcion == "Formularios":
         if archivo:
             df_archivo = pd.read_excel(archivo)
 
-            # Validar que exista la columna Identificador
+            # Validar Identificador
             if "Identificador" not in df_archivo.columns:
-                st.error("❌ Tu archivo debe tener una columna llamada 'Identificador'.")
+                st.error("❌ El archivo debe tener una columna llamada 'Identificador'.")
                 st.stop()
 
-            # Menú para elegir modelo preentrenado dentro de la pestaña
+            # 👉 Selección de modelo preentrenado
             modelo_seleccionado = st.selectbox(
                 "Selecciona el modelo preentrenado:",
                 list(modelos_dict.keys())[:-1],  # Excluye 'Seleccionar manualmente'
@@ -2649,29 +2649,47 @@ elif opcion == "Formularios":
                 columnas_amigables = [nombres_amigables.get(col, col) for col in columnas_requeridas]
                 st.info(f"✅ Este modelo necesita estas columnas: `{', '.join(columnas_amigables)}`")
 
-                # Verificar faltantes y mostrarlos de forma amigable
-                columnas_faltantes = [col for col in columnas_requeridas if col not in df_archivo.columns]
+                # 🔑 Mapeo inverso amigable → clave
+                nombres_a_claves = {v: k for k, v in nombres_amigables.items()}
+
+                # Traducir encabezados del archivo a claves crudas
+                columnas_archivo_traducidas = []
+                for col in df_archivo.columns:
+                    if col in nombres_a_claves:
+                        columnas_archivo_traducidas.append(nombres_a_claves[col])
+                    else:
+                        columnas_archivo_traducidas.append(col)
+
+                # Verificar columnas faltantes (según claves)
+                columnas_faltantes = [col for col in columnas_requeridas if col not in columnas_archivo_traducidas]
                 if columnas_faltantes:
                     faltantes_amigables = [nombres_amigables.get(col, col) for col in columnas_faltantes]
                     st.error(f"❌ Faltan columnas en tu archivo: {', '.join(faltantes_amigables)}")
                     st.stop()
 
-                # Si todo está bien, aplicar predicción
-                X_input = df_archivo[columnas_requeridas]
+                # ✅ Renombrar DataFrame a claves crudas para predicción
+                df_archivo_renombrado = df_archivo.rename(columns=nombres_a_claves)
+
+                # Aplicar predicción
+                X_input = df_archivo_renombrado[columnas_requeridas]
                 pred = modelo.predict(X_input)
                 df_archivo["IMME"] = pred
 
-                # Preparar tabla para mostrar con nombres amigables
+                # Mostrar tabla: Identificador + variables + IMME (amigables)
                 columnas_mostrar = ["Identificador"] + columnas_requeridas + ["IMME"]
                 columnas_mostrar_amigables = ["Identificador"] + columnas_amigables + ["IMME"]
 
-                df_mostrar = df_archivo[columnas_mostrar].copy()
-                df_mostrar.columns = columnas_mostrar_amigables
+                df_mostrar = df_archivo[["Identificador"]].copy()
+                for col in columnas_requeridas:
+                    clave = col
+                    nombre_amigable = nombres_amigables.get(clave, clave)
+                    df_mostrar[nombre_amigable] = df_archivo_renombrado[clave]
+                df_mostrar["IMME"] = df_archivo["IMME"]
 
                 st.markdown("### 📊 Resultados de predicción")
                 st.dataframe(df_mostrar)
 
-                # Descargar archivo
+                # Botón para descargar archivo
                 import io
                 output = io.BytesIO()
                 df_mostrar.to_excel(output, index=False)
@@ -2680,6 +2698,7 @@ elif opcion == "Formularios":
                     output.getvalue(),
                     file_name="imme_con_prediccion.xlsx"
                 )
+
 
 
 
