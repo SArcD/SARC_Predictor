@@ -3051,7 +3051,7 @@ elif opcion == "Formularios":
         df_base = st.session_state.df_filtered.copy()
 
         # Subir archivo
-        archivo = st.file_uploader("📁 Sube archivo CSV o Excel con pacientes", type=['csv', 'xlsx'])
+        archivo = st.file_uploader("📁 Suba archivo CSV o Excel con pacientes", type=['csv', 'xlsx'])
 
         if archivo:
             try:
@@ -3082,7 +3082,7 @@ elif opcion == "Formularios":
                 disponibles = [k for k in column_map if k in posibles_variables]
 
                 selected_vars_display = st.multiselect(
-                    "Selecciona las variables predictoras disponibles:",
+                    "Selecciona las variables para predecir sarcopenia:",
                     options=[column_map[k] for k in disponibles],
                     default=[column_map[k] for k in disponibles if k in ['Fuerza', 'Marcha', 'IMME']]
                 )
@@ -3090,7 +3090,7 @@ elif opcion == "Formularios":
                 selected_vars = [inv_column_map[v] for v in selected_vars_display]
 
                 # Botón para predecir
-                if st.button("🔮 Entrenar modelo y predecir sarcopenia para archivo"):
+                if st.button("🔮 Entrena modelo y predece sarcopenia para archivo"):
                     try:
                         from sklearn.ensemble import RandomForestClassifier
                         from sklearn.preprocessing import LabelEncoder
@@ -3129,7 +3129,7 @@ elif opcion == "Formularios":
 
                         df_archivo["Predicción Sarcopenia"] = y_labels
 
-                        st.markdown("### 🧪 Resultados de predicción")
+                        st.markdown("### 🧪 Resultados de la predicción")
                         st.dataframe(df_archivo)
 
                         # Reporte del modelo
