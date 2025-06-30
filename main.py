@@ -2703,184 +2703,123 @@ elif opcion == "Formularios":
 #        else:
 #            st.warning("⚠️ No se pudo calcular la clasificación de sarcopenia. Asegúrate de haber capturado 'Fuerza', 'marcha' e 'IMME'.")
 
-
-    
-
     with tab_archivo:
+        st.subheader("📤 Predicción de IMME desde archivo con combinación óptima")
+
         archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
         if archivo:
             df_archivo = pd.read_excel(archivo)
 
-            # Verificar presencia del identificador
             if "Identificador" not in df_archivo.columns:
-                st.error("❌ La columna 'Identificador' es obligatoria en tu archivo.")
-            else:
-                columnas_requeridas = (
-                    seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
-                    else modelo.feature_names_in_
+                st.error("❌ La columna 'Identificador' es obligatoria.")
+                st.stop()
+
+            df_train = st.session_state.get("df_filtered")
+            if df_train is None:
+                st.error("❌ No se encontró df_filtered en session_state.")
+                st.stop()
+
+            n_vars = st.number_input(
+                "Selecciona el número de variables para encontrar la combinación óptima:",
+                min_value=1, max_value=len(variables_disponibles), value=3,
+                key="n_vars_archivo_combo"
+            )
+
+            if st.button("🔁 Calcular combinaciones óptimas desde df_filtered"):
+                from itertools import combinations
+                errores_combinaciones = {}
+                for comb in combinations(variables_disponibles, n_vars):
+                    if not all(col in df_train.columns for col in comb):
+                        continue
+                    X = df_train[list(comb)]
+                    y = df_train["IMME"]
+                    X_train, X_test, y_train, y_test = train_test_split(
+                    X, y, test_size=0.2, random_state=42
+                    )
+                    model = DecisionTreeRegressor(random_state=42)
+                    model.fit(X_train, y_train)
+                    mse = mean_squared_error(y_test, model.predict(X_test))
+                    errores_combinaciones[comb] = mse
+
+                if errores_combinaciones:
+                    mejor_comb = min(errores_combinaciones, key=errores_combinaciones.get)
+                    st.session_state["mejor_comb_archivo"] = mejor_comb
+                    st.session_state["modelo_archivo"] = DecisionTreeRegressor(random_state=42).fit(
+                        df_train[list(mejor_comb)], df_train["IMME"]
+                    )
+                    st.success(f"Mejor combinación: {mejor_comb} (MSE: {errores_combinaciones[mejor_comb]:.4f})")
+                else:
+                    st.warning("No se encontraron combinaciones válidas en df_filtered.")
+
+            mejor_comb = st.session_state.get("mejor_comb_archivo")
+            modelo_archivo = st.session_state.get("modelo_archivo")
+
+            if mejor_comb and modelo_archivo:
+                # Verifica que el archivo tenga las columnas necesarias
+                if not all(col in df_archivo.columns for col in mejor_comb):
+                    faltan = [col for col in mejor_comb if col not in df_archivo.columns]
+                    st.error(f"❌ Faltan columnas en tu archivo: {', '.join(faltan)}")
+                    st.stop()
+
+                st.markdown(f"### Predicción usando combinación óptima: `{mejor_comb}`")
+                X_input = df_archivo[list(mejor_comb)]
+                pred = modelo_archivo.predict(X_input)
+                df_archivo["IMME"] = pred
+
+                columnas_mostrar = ["Identificador"] + list(mejor_comb) + ["IMME"]
+                st.dataframe(df_archivo[columnas_mostrar])
+
+                output = io.BytesIO()
+                df_archivo[columnas_mostrar].to_excel(output, index=False)
+                st.download_button(
+                    "⬇️ Descargar archivo con predicciones",
+                    output.getvalue(),
+                    file_name="imme_con_prediccion.xlsx"
                 )
 
-                # Verifica que todas las columnas del modelo estén presentes
-                if not all(col in df_archivo.columns for col in columnas_requeridas):
-                    st.error(f"❌ Faltan columnas requeridas: {', '.join([col for col in columnas_requeridas if col not in df_archivo.columns])}")
-                else:
-                    if modelo_seleccionado == "Seleccionar manualmente":
-                        modelo = DecisionTreeRegressor().fit(df_archivo[seleccion_manual], np.zeros(len(df_archivo)))
-                        pred = modelo.predict(df_archivo[seleccion_manual])
-                        rmse = 0.0  # No hay verdad para comparar
-                    else:
-                        pred = modelo.predict(df_archivo[columnas_requeridas])
-                        rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))  # Estimación simbólica
 
-                    # Agrega la predicción
-                    df_archivo["IMME"] = pred
+    
 
-                    # Muestra solo Identificador + columnas utilizadas + predicción
-                    columnas_mostrar = ["Identificador"] + list(columnas_requeridas) + ["IMME"]
-                    st.dataframe(df_archivo[columnas_mostrar])
+#    with tab_archivo:
+#        archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
+#        if archivo:
+#            df_archivo = pd.read_excel(archivo)
+
+#            # Verificar presencia del identificador
+#            if "Identificador" not in df_archivo.columns:
+#                st.error("❌ La columna 'Identificador' es obligatoria en tu archivo.")
+#            else:
+#                columnas_requeridas = (
+#                    seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
+#                    else modelo.feature_names_in_
+#                )
+
+#                # Verifica que todas las columnas del modelo estén presentes
+#                if not all(col in df_archivo.columns for col in columnas_requeridas):
+#                    st.error(f"❌ Faltan columnas requeridas: {', '.join([col for col in columnas_requeridas if col not in df_archivo.columns])}")
+#                else:
+#                    if modelo_seleccionado == "Seleccionar manualmente":
+#                        modelo = DecisionTreeRegressor().fit(df_archivo[seleccion_manual], np.zeros(len(df_archivo)))
+#                        pred = modelo.predict(df_archivo[seleccion_manual])
+#                        rmse = 0.0  # No hay verdad para comparar
+#                    else:
+#                        pred = modelo.predict(df_archivo[columnas_requeridas])
+#                        rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))  # Estimación simbólica#
+
+#                    # Agrega la predicción
+#                    df_archivo["IMME"] = pred
+
+#                    # Muestra solo Identificador + columnas utilizadas + predicción
+#                    columnas_mostrar = ["Identificador"] + list(columnas_requeridas) + ["IMME"]
+#                    st.dataframe(df_archivo[columnas_mostrar])
 
                     # Exportar resultados
-                    output = io.BytesIO()
-                    df_archivo[columnas_mostrar].to_excel(output, index=False)
-                    st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="imme_con_prediccion.xlsx")
+#                    output = io.BytesIO()
+#                    df_archivo[columnas_mostrar].to_excel(output, index=False)
+#                    st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="imme_con_prediccion.xlsx")
 
-                    st.success(f"📉 RMSE estimado: {rmse:.4f}")
+#                    st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
-    #with tab_sarcopenia:
-  #      st.markdown("### 📋 Formulario para predicción de sarcopenia")
-#
-#        # Variables que usará el modelo
-#        column_map = {
-#            'Fuerza': 'Fuerza (kg)',
-#            'Marcha': 'Marcha (m/s)',
-#            'IMME': 'IMME'
-#        }
-
-#        # Selección de variables
-#        selected_vars_display = st.multiselect(
-#            "Selecciona las variables predictoras para entrenar el modelo:",
-#            options=list(column_map.values()),
-#            default=['Fuerza (kg)', 'Marcha (m/s)', 'IMME']
-#        )
-#        inv_column_map = {v: k for k, v in column_map.items()}
-#        selected_vars = [inv_column_map[var] for var in selected_vars_display]
-
-#        # Inicializar lista de pacientes
-#        if "pacientes_sarcopenia" not in st.session_state:
-#            st.session_state.pacientes_sarcopenia = []
-
-#        # Iniciar paciente nuevo o cargar edición
-#        if "edicion_sarcopenia" in st.session_state:
-#            nuevo_paciente = st.session_state.edicion_sarcopenia
-#            editando = True
-#            st.info(f"✏️ Editando paciente: {nuevo_paciente['Identificador']}")
-#        else:
-#            nuevo_paciente = {}
-#            nuevo_paciente["Identificador"] = st.text_input("Identificador del paciente", key="id_sarc")
-#            editando = False
-
-#        # Inputs
-#        for var in selected_vars:
-#            key_input = f"{var}_sarc"
-#            valor = (
-#                nuevo_paciente[var]
-#                if editando and var in nuevo_paciente
-#                else 0.0
-#            )
-#            nuevo_paciente[var] = st.number_input(f"Ingrese {column_map[var]}", key=key_input, value=valor)
-
-#        # Botones para agregar o guardar edición
-#        col_add, col_save = st.columns(2)
-#        with col_add:
-#            if not editando:
-#                if st.button("➕ Agregar paciente para predicción de sarcopenia"):
-#                    st.session_state.pacientes_sarcopenia.append(nuevo_paciente.copy())
-#                    st.success("Paciente agregado.")
-#                    st.rerun()
-#        with col_save:
-#            if editando:
-#                if st.button("✅ Guardar cambios"):
-#                    st.session_state.pacientes_sarcopenia[st.session_state.edicion_idx_sarcopenia] = nuevo_paciente.copy()
-#                    del st.session_state.edicion_sarcopenia
-#                    del st.session_state.edicion_idx_sarcopenia
-#                    st.success("Cambios guardados.")
-#                    st.rerun()
-
-#        # Mostrar pacientes registrados
-#        if st.session_state.pacientes_sarcopenia:
-#            df_sarc = pd.DataFrame(st.session_state.pacientes_sarcopenia)
-#            st.markdown("### 👥 Pacientes registrados")
-#            st.dataframe(df_sarc)
-
-#            # Selector para edición o eliminación
-#            identificadores = df_sarc["Identificador"].tolist()
-#            paciente_seleccionado = st.selectbox("Selecciona un paciente para editar o borrar:", [""] + identificadores)
-
-#            col_edit, col_delete = st.columns(2)
-#            with col_edit:
-#                if paciente_seleccionado and paciente_seleccionado != "":
-#                    idx = df_sarc[df_sarc["Identificador"] == paciente_seleccionado].index[0]
-#                    if st.button("✏️ Editar paciente seleccionado"):
-#                        st.session_state.edicion_sarcopenia = st.session_state.pacientes_sarcopenia[idx]
-#                        st.session_state.edicion_idx_sarcopenia = idx
-#                        st.rerun()
-#            with col_delete:
-#                if paciente_seleccionado and paciente_seleccionado != "":
-#                    idx = df_sarc[df_sarc["Identificador"] == paciente_seleccionado].index[0]
-#                    if st.button("🗑️ Borrar paciente seleccionado"):
-#                        st.session_state.pacientes_sarcopenia.pop(idx)
-#                        st.success(f"Paciente '{paciente_seleccionado}' eliminado.")
-#                        st.rerun()
-
-#            # Entrenar modelo y predecir
-#            if st.button("🔮 Entrenar modelo y predecir sarcopenia"):
-#                try:
-#                    if "df_filtered" in st.session_state:
-#                        df_train = st.session_state.df_filtered.copy()
-#                    else:
-#                        st.warning("No se encontró el DataFrame 'df_filtered'. Asegúrate de generar los datos antes.")
-#                        st.stop()##
-#
-#                    for col in selected_vars:
-#                        df_train[col] = pd.to_numeric(df_train[col], errors='coerce')
-
-#                    df_train = df_train.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
-
-#                    X = df_train[selected_vars]
-#                    y_raw = df_train['Clasificación Sarcopenia']
-
-#                    # Codificar etiquetas
-#                    from sklearn.preprocessing import LabelEncoder
-#                    le = LabelEncoder()
-#                    y = le.fit_transform(y_raw)
-
-#                    # SMOTE para balancear
-#                    from imblearn.over_sampling import SMOTE
-#                    smote = SMOTE(random_state=42)
-#                    X_resampled, y_resampled = smote.fit_resample(X, y)
-
-#                    # Entrenar modelo
-#                    from sklearn.ensemble import RandomForestClassifier
-#                    model = RandomForestClassifier(
-#                        n_estimators=300,
-#                        max_depth=3,
-#                        min_samples_leaf=5,
-#                        min_samples_split=10,
-#                        random_state=42
-#                    )
-#                    model.fit(X_resampled, y_resampled)
-
-#                    # Predicción
-#                    X_pred = df_sarc[selected_vars]
-#                    y_pred = model.predict(X_pred)
-#                    y_pred_labels = le.inverse_transform(y_pred)
-
-#                    df_sarc["Predicción Sarcopenia"] = y_pred_labels
-#                    st.markdown("### 🧪 Resultados de predicción")
-#                    st.dataframe(df_sarc)
-
-#                except Exception as e:
-#                    st.error(f"Ocurrió un error durante la predicción: {e}")
 
     with tab_sarcopenia:
         st.markdown("### 📋 Formulario para predicción de sarcopenia")
