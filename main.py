@@ -2515,7 +2515,7 @@ elif opcion == "Formularios":
     }
 
     st.subheader("📤 Formularios para predecir IMME")
-    tab_manual, tab_archivo, tab_sarcopenia = st.tabs(["🧍 Ingreso manual", "📁 Subir archivo", "Sarcopenia", "Predicción de sarcopenia desde archivo"])
+    tab_manual, tab_archivo, tab_sarcopenia, tab_sarcopenia_archivo = st.tabs(["Ingreso manual", "Subir archivo", "Sarcopenia", "Predicción de sarcopenia desde archivo"])
 
     with st.sidebar:
         modelo_seleccionado = st.selectbox("Modelo para usar", list(modelos_dict.keys()))
@@ -3041,7 +3041,7 @@ elif opcion == "Formularios":
 ###############
 
     with tab_sarcopenia_archivo:
-        st.markdown("### 📂 Predicción de sarcopenia desde archivo")
+        st.markdown("Predicción de sarcopenia desde archivo")
 
         # Verifica que el DataFrame base esté disponible
         if "df_filtered" not in st.session_state:
