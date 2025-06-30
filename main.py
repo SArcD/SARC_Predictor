@@ -2515,7 +2515,7 @@ elif opcion == "Formularios":
     }
 
     st.subheader("📤 Formularios para predecir IMME")
-    tab_manual, tab_archivo, tab_sarcopenia = st.tabs(["🧍 Ingreso manual", "📁 Subir archivo", "Sarcopenia"])
+    tab_manual, tab_archivo, tab_sarcopenia = st.tabs(["🧍 Ingreso manual", "📁 Subir archivo", "Sarcopenia", "Predicción de sarcopenia desde archivo"])
 
     with st.sidebar:
         modelo_seleccionado = st.selectbox("Modelo para usar", list(modelos_dict.keys()))
