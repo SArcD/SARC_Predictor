@@ -2434,7 +2434,22 @@ elif opcion == "Formularios":
     tab_manual, tab_archivo, tab_sarcopenia, tab_sarcopenia_archivo = st.tabs(["Ingreso manual", "Subir archivo", "Sarcopenia", "Predicción de sarcopenia desde archivo"])
 
     with tab_manual:
+
+        st.markdown("""
+        <div style='text-align: justify'>
+        <strong>¿Cómo usar esta pestaña?</strong><br><br>
+        1️⃣ Selecciona el modelo que deseas utilizar para calcular el <strong>Índice de Masa Muscular Esquelética Apendicular (IMME)</strong>.<br>
+        2️⃣ Si eliges la opción <em>Seleccionar manualmente</em>, marca las variables que deseas incluir.<br>
+        3️⃣ Completa el formulario con los datos de cada paciente: ingresa su <strong>Identificador</strong> y los valores de las variables requeridas.<br>
+        4️⃣ Presiona <strong>➕ Agregar paciente</strong> para registrar cada uno. Podrás verlos en la tabla inferior.<br>
+        5️⃣ Puedes <strong>editar</strong> o <strong>borrar</strong> un paciente usando los botones correspondientes.<br>
+        6️⃣ Cuando tengas todos tus pacientes, presiona <strong>🔮 Predecir IMME</strong> para calcular los resultados.<br><br>
+        ⚠️ <em>Los resultados se mostrarán en la tabla junto con los valores ingresados. Si usas un modelo preentrenado, se mostrará un RMSE estimado.</em>
+        </div>
+        """, unsafe_allow_html=True)
+        
         modelo_seleccionado = st.selectbox("Modelo para usar", list(modelos_dict.keys()))
+        
 
     modelo_url, n_vars = modelos_dict[modelo_seleccionado]
     modelo = None
