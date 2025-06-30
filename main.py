@@ -2622,6 +2622,20 @@ elif opcion == "Formularios":
     with tab_archivo:
         st.subheader("📂 Predicción de IMME desde archivo usando modelos preentrenados")
 
+        st.markdown("""
+        <div style='text-align: justify'>
+        <strong>¿Cómo usar esta pestaña?</strong><br><br>
+        1️⃣ Selecciona el modelo preentrenado que desees utilizar para calcular el <strong>Índice de Masa Muscular Esquelética Apendicular (IMME)</strong>.<br>
+        2️⃣ Descarga o consulta las variables necesarias para ese modelo; se mostrarán claramente con sus nombres amigables.<br>
+        3️⃣ Prepara tu archivo en formato <strong>.xlsx</strong> que debe contener:<br>
+        &nbsp;&nbsp;&nbsp;• Una columna <strong>Identificador</strong> para cada persona o caso.<br>
+        &nbsp;&nbsp;&nbsp;• Las columnas requeridas por el modelo, con los encabezados tal como se muestran (pueden usar nombres amigables, se traducen internamente).<br>
+        4️⃣ Sube tu archivo usando el botón de carga.<br>
+        5️⃣ Si todo es correcto, se calculará el IMME para cada fila y podrás <strong>descargar el archivo con las predicciones</strong>.<br><br>
+        ⚠️ <em>Si faltan columnas requeridas, se mostrarán los nombres amigables para que puedas corregir tu archivo.</em>
+        </div>
+        """, unsafe_allow_html=True)
+        
         archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
 
         if archivo:
