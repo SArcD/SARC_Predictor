@@ -2777,6 +2777,24 @@ elif opcion == "Formularios":
     with tab_sarcopenia:
         st.markdown("### 📋 Formulario para predicción de sarcopenia")
 
+        st.markdown("""
+        <div style='text-align: justify'>
+        <strong>¿Cómo usar esta pestaña?</strong><br><br>
+        1️⃣ Verifica que hayas cargado o generado previamente el <strong>DataFrame base</strong> con los datos necesarios para entrenamiento y predicción de sarcopenia.<br>
+        2️⃣ Selecciona las variables predictoras disponibles que quieras incluir en el modelo. Puedes elegir una combinación de fuerza de prensión, velocidad de marcha, IMME u otras medidas antropométricas.<br>
+        3️⃣ Completa los datos de cada paciente: ingresa su <strong>Identificador</strong> y los valores de cada variable seleccionada.<br>
+        4️⃣ Presiona <strong>➕ Agrega paciente</strong> para registrar cada persona. Podrás verlos en la tabla inferior.<br>
+        5️⃣ Si lo necesitas, puedes <strong>editar</strong> o <strong>borrar</strong> cualquier registro antes de entrenar el modelo.<br>
+        6️⃣ Presiona <strong>🔮 Entrenar modelo y predecir sarcopenia</strong> para:<br>
+        &nbsp;&nbsp;&nbsp;• Ajustar un modelo Random Forest usando los datos base.<br>
+        &nbsp;&nbsp;&nbsp;• Calcular métricas de desempeño (F1-score, reporte de clasificación).<br>
+        &nbsp;&nbsp;&nbsp;• Clasificar automáticamente a cada paciente registrado.<br><br>    
+        ⚠️ <em>Recuerda que el entrenamiento se realiza solo con las variables seleccionadas y la columna de clasificación de sarcopenia del DataFrame base.</em>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+        
         # Asegurar que el DataFrame base esté disponible
         if "df_filtered" not in st.session_state:
             st.warning("Primero debes cargar o generar el DataFrame con los datos base.")
