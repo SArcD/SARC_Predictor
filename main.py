@@ -3038,6 +3038,122 @@ elif opcion == "Formularios":
                 except Exception as e:
                     st.error(f"Ocurrió un error durante la predicción: {e}")
 
+###############
+
+    with tab_sarcopenia_archivo:
+        st.markdown("### 📂 Predicción de sarcopenia desde archivo")
+
+        # Verifica que el DataFrame base esté disponible
+        if "df_filtered" not in st.session_state:
+            st.warning("Primero debes cargar o generar el DataFrame con los datos base.")
+            st.stop()
+
+        df_base = st.session_state.df_filtered.copy()
+
+        # Subir archivo
+        archivo = st.file_uploader("📁 Sube archivo CSV o Excel con pacientes", type=['csv', 'xlsx'])
+
+        if archivo:
+            try:
+                if archivo.name.endswith('.csv'):
+                    df_archivo = pd.read_csv(archivo)
+                else:
+                    df_archivo = pd.read_excel(archivo)
+
+                st.success(f"Archivo cargado correctamente. Registros: {len(df_archivo)}")
+                st.dataframe(df_archivo.head())
+
+                # Mapeo de columnas igual que antes
+                column_map = {
+                    'Fuerza': 'Fuerza (kg)',
+                    'Marcha': 'Marcha (m/s)',
+                    'IMME': 'IMME',
+                    'P117': 'Peso (kg)',
+                    'P118': 'Estatura (cm)',
+                    'P120': 'Brazo (cm)',
+                    'P121': 'Cintura (cm)',
+                    'P122': 'Cadera (cm)',
+                    'P123': 'Muslo (cm)',
+                    'P124': 'Pantorrilla (cm)',
+                    'IMC': 'IMC',
+                }
+
+                posibles_variables = [col for col in df_base.columns if col in column_map]
+                disponibles = [k for k in column_map if k in posibles_variables]
+
+                selected_vars_display = st.multiselect(
+                    "Selecciona las variables predictoras disponibles:",
+                    options=[column_map[k] for k in disponibles],
+                    default=[column_map[k] for k in disponibles if k in ['Fuerza', 'Marcha', 'IMME']]
+                )
+                inv_column_map = {v: k for k, v in column_map.items()}
+                selected_vars = [inv_column_map[v] for v in selected_vars_display]
+
+                # Botón para predecir
+                if st.button("🔮 Entrenar modelo y predecir sarcopenia para archivo"):
+                    try:
+                        from sklearn.ensemble import RandomForestClassifier
+                        from sklearn.preprocessing import LabelEncoder
+                        from sklearn.metrics import classification_report, f1_score
+                        from imblearn.over_sampling import SMOTE
+
+                        # Entrenar con base de entrenamiento
+                        df_train = df_base.copy()
+                        for col in selected_vars:
+                            df_train[col] = pd.to_numeric(df_train[col], errors='coerce')
+                        df_train = df_train.dropna(subset=selected_vars + ['Clasificación Sarcopenia'])
+
+                        X = df_train[selected_vars]
+                        y_raw = df_train['Clasificación Sarcopenia']
+                        le = LabelEncoder()
+                        y = le.fit_transform(y_raw)
+
+                        smote = SMOTE(random_state=42)
+                        X_resampled, y_resampled = smote.fit_resample(X, y)
+
+                        model = RandomForestClassifier(
+                            n_estimators=300,
+                            max_depth=3,
+                            min_samples_leaf=5,
+                            min_samples_split=10,
+                            random_state=42
+                        )
+                        model.fit(X_resampled, y_resampled)
+
+                        # Predicción para archivo subido
+                        X_pred = df_archivo[selected_vars]
+                        for col in selected_vars:
+                            X_pred[col] = pd.to_numeric(X_pred[col], errors='coerce')
+                        y_pred = model.predict(X_pred)
+                        y_labels = le.inverse_transform(y_pred)
+
+                        df_archivo["Predicción Sarcopenia"] = y_labels
+
+                        st.markdown("### 🧪 Resultados de predicción")
+                        st.dataframe(df_archivo)
+
+                        # Reporte del modelo
+                        y_pred_train = model.predict(X)
+                        f1 = f1_score(y, y_pred_train, average='weighted')
+                        report = classification_report(y, y_pred_train, target_names=le.classes_)
+
+                        st.markdown("### 📈 Desempeño del modelo")
+                        st.text(report)
+                        st.success(f"F1-score (ponderado): {f1:.4f}")
+
+                        # Descargar resultados
+                        import io
+                        output = io.BytesIO()
+                        df_archivo.to_excel(output, index=False)
+                        st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="predicciones_sarcopenia_archivo.xlsx")
+
+                    except Exception as e:
+                        st.error(f"Ocurrió un error durante la predicción: {e}")
+
+            except Exception as e:
+                st.error(f"No se pudo procesar el archivo: {e}")
+
+
 
 
 
