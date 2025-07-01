@@ -51,7 +51,7 @@ if opcion == "Introducción":
     de apoyo en el diagnóstico a partir de parámetros antropométricos"**, desarrollado 
     por el Doctor en Ciencias (Astrofísica) Santiago Arceo Díaz, bajo la dirección de 
     la Doctora Xóchitl Rosío Angélica Trujillo Trujillo, y con la ayuda de los colaboradores mencionados en esta sección. Esta estancia es gracias a la 
-    colaboración entre el entre la **Secretaría de Ciencia Humanidades Tecnología e Innovación** ([**SECIHTI**, antes **CONAHCYT**](https://secihti.mx/)) y la Universidad de Colima ([**UCOL**](https://portal.ucol.mx/cuib/))**
+    colaboración entre el entre la **Secretaría de Ciencia Humanidades Tecnología e Innovación** ([**SECIHTI**, antes **CONAHCYT**](https://secihti.mx/)) y la **Universidad de Colima ([**UCOL**](https://portal.ucol.mx/cuib/))**
     </div>
     """, unsafe_allow_html=True)
 
