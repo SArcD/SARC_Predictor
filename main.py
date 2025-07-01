@@ -21,23 +21,13 @@ from itertools import combinations
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AgglomerativeClustering
 import matplotlib.patches as patches
-#import streamlit as st
-#import pandas as pd
-            #import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, f1_score
 from sklearn.inspection import PartialDependenceDisplay
 from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import SMOTE
-    #import streamlit as st
-    #import pandas as pd
-    #import numpy as np
-    #from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
-    #import joblib
-    #import requests
-    #import io
 
 
 
@@ -80,8 +70,6 @@ if opcion == "Introducción":
     Elegimos el lenguaje de programación [**Python**](https://docs.python.org/es/3/tutorial/) y las plataformas [**Streamlit**](https://streamlit.io/) y [**GitHub**](https://github.com/). Estas opciones permiten una fácil visualización y manipulación de la aplicación, además de almacenar los algoritmos en la nube. Las técnicas utilizadas para el análisis de los datos y la creación de modelos de aproximación se derivan de prácticas usuales para la depuración de datos, la creación de árboles de ajuste, la técnica de clustering jerárquico y Random Forest. **La aplicación es de libre acceso y uso gratuito para cualquier personal de atención primaria de pacientes geriátricos.**
     </div>
     """, unsafe_allow_html=True)
-
-    #st.title("Acerca de Sarc-open-IA")
 
     st.subheader("Objetivo")
     st.markdown("""
@@ -160,14 +148,14 @@ elif opcion == "Proceso":
         with st.expander("**Descripción de la base de datos**"):
             st.markdown("""
 <div style='text-align: justify'>
-La <strong>Tabla 1</strong> muestra un <strong>resumen</strong> de los datos que se utilizaron para el <strong>entrenamiento de los modelos</strong>. 
+A continuación, se muestra un <strong>resumen gráfico</strong> de los datos que se utilizaron para el <strong>entrenamiento de los modelos</strong>. 
 Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS 
 (escribir al correo de contacto <a href='mailto:sergio.sanchezga@imss.gob.mx'>sergio.sanchezga@imss.gob.mx</a>.
 </div>
 """, unsafe_allow_html=True)
 
             #st.dataframe(datos)
-            st.dataframe(datos.describe())
+            #st.dataframe(datos.describe())
             st.markdown("""
 <div style='text-align: justify'>
 <strong>La Figura 1</strong> muestra las proporciones de hombres y mujeres dentro de la muestra que se usó para el entrenamiento de los modelos 
@@ -294,8 +282,7 @@ La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en l
                 st.session_state.fig_comorbilidades = fig_2
             st.pyplot(st.session_state.fig_comorbilidades)
 
-        # Mostrar en Streamlit
-        #st.pyplot(fig_2)
+
 #------------------------------Comparación por sexo
 
             st.markdown("""
@@ -445,17 +432,12 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             # Filtrar las filas en las que todas las columnas especificadas son iguales a 0
             filtered_data = datos[(datos[columns_to_check] == 0).all(axis=1)]
 
-        # Mostrar el DataFrame resultante
-        #filtered_data
-
             df=filtered_data[['P117_1','P117_2','P117_3','P118_1','P118_2','P118_3','P119_1','P119_2','P119_3','P120_1','P120_2','P120_3','P121_1','P121_2','P121_3','P122_1','P122_2','P122_3','P123_1','P123_2','P123_3','P124_1','P124_2','P124_3','P125_1','P125_2','P125_3','P126_1','P126_2','P126_3','P127_1','P127_2','P127_3','P128_1','P128_2','P128_3','P129_1','P129_2','P129_3','P130_1','P130_2','P130_3']]
 
             # Corrigiendo la advertencia al agrupar columnas
             df_grouped = df.T.groupby(lambda x: x.split('_')[0]).mean().T
             # Calculando el IMC: Peso / (Altura^2)
             df_grouped['IMC'] = df_grouped['P117'] / ((df_grouped['P118']*0.01) ** 2)
-
-            #df_grouped
             # Promediar los valores de las columnas P113_1, P113_3, y P113_5
             df_2=filtered_data[['P113_1', 'P113_3', 'P113_5']]
             df_2['P113_iz'] = filtered_data[['P113_1', 'P113_3', 'P113_5']].mean(axis=1)
@@ -486,9 +468,6 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             #df_datos
             # Concatenating df_grouped with df_r to create a single DataFrame
             df_combined = pd.concat([df_datos, df_grouped, df_3b, df_4], axis=1)
-            #df_combined
-            # Hombre# Standardizing the columns from the 4th column onwards in df_combined
-            #df_combined = df_combined[df_combined['sexo'] == "Hombre"]
 
             columns_to_standardize = df_combined.columns[4:]  # Selecting columns from the 4th column onwards
 
@@ -548,13 +527,6 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
         
                 fig_4.tight_layout()
                 st.session_state.fig_varianza_men = fig_4
-
-
-
-            # Guardar en alta resolución
-            #plt.savefig('/content/Normalized_Variances_Men_Filtered.png', dpi=300, bbox_inches='tight')
-            st.pyplot(st.session_state.fig_varianza_men)
-            #st.pyplot(fig)
 
             # --- 1. Separar hombres y mujeres
             df_hombres = df_combined[df_combined['sexo'] == 'Hombre']
@@ -642,7 +614,6 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
                 st.session_state.fig_varianza = fig_5
 
             st.pyplot(st.session_state.fig_varianza)
-            #st.pyplot(fig)
             ################################ Histogramas comparativos de variables
 
 
@@ -731,9 +702,6 @@ La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En
             # Mostrar en Streamlit
             st.plotly_chart(st.session_state.fig_histogramas)
 
-            #st.pyplot(st.session_state.fig_histogramas)
-
-            #st.plotly_chart(fig, use_container_width=True)
 
 
         ########### mascara de varianzas
@@ -1017,26 +985,6 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
 
             # Aplicar la función a cada fila del DataFrame
             df_combined['IMME'] = df_combined.apply(calcular_IMME, axis=1)
-            #df_combined
-
-            #import streamlit as st
-            #from sklearn.tree import DecisionTreeRegressor
-            #from sklearn.model_selection import train_test_split
-            #from sklearn.metrics import mean_squared_error
-            #from itertools import combinations
-            #import pandas as pd
-
-            #st.subheader("🔍 Selección de combinaciones óptimas de variables para predecir IMME")
-
-            # Variables disponibles
-            #variables = ["sexo",'P117', 'P118', 'P119', 'P120', 'P121', 'P122', 'P123', 'P124',
-            #     'P125', 'P126', 'P127', 'P128', 'P129', 'IMC', 'P113', 'P112_vel']
-
-            # Recalcular estatura si es necesario
-            #if 'P118' not in df_combined.columns:
-            #    df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
-
-
 
             st.subheader("Modelo para la predicción del Índice de Masa Musculo-Esquelética Apendicular")
             st.markdown("""
@@ -1521,46 +1469,14 @@ En la siguiente tabla se muestran los **porcentajes de pacientes descartados** e
 
             # Asignar "Sin Sarcopenia" a quienes no fueron clasificados
             df_filtered['Clasificación Sarcopenia'] = df_filtered['Clasificación Sarcopenia'].fillna('Sin Sarcopenia')
-        #df_filtered
-        
-        # Mostrar resultados
-        #st.subheader("Resultados de Clasificación de Sarcopenia")
-        #if not df_resultado.empty:
-        #    #st.write(df_resultado)
-        #    st.dataframe(df_resultado, use_container_width=True)
-        #else:
-        #    st.warning("No se identificaron individuos con criterios de sarcopenia bajo los filtros establecidos.")
-        ##df_filtered
 
-
-        #df_combined
-
-
-        # Filtrar total por sexo (1 = hombres, 0 = mujeres)
-        #sexo_elegido = 1  # Simular que el 
-        #df_total_sexo = df_filtered.shape[0]
-        #total_pacientes = len(df_total_sexo)
             total_pacientes = df_filtered.shape[0]
-        #total_pacientes
-        # Contar pacientes por clasificación
-        #conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
-        #sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
-        #probable = conteos.get('Sarcopenia Probable', 0)
-        #grave = conteos.get('Sarcopenia Grave', 0)
-        #saludables = total_pacientes - sospechosa
-
 
         # Contar pacientes por clasificación (totales acumulativos)
             conteos = df_resultado['Clasificación Sarcopenia'].value_counts()
             total_grave = conteos.get('Sarcopenia Grave', 0)
             total_probable = conteos.get('Sarcopenia Probable', 0)
             total_sospechosa = conteos.get('Sarcopenia Sospechosa', 0)
-
-        # Desglose excluyente para evitar dobles conteos
-        #grave = total_grave
-        #probable = total_probable - grave
-        #sospechosa = total_sospechosa - probable - grave
-        #saludables = total_pacientes - (sospechosa + probable + grave)
 
 
             grave = df_resultado[df_resultado['Clasificación Sarcopenia'] == 'Sarcopenia Grave'].shape[0]
@@ -1609,9 +1525,6 @@ En la siguiente tabla se muestran los **porcentajes de pacientes descartados** e
             ax.axis('off')
             plt.title("Clasificación Jerárquica de Sarcopenia", fontsize=14)
 
-            # === Mostrar en Streamlit ===
-            #st.subheader("Visualización Jerárquica de Sarcopenia")
-
 
             st.markdown("""
 <h4 style='text-align: justify;'>Clasificación de pacientes por categorías de riesgo</h4>
@@ -1649,14 +1562,6 @@ Se incluyen únicamente los pacientes del sexo seleccionado que <strong>no prese
 
         # Lista completa de variables seleccionables
             all_columns = list(column_labels.keys())
-
-        # Sidebar para seleccionar variables
-        #st.sidebar.header("🔎 Selecciona variables para comparar")
-        #selected_labels = st.sidebar.multiselect(
-        #    label="Variables a graficar",
-        #    options=list(column_labels.values()),
-        #    default=list(column_labels.values())  # Puedes dejar vacío si prefieres no seleccionar todas por defecto
-        #)
 
         # Mostrar selección de variables en el cuerpo central
             st.markdown("**Selecciona los parámetros que deseas comparar. Las gráficas de caja comparan los parámetros seleccionados para los pacientes de cada una de las categorías de riesgo.**")
@@ -1891,448 +1796,8 @@ Ejemplo: Si el recall para <em>Sarcopenia Sospechosa</em> es 0.60, el modelo det
                         except Exception as e:
                             st.error(f"Ocurrió un error al generar las gráficas de dependencia parcial: {e}")
 
-
-
-
-                ################################################################################################
-                # Agrega esta sección justo antes del bucle de graficación
-                #color_map = {
-                #    'Sarcopenia Grave': '#d62728',       # Rojo
-                #    'Sin Sarcopenia': '#1f77b4',         # Azul
-                #    'Sarcopenia Sospechosa': '#2ca02c',  # Verde
-                #    'Sarcopenia Probable': '#ff7f0e'     # Naranja
-                #}
-                
-                # Gráficos de dependencia parcial
-                #fig, ax = plt.subplots(1, len(selected_vars), figsize=(5 * len(selected_vars), 4 + len(le.classes_) * 0.6), dpi=300)
-
-                #if len(selected_vars) == 1:
-                #    ax = [ax]
-
-                #for class_index, class_name in enumerate(le.classes_):
-                #    PartialDependenceDisplay.from_estimator(
-                #        model,
-                #        X_train,
-                #        features=list(range(len(selected_vars))),
-                #        feature_names=selected_vars_display,
-                #        target=class_index,
-                #        ax=ax,
-                #        line_kw={"label": class_name,
-                #        "color": color_map.get(class_name, None)}
-                #    )
-                
-                #for i, axis in enumerate(ax):
-                #    axis.set_xlabel(selected_vars_display[i])
-                #    axis.set_ylabel("Dependencia Parcial")
-                #    axis.grid(True)
-                #    axis.legend()
-
-                #plt.suptitle("📈 Gráfica de dependencia parcial por clase", fontsize=14)
-                #st.pyplot(fig)
-
                 except Exception as e:
                     st.error(f"Ocurrió un error durante el entrenamiento o visualización: {e}")
-
-
-
-
-
-        
-#        df_combined
-
-#        import matplotlib.pyplot as plt
-#        from sklearn.preprocessing import StandardScaler
-#        from sklearn.decomposition import PCA
-#        from sklearn.cluster import AgglomerativeClustering
-#        from scipy.spatial.distance import pdist, squareform
-#        from sklearn.metrics import silhouette_score
-
-
-#        # Selección del sexo
-#        sexo = st.radio("Selecciona el sexo para el análisis", (0, 1), format_func=lambda x: 'Mujeres' if x == 0 else 'Hombres')
-#        df_combined_2 = df_combined
-#        # Filtrar los datos según el sexo seleccionado
-#        df_filtered = df_combined_2[df_combined_2['sexo'] == sexo]
-
-#        # Mostrar algunos datos filtrados para validación
-#        st.write(f"Mostrando datos para: {'Mujeres' if sexo == 0 else 'Hombres'}")
-#        st.write(df_filtered.head())
-
-#        # Verificar si hay datos después del filtro
-#        if df_filtered.empty:
-#            st.error('No hay datos disponibles para este sexo. Intenta con otro.')
-#        else:
-#            # Seleccionar las columnas y normalizar los datos
-#            selected_columns = ['P113']  # Aquí puedes seleccionar las columnas que necesitas
-#            numeric_data_2 = df_filtered[selected_columns].dropna()
-    
-#            # Normalización de los datos
-#            scaler = StandardScaler()
-#            normalized_data_2 = scaler.fit_transform(numeric_data_2)
-
-#            # Aplicar PCA para reducir la dimensionalidad
-#            pca = PCA(n_components=1)
-#            pca_data = pca.fit_transform(normalized_data_2)
-
-#            # Calcular la matriz de distancias
-#            distance_matrix = squareform(pdist(pca_data))
-
-#            # Aplicar Agglomerative Clustering
-#            avg_distances = []
-#            silhouettes = []
-#            K = range(2, 15)
-    
-#            for k in K:
-#                clustering = AgglomerativeClustering(n_clusters=k, linkage='ward')
-#                labels = clustering.fit_predict(pca_data)
-
-#                # Calcular la distancia intra-cluster
-#                intra_cluster_distances = []
-#                for cluster in range(k):
-#                    cluster_points = distance_matrix[np.ix_(labels == cluster, labels == cluster)]
-#                    intra_cluster_distances.append(np.mean(cluster_points))
-
-#                avg_distances.append(np.mean(intra_cluster_distances))
-
-                # Calcular el Silhouette Score
-#                silhouette_avg = silhouette_score(pca_data, labels)
-#                silhouettes.append(silhouette_avg)
-
-#            # Graficar el método del codo
-#            st.subheader('Método del Codo')
-#            fig, ax = plt.subplots(figsize=(8, 6))
-#            ax.plot(K, avg_distances, 'bo-')
-#            ax.set_xlabel('Número de clusters (k)')
-#            ax.set_ylabel('Distancia intra-cluster promedio')
-#            ax.set_title('Método del codo para Agglomerative Clustering')
-#            st.pyplot(fig)
-
-
-#            # Graficar el Silhouette Score
-#            st.subheader('Silhouette Score')
-#            fig, ax = plt.subplots(figsize=(8, 6))
-#            ax.plot(K, silhouettes, 'go-')
-#            ax.set_xlabel('Número de clusters (k)')
-#            ax.set_ylabel('Silhouette Score')
-#            ax.set_title('Silhouette Score para Agglomerative Clustering')
-#            st.pyplot(fig)
-
-#            import streamlit as st
-#            import pandas as pd    
-#            import numpy as np
-#            from sklearn.preprocessing import StandardScaler
-#            from sklearn.cluster import AgglomerativeClustering
-
-            # Suponiendo que df_combined_2 ya está disponible como DataFrame
-            # df_combined_2 = pd.read_csv('path_to_your_data.csv')
-
-#            # Título de la aplicación
-#            st.title('Clustering Jerárquico Aglomerativo')
-
-#            # Opción de filtro por sexo
-#            sexo = st.radio("Selecciona el sexo para el análisis", ('Hombres', 'Mujeres'))
-
-#            # Filtrar el DataFrame según el sexo seleccionado (0 para mujeres, 1 para hombres)
-#            if sexo == 'Mujeres':
-#                df_filtered = df_combined_2[df_combined_2['sexo'] == 0]
-#            else:
-#                df_filtered = df_combined_2[df_combined_2['sexo'] == 1]
-
-#            # Mostrar un resumen de los datos filtrados
-#            st.write(f"Mostrando datos para: {sexo}")
-#            st.write(df_filtered.head())
-
-#            # Selección de las columnas para el análisis
-#            selected_columns = ['P113']  # Cambia según las columnas que necesites
-#            numeric_data_2 = df_filtered[selected_columns]
-
-#            # Eliminar valores no numéricos y valores faltantes
-#            numeric_data_2 = numeric_data_2.dropna()
-
-#            # Normalizar los datos
-#            scaler = StandardScaler()
-#            normalized_data_2 = scaler.fit_transform(numeric_data_2)
-
-#            # Entrada del número de clusters (por defecto 4)
-#            num_clusters = st.number_input("Número de clusters:", min_value=2, max_value=10, value=4)
-
-#            # Aplicar Agglomerative Clustering con el número de clusters especificado        
-#            clustering = AgglomerativeClustering(n_clusters=num_clusters, linkage='ward')
-#            labels_2019 = clustering.fit_predict(normalized_data_2)
-
-#            # Agregar las etiquetas de clúster al DataFrame original
-#            df_filtered['Cluster'] = labels_2019
-
-#            # Mostrar el DataFrame con las etiquetas de los clústeres
-#            st.write("Datos con Clustering aplicado:")
-#            st.write(df_filtered)
-
-#            # Opcional: Mostrar la cantidad de elementos en cada clúster
-#            st.write("Cantidad de elementos por clúster:")
-#            st.write(df_filtered['Cluster'].value_counts())
-
-
-#            # Renombrar las columnas como se mencionó
-#            df_filtered = df_filtered.rename(columns={
-#                'P112_vel': 'Marcha',
-#                'P113': 'Fuerza',
-#                'P125': 'P. Tricipital',
-#                'P128': 'P. Pantorrilla',
-#                'IMC': 'IMC',
-#                'P127': 'Biceps',
-#                'P126': 'P. subescapular',
-#                'P121': 'Cintura',
-#                'P123': 'Muslo',
-#                'P120': 'Brazo',
-#                'P122': 'Cadera',
-#                'P124': 'Pantorrilla',
-#                'P117': 'Peso'
-#            })
-
-#            # Seleccionar las columnas específicas con los nuevos nombres
-#            selected_columns_renamed = [
-#                'Marcha', 'Fuerza', 'P. Tricipital', 'P. Pantorrilla',
-#                'IMC', 'Biceps', 'P. subescapular', 'Cintura', 'Muslo', 'Brazo', 'Cadera', 'Pantorrilla', 'Peso', 'IMME'
-#            ]
-
-#            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
-#            numeric_columns = df_filtered[selected_columns_renamed]
-
-#            # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
-#            for column in numeric_columns.columns:
-                # Obtener los datos de cada cluster para el parámetro actual
-#                cluster_data = [df_filtered[df_filtered['Cluster'] == cluster][column] for cluster in range(8)]
-
-                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
-#                quintile_1 = df_filtered[column].quantile(0.20)
-#                quintile_2 = df_filtered[column].quantile(0.40)
-#                quintile_3 = df_filtered[column].quantile(0.60)
-#                quintile_4 = df_filtered[column].quantile(0.80)
-
-#                # Crear una nueva figura para el gráfico de caja
-#                fig = go.Figure()
-
-#                # Agregar el gráfico de caja para cada cluster
-#                for j in range(8):  # Cambié de 6 a 8, ya que usas hasta 8 clusters
-#                    fig.add_trace(go.Box(y=cluster_data[j], boxpoints='all', notched=True, name=f'Cluster {j}'))
-
-#                # Agregar líneas horizontales para los quintiles
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_1, y1=quintile_1,
-#                  line=dict(color="blue", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea del primer quintil (Q1 = 20%)
-
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_2, y1=quintile_2,
-#                  line=dict(color="green", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea del segundo quintil (Q2 = 40%)
-
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_3, y1=quintile_3,
-#                  line=dict(color="orange", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea de la mediana (Q3 = 60%)
-
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_4, y1=quintile_4,
-#                  line=dict(color="red", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea del cuarto quintil (Q4 = 80%)
-
-#                # Actualizar el diseño y mostrar cada gráfico de caja individual
-#                fig.update_layout(title_text=f'Comparación de Clusters - {column}',
-#                      xaxis_title="Clusters",
-#                      yaxis_title=column,
-#                      showlegend=False)
-#                st.plotly_chart(fig)  # Usamos st.plotly_chart para integrar el gráfico en Streamlit
-
-
-#            import streamlit as st
-#            import pandas as pd
-#            import matplotlib.pyplot as plt
-
-#            # Calcular el percentil 40 global de 'Fuerza' en todo df_filtered
-#            percentile_40_fuerza = df_filtered['Fuerza'].quantile(0.40)
-
-#            # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
-#            df_filtered_result = pd.DataFrame()
-#            percentages_deleted = {}
-
-#            # Iterar sobre cada clúster y aplicar el filtro
-#            for cluster in df_filtered['Cluster'].unique():
-#                # Filtrar el DataFrame por cada cluster
-#                cluster_data = df_filtered[df_filtered['Cluster'] == cluster]
-#                # Mantener solo las filas con 'Fuerza' menor o igual al percentil 40 global
-#                filtered_cluster_data = cluster_data[cluster_data['Fuerza'] <= percentile_40_fuerza]
-#                # Agregar las filas filtradas al nuevo DataFrame
-#                df_filtered_result = pd.concat([df_filtered_result, filtered_cluster_data])
-#                # Calcular el porcentaje de filas eliminadas en cada cluster
-#                percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
-#                percentages_deleted[cluster] = percentage_deleted
-
-#            # Convertir los porcentajes a un DataFrame para visualizar
-#            percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
-
-#            # Mostrar el DataFrame con los datos filtrados en Streamlit
-#            st.write("Datos filtrados según el percentil 40 de 'Fuerza':")
-#            st.write(df_filtered_result)
-
-#            # Mostrar el porcentaje de filas eliminadas por clúster    
-#            st.write("Porcentaje de filas eliminadas por clúster:")
-#            st.write(percentages_df)
-
-#            # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por clúster
-#            fig, ax = plt.subplots(figsize=(10, 6))
-#            ax.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
-#            ax.set_xlabel('Cluster')
-#            ax.set_ylabel('Porcentaje de Filas Eliminadas')
-#            ax.set_title('Porcentaje de Filas Eliminadas por Cluster (Fuerza <= Percentil 40%)')
-
-#            # Mostrar el gráfico en Streamlit
-#            st.pyplot(fig)
-
-
-############################
-
-#            import streamlit as st
-#            import pandas as pd
-#            import numpy as np
-#            from sklearn.preprocessing import StandardScaler
-#            from sklearn.cluster import AgglomerativeClustering
-
-
-
-#            # Selección de columnas para el análisis
-#            selected_columns = st.multiselect(
-#                'Selecciona las columnas para el análisis de clustering',
-#                options=df_filtered.columns,
-#                default=['IMME']  # Esta es la columna por defecto
-#            )
-
-#            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
-#            numeric_data_2 = df_filtered[selected_columns]
-
-#            # Eliminar valores no numéricos y valores faltantes
-#            numeric_data_2 = numeric_data_2.dropna()
-
-#            # Normalizar los datos
-#            scaler = StandardScaler()
-#            normalized_data_2 = scaler.fit_transform(numeric_data_2)
-
-#            # Número de clusters, con valor por defecto 4
-#            num_clusters = st.number_input("Núm de clusters:", min_value=2, max_value=10, value=4)
-
-#            # Aplicar Agglomerative Clustering
-#            clustering = AgglomerativeClustering(n_clusters=num_clusters, linkage='ward')
-#            labels_2019 = clustering.fit_predict(normalized_data_2)
-
-#            # Agregar las etiquetas al DataFrame original filtrado
-#            df_filtered['Cluster'] = labels_2019
-
-#            # Mostrar el DataFrame con los resultados del clustering
-#            st.write("Datos con las etiquetas de clúster agregadas:")    
-#            st.write(df_filtered.head())
-
-#            # Opcional: Mostrar la cantidad de elementos por clúster
-#            st.write("Cantidad de elementos por clúster:")
-#            st.write(df_filtered['Cluster'].value_counts())
-
-
-##################
-
-#            import streamlit as st
-#            import pandas as pd
-#            import plotly.graph_objects as go
-
- 
-
-#            # Filtrar el DataFrame para incluir solo las columnas seleccionadas
-#            numeric_columns_2 = df_filtered[selected_columns_renamed]
-
-#            # Crear un gráfico de caja individual para cada parámetro y comparar los clusters
-#            for column in numeric_columns_2.columns:
-                # Obtener los datos de cada cluster para el parámetro actual
-#                cluster_data = [df_filtered[df_filtered['Cluster'] == cluster][column] for cluster in range(df_filtered['Cluster'].nunique())]
-
-#                # Calcular los quintiles (Q1=20%, Q2=40%, mediana=Q3=60%, Q4=80%)
-#                quintile_1 = df_filtered[column].quantile(0.20)
-#                quintile_2 = df_filtered[column].quantile(0.40)
-#                quintile_3 = df_filtered[column].quantile(0.60)
-#                quintile_4 = df_filtered[column].quantile(0.80)
-
-#                # Crear una nueva figura para el gráfico de caja
-#                fig = go.Figure()
-
-#                # Agregar el gráfico de caja para cada cluster
-#                for j in range(df_filtered['Cluster'].nunique()):
-#                    fig.add_trace(go.Box(y=cluster_data[j], boxpoints='all', notched=True, name=f'Cluster {j}'))
-
-#                # Agregar líneas horizontales para los quintiles
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_1, y1=quintile_1,
-#                  line=dict(color="blue", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea del primer quintil (Q1 = 20%)
-
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_2, y1=quintile_2,
-#                  line=dict(color="green", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea del segundo quintil (Q2 = 40%)
-
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_3, y1=quintile_3,
-#                  line=dict(color="orange", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea de la mediana (Q3 = 60%)
-
-#                fig.add_shape(type="line",
-#                  x0=0, x1=1, y0=quintile_4, y1=quintile_4,
-#                  line=dict(color="red", width=2, dash="dash"),
-#                  xref="paper", yref="y")  # Línea del cuarto quintil (Q4 = 80%)
-
-#                # Actualizar el diseño y mostrar cada gráfico de caja individual
-#                fig.update_layout(title_text=f'Comparación de Clusters - {column}',
-#                      xaxis_title="Clusters",
-#                      yaxis_title=column,
-#                      showlegend=False)
-
-#                # Mostrar el gráfico en Streamlit
-#                st.plotly_chart(fig)
-
-######################
-
-#            import pandas as pd
-#            import matplotlib.pyplot as plt
-
-#            # Calcular el percentil 60 global de 'Fuerza' en todo df_combined_hombres
-#            percentile_40_IMME = df_combined_2['IMME'].quantile(0.40)
-
-            # Crear un DataFrame vacío para almacenar las filas que cumplen la condición
-#            df_filtered_2 = pd.DataFrame()
-#            percentages_deleted = {}
-
-#            for cluster in df_filtered['Cluster'].unique():
-#                # Filtrar el DataFrame por cada cluster
-#                cluster_data = df_filtered[df_filtered['Cluster'] == cluster]
-#                # Mantener solo las filas con 'Fuerza' menor o igual al percentil 60 global
-#                filtered_cluster_data = cluster_data[cluster_data['IMME'] <= percentile_40_IMME]
-#                # Agregar las filas filtradas al nuevo DataFrame
-#                df_filtered_2 = pd.concat([df_filtered_2, filtered_cluster_data])
-#                # Calcular el porcentaje de filas eliminadas en cada cluster
-#                percentage_deleted = 100 * (1 - len(filtered_cluster_data) / len(cluster_data))
-#                percentages_deleted[cluster] = percentage_deleted
-
-#            # Convertir los porcentajes a un DataFrame para visualizar
-#            percentages_df = pd.DataFrame(list(percentages_deleted.items()), columns=['Cluster', 'Percentage Deleted'])
-
-#            # Mostrar el DataFrame con los datos filtrados
-
-#            # Crear el diagrama de barras para mostrar el porcentaje de filas eliminadas por cluster    
-#            plt.figure(figsize=(10, 6))
-#            plt.bar(percentages_df['Cluster'], percentages_df['Percentage Deleted'], color='purple', alpha=0.7)
-#            plt.xlabel('Cluster')
-#            plt.ylabel('Porcentaje de Filas Eliminadas')
-#            plt.title('Porcentaje de Filas Eliminadas por Cluster (IMME > Quintil 40% Global)')
-#            plt.show()
-
-
-
 
 
     except Exception as e:
