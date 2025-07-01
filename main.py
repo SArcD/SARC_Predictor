@@ -30,7 +30,7 @@ from imblearn.over_sampling import SMOTE
 from sklearn.metrics import mean_squared_error
 
 
-st.image("assets/images/SarcPred.png", width=200)
+st.image("SarcPred.PNG", width=200)
 st.title("Sarc-Predictor")
 
 
