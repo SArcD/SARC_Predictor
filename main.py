@@ -7,6 +7,40 @@ import requests
 import io
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
+import plotly.subplots as sp
+from sklearn.feature_selection import VarianceThreshold
+import seaborn as sns
+from sklearn.preprocessing import MinMaxScaler
+import networkx as nx
+import matplotlib.patches as mpatches
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+from itertools import combinations
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+import matplotlib.patches as patches
+#import streamlit as st
+#import pandas as pd
+            #import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, f1_score
+from sklearn.inspection import PartialDependenceDisplay
+from sklearn.preprocessing import LabelEncoder
+from imblearn.over_sampling import SMOTE
+    #import streamlit as st
+    #import pandas as pd
+    #import numpy as np
+    #from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error
+    #import joblib
+    #import requests
+    #import io
+
+
+
 
 
 
@@ -270,9 +304,6 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
 </div>
 """, unsafe_allow_html=True)
         
-            import matplotlib.pyplot as plt
-            import numpy as np
-            import pandas as pd
 
             # Asegurar que la columna 'sexo' esté bien codificada
             datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
@@ -568,27 +599,6 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
 </div>
 """, unsafe_allow_html=True)
 
-            
-            
-            #column_labels_en = {
-            #    'P112_vel': 'Gait Speed',
-            #    'P113': 'Grip Strength',
-            #    'P125': 'Triceps Skinfold',
-            #    'P126': 'Subscapular Skinfold',
-            #    'P128': 'Calf Circumference',
-            #    'P127': 'Biceps Skinfold',
-            #    'P117': 'Weight',
-            #    'IMC': 'BMI',
-            #    'P123': 'Thigh Circumference',
-            #    'P121': 'Waist Circumference',
-            #    'P120': 'Arm Circumference',
-            #    'P124': 'Calf Skinfold',
-            #    'P122': 'Abdomen Circumference',
-            #    'P119': 'Chest Circumference',
-            #    'P129': 'Neck Circumference',
-            #    'P130': 'Wrist Circumference',
-            #    'P118': 'Hip Circumference'
-            #}
 
             # --- 5. Traducir nombres
             variances_hombres.index = variances_hombres.index.map(lambda x: column_labels_en.get(x, x))    
@@ -635,9 +645,7 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
             #st.pyplot(fig)
             ################################ Histogramas comparativos de variables
 
-            #import streamlit as st
-            import plotly.graph_objects as go
-            import plotly.subplots as sp
+
             st.markdown("""
 <div style='text-align: justify'>
 La <strong>Figura 6</strong> muestra los <strong>histogramas</strong> con la distribución de valores para cada uno de los parámetros.  
@@ -730,7 +738,6 @@ La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En
 
         ########### mascara de varianzas
 
-            from sklearn.feature_selection import VarianceThreshold
 
             # Standardizing the columns from the 4th column onwards in df_combined
             columns_to_standardize = df_combined.columns[4:]  # Selecting columns from the 4th column onwards
@@ -756,12 +763,7 @@ La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En
             ##matriz de correlacion
 
 
-            import streamlit as st
-            import seaborn as sns
-            import matplotlib.pyplot as plt
-            from sklearn.preprocessing import MinMaxScaler
-            import numpy as np
-            import pandas as pd
+
             st.markdown("""
 <div style='text-align: justify'>
 El siguiente paso en la simplificación consistió en identificar aquellas variables que pudieran estar altamente 
@@ -813,9 +815,6 @@ El siguiente paso en la simplificación consistió en identificar aquellas varia
             df_combined = df_combined.dropna()
             #df_combined
 
-            import networkx as nx
-            import numpy as np
-            import pandas as pd
 
             st.markdown("""
 <div style='text-align: justify'>
@@ -889,8 +888,7 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
             nodes_men -= nodes_both    
             nodes_women -= nodes_both
 
-            import networkx as nx
-            import matplotlib.patches as mpatches
+
 
             # Layout Kamada-Kawai
             pos = nx.kamada_kawai_layout(G)
@@ -1039,15 +1037,7 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
             #    df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
 
 
-            import streamlit as st
-            import pandas as pd
-            import numpy as np
-            from sklearn.tree import DecisionTreeRegressor
-            from sklearn.model_selection import train_test_split
-            from sklearn.metrics import mean_squared_error
-            from itertools import combinations
-            import joblib
-            import matplotlib.pyplot as plt
+
             st.subheader("Modelo para la predicción del Índice de Masa Musculo-Esquelética Apendicular")
             st.markdown("""
 <div style='text-align: justify'>
@@ -1184,12 +1174,7 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
             else:
                 st.info("Presiona el botón para calcular combinaciones óptimas.")
         
-        
-            import matplotlib.pyplot as plt
-            import pandas as pd
-            import numpy as np
-
-
+    
 
             if mejor_combinacion_n is not None:
                 # Datos para la mejor combinación global
@@ -1412,11 +1397,7 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
 
         with st.expander(" **Incidencia de sarcopenia en la muestra: agrupación de pacientes mediante clustering jerárquico** "):
             
-            import streamlit as st
-            import pandas as pd
-            import numpy as np
-            from sklearn.preprocessing import StandardScaler
-            from sklearn.cluster import AgglomerativeClustering
+
 
             st.markdown("""
 ### Agrupación de pacientes mediante clustering jerárquico
@@ -1553,8 +1534,7 @@ En la siguiente tabla se muestran los **porcentajes de pacientes descartados** e
 
 
         #df_combined
-            import matplotlib.pyplot as plt
-            import matplotlib.patches as patches
+
 
         # Filtrar total por sexo (1 = hombres, 0 = mujeres)
         #sexo_elegido = 1  # Simular que el 
@@ -1728,25 +1708,6 @@ Se incluyen únicamente los pacientes del sexo seleccionado que <strong>no prese
 ###################################
         with st.expander("Modelos predictivos"):
 
-            import streamlit as st
-            import pandas as pd
-            import matplotlib.pyplot as plt
-            from sklearn.ensemble import RandomForestClassifier
-            from sklearn.model_selection import train_test_split
-            from sklearn.metrics import classification_report, f1_score
-            from sklearn.inspection import PartialDependenceDisplay
-            from sklearn.preprocessing import LabelEncoder
-            from imblearn.over_sampling import SMOTE
-
-            import streamlit as st
-            import pandas as pd
-            import matplotlib.pyplot as plt
-            from sklearn.ensemble import RandomForestClassifier
-            from sklearn.model_selection import train_test_split
-            from sklearn.preprocessing import LabelEncoder
-            from sklearn.metrics import classification_report, f1_score
-            from sklearn.inspection import PartialDependenceDisplay
-            from imblearn.over_sampling import SMOTE
 
             st.subheader("Predicción de sarcopenia con Random Forest")
             st.markdown("""
@@ -2379,14 +2340,6 @@ Ejemplo: Si el recall para <em>Sarcopenia Sospechosa</em> es 0.60, el modelo det
     
 elif opcion == "Formularios":
 
-    import streamlit as st
-    import pandas as pd
-    import numpy as np
-    from sklearn.tree import DecisionTreeRegressor
-    from sklearn.metrics import mean_squared_error
-    import joblib
-    import requests
-    import io
 
     # Diccionario de nombres amigables
     nombres_amigables = {
