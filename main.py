@@ -1,5 +1,14 @@
 #########################################################
 import streamlit as st
+import pandas as pd
+from io import BytesIO
+import joblib
+import requests
+import io
+import matplotlib.pyplot as plt
+import numpy as np
+
+
 
 # Menú en barra lateral
 opcion = st.sidebar.radio(
@@ -77,13 +86,7 @@ if opcion == "Introducción":
 elif opcion == "Proceso":
 
     #########################################################
-    import streamlit as st
-    import pandas as pd
-    import requests
-    from io import BytesIO
-    import joblib
-    import requests
-    import io
+
 
     @st.cache_resource(show_spinner=False)
     def cargar_modelo_desde_github(url):
@@ -138,8 +141,6 @@ Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente s
 </div>
 """, unsafe_allow_html=True)
 
-            import matplotlib.pyplot as plt
-            import streamlit as st
 
             # Reemplazar valores numéricos por etiquetas de sexo
             datos['sexo'] = datos['sexo'].replace({1.0: 'Hombre', 2.0: 'Mujer'})
@@ -173,9 +174,6 @@ La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en l
 </div>
 """, unsafe_allow_html=True)
             
-            import matplotlib.pyplot as plt
-            import numpy as np
-            import streamlit as st
 
 
             # --- 1. Definir columnas y etiquetas ---
