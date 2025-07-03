@@ -31,8 +31,6 @@ from sklearn.metrics import mean_squared_error
 
 
 st.image("SarcPred.PNG", use_column_width=True)
-#st.title("Sarc-Predictor")
-
 
 
 # Menú en barra lateral
@@ -108,7 +106,7 @@ if opcion == "Introducción":
 
 elif opcion == "Proceso":
 
-    #########################################################
+#######################################################
 
 
     @st.cache_resource(show_spinner=False)
@@ -131,7 +129,7 @@ elif opcion == "Proceso":
     **En el siguiente menú puede elegir entre las bases de datos disponibles para el entrenamiento de los modelos predictivos**""")
     # Seleccionar el año de la base de datos
     selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
-    st.markdown("""**Nota:** En su versión actual el entrenamiento de los modelos debe hacerse con la base de datos de 2019, ya que es la mas amplia de las dos que están disponibles (actualizado al 20-06-2025""")
+    st.markdown("""**Nota:** En su versión actual el entrenamiento de los modelos debe hacerse con la base de datos de 2019, ya que es la mas amplia de las dos que están disponibles (actualizado al 20-06-2025)""")
     # Definir la ruta del archivo en función de la selección
     if selected_year == "2022":
         file_path = "Base 2022 Santiago Arceo.xls"
@@ -140,7 +138,7 @@ elif opcion == "Proceso":
 
     # Intento de cargar el archivo de Excel usando `xlrd` para archivos `.xls`
     try:
-        datos = pd.read_excel(file_path)  # Rellenar NaN con espacios
+        datos = pd.read_excel(file_path) 
         #st.write(f"Datos de la base {selected_year} cargados con éxito:")
         #st.dataframe(datos)
         st.success(f"✅ Datos de la base {selected_year} cargados con éxito.")
@@ -155,8 +153,6 @@ Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente s
 </div>
 """, unsafe_allow_html=True)
 
-            #st.dataframe(datos)
-            #st.dataframe(datos.describe())
             st.markdown("""
 <div style='text-align: justify'>
 <strong>La Figura 1</strong> muestra las proporciones de hombres y mujeres dentro de la muestra que se usó para el entrenamiento de los modelos 
@@ -198,7 +194,6 @@ La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en l
 """, unsafe_allow_html=True)
             
 
-
             # --- 1. Definir columnas y etiquetas ---
             columns_to_check = ['P44_3', 'P44_5', 'P44_7', 'P44_8', 'P44_9', 'P44_11', 'P44_12',
                         'P44_13', 'P44_14', 'P44_20', 'P44_21', 'P44_24', 'P44_27', 'P44_31']
@@ -207,16 +202,14 @@ La <strong>Figura 2</strong> muestra la distribución de las comorbilidades en l
                             'Diabetes Leve', 'Enfermedad Cerebro Vascular', 'Hipertensión Complicada', 'Hipertensión Sin Complicación',
                             'Insuficiencia Renal', 'Obesidad', 'Pérdida de Peso']
 
-            # --- 2. Procesamiento de datos ---
+            # --- 2. Procesar datos ---
             datos[columns_to_check] = datos[columns_to_check].apply(pd.to_numeric, errors='coerce').fillna(0).astype(int)
             datos['Sin comorbilidades'] = (datos[columns_to_check].sum(axis=1) == 0).astype(int)
 
             comorbidities_counts = datos[columns_to_check + ['Sin comorbilidades']].sum()
             comorbidities_labels_with_none = comorbidities_labels + ['Sin comorbilidades']
 
-        
             # --- Preparar proporciones y etiquetas
-
             total = comorbidities_counts.sum()
             proportions = comorbidities_counts / total
 
@@ -418,7 +411,7 @@ Una forma de simplificar los modelos es eliminar aquellos parámetros (variables
 Para saber cuáles son útiles, se puede usar la <a href='https://economipedia.com/definiciones/varianza.html' target='_blank'>varianza</a>, que mide qué tanto varía un parámetro entre distintos pacientes. Los parámetros con mayor varianza permiten distinguir mejor entre pacientes, lo cual es importante si queremos clasificar correctamente.
 
 Por eso, decidimos conservar únicamente los parámetros con mayor varianza.  
-Antes de hacer ese análisis, normalizamos los valores para que las unidades (por ejemplo, gramos, centímetros, años) no afectaran artificialmente los resultados.  
+Antes de hacer ese análisis, normalizamos los valores para que las unidades (por ejemplo, gramos, centímetros o años) no afectaran artificialmente los resultados.  
 
 <strong>La Figura 4 muestra la gráfica con las varianzas normalizadas de cada parámetro.</strong>
 </strong>
@@ -435,22 +428,23 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
 
             df=filtered_data[['P117_1','P117_2','P117_3','P118_1','P118_2','P118_3','P119_1','P119_2','P119_3','P120_1','P120_2','P120_3','P121_1','P121_2','P121_3','P122_1','P122_2','P122_3','P123_1','P123_2','P123_3','P124_1','P124_2','P124_3','P125_1','P125_2','P125_3','P126_1','P126_2','P126_3','P127_1','P127_2','P127_3','P128_1','P128_2','P128_3','P129_1','P129_2','P129_3','P130_1','P130_2','P130_3']]
 
-            # Corrigiendo la advertencia al agrupar columnas
+            # Corregir la advertencia al agrupar columnas
             df_grouped = df.T.groupby(lambda x: x.split('_')[0]).mean().T
-            # Calculando el IMC: Peso / (Altura^2)
+            # Calcular el IMC: Peso / (Altura^2)
             df_grouped['IMC'] = df_grouped['P117'] / ((df_grouped['P118']*0.01) ** 2)
-            # Promediar los valores de las columnas P113_1, P113_3, y P113_5
+            #df_grouped
+            #Promediar los valores de las columnas P113_1, P113_3, y P113_5
             df_2=filtered_data[['P113_1', 'P113_3', 'P113_5']]
             df_2['P113_iz'] = filtered_data[['P113_1', 'P113_3', 'P113_5']].mean(axis=1)
             # Promediar los valores de las columnas P113_1, P113_3, y P113_5
-            df_2 = df_2.drop(columns=['P113_1', 'P113_3', 'P113_5'])
             #df_2
+            df_2 = df_2.drop(columns=['P113_1', 'P113_3', 'P113_5'])
             # Promediar los valores de las columnas P113_1, P113_3, y P113_5
             df_3=filtered_data[['P113_2', 'P113_4', 'P113_6']]
             df_3['P113_der'] = filtered_data[['P113_2', 'P113_4', 'P113_6']].mean(axis=1)
             # Promediar los valores de las columnas P113_1, P113_3, y P113_5
             df_3 = df_3.drop(columns=['P113_2', 'P113_4', 'P113_6'])
-            #df_3
+            #df_2
             df_3b = pd.concat([df_2,df_3], axis=1)
             df_3b['P113']=(df_2['P113_iz']+df_3['P113_der'])/2
             df_3b = df_3b.drop(columns=['P113_iz', 'P113_der'])
@@ -467,20 +461,19 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             #df_4
             df_datos=filtered_data[['folio_paciente','edad_am','sexo','nacio_en_mexico']]
             #df_datos
-            # Concatenating df_grouped with df_r to create a single DataFrame
+            # Concatenar df_grouped con df_r para crear un solo DataFrame
             df_combined = pd.concat([df_datos, df_grouped, df_3b, df_4], axis=1)
 
-            columns_to_standardize = df_combined.columns[4:]  # Selecting columns from the 4th column onwards
+            columns_to_standardize = df_combined.columns[4:]  # Seleccionar columnas de la 4 en adelante
 
-            # Calculating variance using the provided method: dividing by the mean and then calculating the variance
+            # Calcular la varianza al dividir por el promedio 
             features = df_combined[columns_to_standardize]  # Selecting the standardized features
             variances = (features / features.mean()).dropna().var()
 
             variances=variances.sort_values(ascending=False)
-            #variances
+            #varianzas
             variances_df = pd.DataFrame({'Variable': variances.index, 'Normalized Variance': variances.values})
-            #import matplotlib.pyplot as plt
-
+        
             # Diccionario de traducción
             column_labels_en = {
                 'P112_vel': 'Velocidad de marcha',
@@ -512,7 +505,6 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             variances_filtered = variances_df[variances_df['Normalized Variance'] >= 0.02]
 
             # --- 3. Graficar ---
-            #plt.figure(figsize=(10, 6), dpi=300)
             if 'fig_varianza_men' not in st.session_state:
 
                 fig_4, ax = plt.subplots(figsize=(10, 6), dpi=150)
@@ -700,7 +692,7 @@ La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En
                     )
                 st.session_state.fig_histogramas = fig_6
 
-            # Mostrar en Streamlit
+            # Mostrar
             st.plotly_chart(st.session_state.fig_histogramas)
 
 
@@ -708,29 +700,26 @@ La muestra original se ha separado en los subconjuntos de hombres y mujeres.  En
         ########### mascara de varianzas
 
 
-            # Standardizing the columns from the 4th column onwards in df_combined
-            columns_to_standardize = df_combined.columns[4:]  # Selecting columns from the 4th column onwards
+            # Estandarizar columnas, comenzando desde la 4 en df_combined
+            columns_to_standardize = df_combined.columns[4:] 
 
-            # Calculating variance using the provided method: dividing by the mean and then calculating the variance
+            # Calcular la varianza normalizada al dividir cada variable entre el promedio y luego calcular la varianza
             features = df_combined[columns_to_standardize]  # Selecting the features to be standardized
             variances = (features / features.mean()).dropna().var()
 
-            # Sorting variances in descending order
+            # Ordenar varianzas en orden descendente
             variances = variances.sort_values(ascending=False)
 
-            # Applying the variance threshold mask
+            # Aplicar el umbral de varianza 
             sel = VarianceThreshold(threshold=0.005)
             sel.fit(features / features.mean())
 
-            # Creating a boolean mask based on the variance    
+            # Crear máscara de varianzas    
             mask = variances >= 0.005
 
-            # Applying the mask to create a reduced DataFrame
+            # Aplicar la mascara para crear un dataframe reducido
             reduced_df = features.loc[:, mask]
             reduced_df.to_excel('reduced_df_hombres.xlsx', index=False)
-
-            ##matriz de correlacion
-
 
 
             st.markdown("""
@@ -750,7 +739,7 @@ El siguiente paso en la simplificación consistió en identificar aquellas varia
             # --- Normalizar con MinMaxScaler ---
             scaler = MinMaxScaler()    
             normalized_array = scaler.fit_transform(numeric_df)
-            #normalized_df = pd.DataFrame(normalized_array, columns=selected_columns)
+
             normalized_df = pd.DataFrame(normalized_array, columns=[column_labels[col] for col in selected_columns])
 
             # --- Calcular matriz de correlación ---
@@ -779,7 +768,7 @@ El siguiente paso en la simplificación consistió en identificar aquellas varia
                 st.subheader("🔗 Mapa de correlaciones normalizadas")
             st.pyplot(st.session_state.fig_mapas)
 
-            # Concatenating df_grouped with df_r to create a single DataFrame
+            # Concatenar df_grouped con df_r 
             df_combined = pd.concat([df_datos, reduced_df], axis=1)
             df_combined = df_combined.dropna()
             #df_combined
@@ -856,8 +845,6 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
             # Eliminar duplicados
             nodes_men -= nodes_both    
             nodes_women -= nodes_both
-
-
 
             # Layout Kamada-Kawai
             pos = nx.kamada_kawai_layout(G)
@@ -937,7 +924,7 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
                     ax=ax
                 )
 
-                # Leyend    a        
+                # Leyendas        
                 legend_handles = [
                     mpatches.Patch(color='steelblue', label='Hombres'),
                     mpatches.Patch(color='lightcoral', label='Mujeres'),
@@ -959,7 +946,7 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
             df_combined['P118'] = ((df_combined['P117'] / df_combined['IMC'])**0.5) * 100
     
             df_combined['sexo'] = df_combined['sexo'].replace({'Hombre': 1.0, 'Mujer': 0.0})
-            #df_combied_2 = df_combined.copy()
+
             # Modificar la función para calcular el Índice de Masa Muscular Esquelética (IMME)
             def calcular_IMME(row):
                 CP = row['P124']  # Circunferencia de Pantorrilla en cm
@@ -971,13 +958,13 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
                 # Calcular la Talla (Altura en cm) a partir del IMC y el Peso
                 Talla = np.sqrt(P / IMC)  # Talla en metros (no es necesario convertir a cm aquí)
 
-                # Estimar la masa muscular esquelética (puede adaptarse según la referencia)
+                # Estimar la masa muscular esquelética (esta formula es de Rodriguez et al 2015)
                 masa_muscular = (
                     0.215 * CP +  # Estimación con circunferencia de pantorrilla
                     0.093 * FP +  # Estimación con fuerza de prensión
                     0.061 * P +   # Estimación con peso corporal
                     3.637 * Sexo  # Ajuste según el sexo
-                )
+                ) 
 
                 # Calcular el IMME (masa muscular dividida por talla al cuadrado)
                 imme = masa_muscular / (Talla ** 2)
@@ -1107,11 +1094,6 @@ en casos donde no se disponga de todos los datos requeridos por la fórmula orig
                 st.markdown(f"### 📊 Combinaciones con exactamente {selected_n} variables:")
                 filtered_results = {k: v for k, v in errores_combinaciones.items() if len(k) == selected_n}
                 sorted_results = sorted(filtered_results.items(), key=lambda x: x[1])
-
-                #df_resultados = pd.DataFrame([
-                #    {'Variables': ', '.join(k), 'MSE': v}
-                #    for k, v in sorted_results
-                #])
 
                 df_resultados = pd.DataFrame([
                 {'Variables': ', '.join([nombres_amigables.get(var, var) for var in k]), 'MSE': v}
@@ -1410,7 +1392,7 @@ Esta agrupación permite visualizar patrones clínicos y orientar decisiones pre
                 return df_filtrado, df_eliminado
 
             # Paso 1: Clustering por Fuerza
-            #df_fuerza, _ = aplicar_clustering(df_filtered, 'Fuerza', 0.40, 'Sarcopenia Sospechosa')
+
             df_fuerza, df_elim1 = aplicar_clustering(df_filtered, 'Fuerza', 0.40, 'Sarcopenia Sospechosa')
             pct_elim1 = 100 * len(df_elim1) / len(df_filtered)
 
