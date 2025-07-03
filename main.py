@@ -2425,7 +2425,21 @@ elif opcion == "Equipo de trabajo":
                "reseña": "Médica cirujana y partera con especialidad en Medicina Interna y Doctorado en Ciencias Médicas por la Universidad de Colima, médica especialista del Hospital Materno Infantil de Colima y PTC de la Facultad de Medicina de la Universidad de Colima. Es profesora de los posgrados en Ciencias Médicas, Ciencias Fisiológicas, Nutrición clínica y Ciencia ambiental global.",
                "CV": "https://scholar.google.com.mx/scholar?hl=en&as_sdt=0%2C5&q=Monica+Rios+silva&btnG=", "contacto": "mrios@ucol.mx"}
                ]
+    for persona in equipo:
+        st.image(persona["foto"], width=150)
+    
+        st.markdown(f"""
+        <h4 style='text-align: left;'>{persona['nombre']}</h4>
+        <p style='text-align: justify;'>{persona['reseña']}</p>
+        <p style='text-align: left;'>
+            📄 <a href="{persona['CV']}" target="_blank">Ver CV</a><br>
+            📧 {persona['contacto']}
+        </p>
+        <hr style='margin-top: 10px; margin-bottom: 20px;'>
+        """, unsafe_allow_html=True)
 
+
+    
     # Establecer la altura deseada para las imágenes
     altura_imagen = 150  # Cambia este valor según tus preferencias
 
