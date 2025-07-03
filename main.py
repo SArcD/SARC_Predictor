@@ -1398,21 +1398,21 @@ Esta agrupación permite visualizar patrones clínicos y orientar decisiones pre
 
             # Paso 2: Clustering por IMME
             if not df_fuerza.empty:
-                #df_imme, _ = aplicar_clustering(df_fuerza, 'IMME', 0.40, 'Sarcopenia Probable')
+                
                 df_imme, df_elim2 = aplicar_clustering(df_fuerza, 'IMME', 0.40, 'Sarcopenia Probable')
                 pct_elim2 = 100 * len(df_elim2) / len(df_fuerza)
             else:
-                #df_imme = pd.DataFrame()
+                
                 df_imme, df_elim2, pct_elim2 = pd.DataFrame(), pd.DataFrame(), 0
 
 
             # Paso 3: Clustering por Marcha
             if not df_imme.empty:
-                #df_marcha, _ = aplicar_clustering(df_imme, 'Marcha', 0.40, 'Sarcopenia Grave')
+                
                 df_marcha, df_elim3 = aplicar_clustering(df_imme, 'Marcha', 0.40, 'Sarcopenia Grave')
                 pct_elim3 = 100 * len(df_elim3) / len(df_imme)
             else:
-                #df_marcha = pd.DataFrame()
+                
                 df_marcha, df_elim3, pct_elim3 = pd.DataFrame(), pd.DataFrame(), 0
 
 
@@ -1422,7 +1422,6 @@ Esta agrupación permite visualizar patrones clínicos y orientar decisiones pre
                 'Eliminados': [len(df_elim1), len(df_elim2), len(df_elim3)],
                 '% Eliminados': [pct_elim1, pct_elim2, pct_elim3]
             })
-            #st.subheader("Resumen de cribado por etapas")
 
             st.markdown("""
 ### Porcentaje de pacientes descartados por etapa
@@ -1594,7 +1593,7 @@ Se incluyen únicamente los pacientes del sexo seleccionado que <strong>no prese
 
 
 ###################################
-        with st.expander("Modelos predictivos"):
+        with st.expander("**Modelos predictivos**"):
 
 
             st.subheader("Predicción de sarcopenia con Random Forest")
@@ -1913,8 +1912,6 @@ elif opcion == "Formularios":
             key=key_input_marcha
         )
 
-
-
         
         col1, col2 = st.columns(2)
         with col1:
@@ -1931,15 +1928,13 @@ elif opcion == "Formularios":
         if st.session_state.pacientes_manual:
             df_manual = pd.DataFrame(st.session_state.pacientes_manual)
 
-            # 🔽 Aquí insertas el bloque para renombrar
+            #  Insertar el bloque para renombrar
             columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
             df_mostrar = df_manual.rename(columns=columnas_amigables)
 
             st.markdown("### Pacientes registrados")
             st.dataframe(df_mostrar)  # Mostrar con nombres amigables
             
-            #st.markdown("### 🗂️ Pacientes registrados")
-            #st.dataframe(df_manual)
 
             # Selector para editar o borrar
             identificadores = df_manual["Identificador"].tolist()
@@ -1985,54 +1980,6 @@ elif opcion == "Formularios":
                 st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
 
-
-
-    
-                # Mostrar tabla con nombres amigables actualizados
-                #columnas_amigables = {col: nombres_amigables.get(col, col) for col in df_manual.columns}
-                #df_mostrar = df_manual.rename(columns=columnas_amigables)
-                #st.dataframe(df_mostrar)
-
-
-                #st.success(f"📉 RMSE estimado: {rmse:.4f}")
-
-    ##############################
-
-#        import joblib
-#        import urllib.request
-
-#        # URL de los modelos
-#        url_modelo_hombre = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_sarcopenia_rfhombre.pkl"
-#        url_modelo_mujer = "https://github.com/SArcD/SARC_Predictor/raw/refs/heads/main/modelo_sarcopenia_rfmujer.pkl"
-
-#        # Función para cargar modelo desde URL
-#        @st.cache_resource
-#        def cargar_modelo_desde_url(url):
-#            with urllib.request.urlopen(url) as response:
-#                modelo = joblib.load(response)
-#            return modelo
-
-#        # Cargar modelos
-#        modelo_hombre = cargar_modelo_desde_url(url_modelo_hombre)
-#        modelo_mujer = cargar_modelo_desde_url(url_modelo_mujer)
- 
-        # Verificar columnas requeridas
-        #columnas_sarcopenia = ['Fuerza (kg)', 'Marcha (m/s)', "IMME"]
-#        columnas_sarcopenia = ['P113', 'P112_vel', 'IMME']
-
-#        if all(col in df_manual.columns for col in columnas_sarcopenia):
-#            clasificaciones = []
-#            for _, fila in df_manual.iterrows():
-#                sexo = fila["sexo"]
-#                entrada = fila[columnas_sarcopenia].values.reshape(1, -1)
-#                modelo_uso = modelo_hombre if sexo == 1.0 else modelo_mujer
-#                prediccion = modelo_uso.predict(entrada)[0]
-#                clasificaciones.append(prediccion)
-#
-#            df_manual["Clasificación de sarcopenia"] = clasificaciones
-#        else:
-#            st.warning("⚠️ No se pudo calcular la clasificación de sarcopenia. Asegúrate de haber capturado 'Fuerza', 'marcha' e 'IMME'.")
-
     with tab_archivo:
         st.subheader("📂 Predicción de IMME desde archivo usando modelos preentrenados")
 
@@ -2060,7 +2007,7 @@ elif opcion == "Formularios":
                 st.error("❌ El archivo debe tener una columna llamada 'Identificador'.")
                 st.stop()
 
-            # 👉 Selección de modelo preentrenado
+            #  Selección de modelo preentrenado
             modelo_seleccionado = st.selectbox(
                 "Selecciona el modelo preentrenado:",
                 list(modelos_dict.keys())[:-1],  # Excluye 'Seleccionar manualmente'
@@ -2077,7 +2024,7 @@ elif opcion == "Formularios":
                 columnas_amigables = [nombres_amigables.get(col, col) for col in columnas_requeridas]
                 st.info(f"✅ Este modelo necesita estas columnas: `{', '.join(columnas_amigables)}`")
 
-                # 🔑 Mapeo inverso amigable → clave
+                #  Mapeo inverso amigable → clave
                 nombres_a_claves = {v: k for k, v in nombres_amigables.items()}
 
                 # Traducir encabezados del archivo a claves crudas
@@ -2095,7 +2042,7 @@ elif opcion == "Formularios":
                     st.error(f"❌ Faltan columnas en tu archivo: {', '.join(faltantes_amigables)}")
                     st.stop()
 
-                # ✅ Renombrar DataFrame a claves crudas para predicción
+                #  Renombrar DataFrame a claves crudas para predicción
                 df_archivo_renombrado = df_archivo.rename(columns=nombres_a_claves)
 
                 # Aplicar predicción
@@ -2126,51 +2073,6 @@ elif opcion == "Formularios":
                     output.getvalue(),
                     file_name="imme_con_prediccion.xlsx"
                 )
-
-
-
-
-    
-
-#    with tab_archivo:
-#        archivo = st.file_uploader("Sube tu archivo (.xlsx)", type="xlsx")
-#        if archivo:
-#            df_archivo = pd.read_excel(archivo)
-
-#            # Verificar presencia del identificador
-#            if "Identificador" not in df_archivo.columns:
-#                st.error("❌ La columna 'Identificador' es obligatoria en tu archivo.")
-#            else:
-#                columnas_requeridas = (
-#                    seleccion_manual if modelo_seleccionado == "Seleccionar manualmente"
-#                    else modelo.feature_names_in_
-#                )
-
-#                # Verifica que todas las columnas del modelo estén presentes
-#                if not all(col in df_archivo.columns for col in columnas_requeridas):
-#                    st.error(f"❌ Faltan columnas requeridas: {', '.join([col for col in columnas_requeridas if col not in df_archivo.columns])}")
-#                else:
-#                    if modelo_seleccionado == "Seleccionar manualmente":
-#                        modelo = DecisionTreeRegressor().fit(df_archivo[seleccion_manual], np.zeros(len(df_archivo)))
-#                        pred = modelo.predict(df_archivo[seleccion_manual])
-#                        rmse = 0.0  # No hay verdad para comparar
-#                    else:
-#                        pred = modelo.predict(df_archivo[columnas_requeridas])
-#                        rmse = np.sqrt(mean_squared_error(np.zeros_like(pred), pred))  # Estimación simbólica#
-
-#                    # Agrega la predicción
-#                    df_archivo["IMME"] = pred
-
-#                    # Muestra solo Identificador + columnas utilizadas + predicción
-#                    columnas_mostrar = ["Identificador"] + list(columnas_requeridas) + ["IMME"]
-#                    st.dataframe(df_archivo[columnas_mostrar])
-
-                    # Exportar resultados
-#                    output = io.BytesIO()
-#                    df_archivo[columnas_mostrar].to_excel(output, index=False)
-#                    st.download_button("⬇️ Descargar predicciones", output.getvalue(), file_name="imme_con_prediccion.xlsx")
-
-#                    st.success(f"📉 RMSE estimado: {rmse:.4f}")
 
 
     with tab_sarcopenia:
@@ -2495,12 +2397,8 @@ elif opcion == "Equipo de trabajo":
     equipo = [{
                "nombre": "Dr. Santiago Arceo Díaz",
                "foto": "ArceoS.jpg",
-               "reseña": "Licenciado en Física, Maestro en Física y Doctor en Ciencias (Astrofísica). Posdoctorante de la Universidad de Colima y profesor del Tecnológico Nacional de México Campus Colima. Cuenta con el perfil deseable, pertenece al núcleo académico y es colaborador del cuerpo académico Tecnologías Emergentes y Desarrollo Web de la Maestría Sistemas Computacionales. Ha dirigido tesis de la Maestría en Sistemas Computacionales y en la Maestría en Arquitectura Sostenible y Gestión Urbana.",
+               "reseña": "Licenciado en Física, Maestro en Física y Doctor en Ciencias (Astrofísica). Posdoctorante de la Universidad de Colima. Miembro del Sistema Nacional de Investigadoras e Investigadores (Nivel 1).",
                "CV": "https://scholar.google.com.mx/citations?user=3xPPTLoAAAAJ&hl=es", "contacto": "santiagoarceodiaz@gmail.com"},
-           {
-               "nombre": "José Ramón González",
-               "foto": "JR.jpeg",
-               "reseña": "Estudiante de la facultad de medicina en la Universidad de Colima, cursando el servicio social en investigación en el Centro Universitario de Investigaciones Biomédicas, bajo el proyecto Aplicación de un software basado en modelos predictivos como herramienta de apoyo en el diagnóstico de sarcopenia en personas adultas mayores a partir de parámetros antropométricos.", "CV": "https://scholar.google.com.mx/citations?user=3xPPTLoAAAAJ&hl=es", "contacto": "jgonzalez90@ucol.mx"},
            {
                "nombre": "Dra. Xochitl Angélica Rosío Trujillo Trujillo",
                "foto": "DraXochilt.jpg",
@@ -2517,7 +2415,7 @@ elif opcion == "Equipo de trabajo":
                "reseña": "Licenciado en Nutrición, Maestro en Ciencias Médicas, Maestro en Seguridad Alimentaria y Doctor en Ciencias Médicas. Profesor e Investigador de Tiempo Completo de la Facultad de Medicina en la Universidad de Colima. miembro del Sistema Nacional de Investigadores en el nivel 1. Miembro fundador de la asociación civil DAYIN (Desarrollo de Ayuda con Investigación)",
                "CV": "https://scholar.google.com.mx/citations?hl=es&user=ugl-bksAAAAJ", "contacto": "jbricio@ucol.mx"},      
                {
-               "nombre": "Mtra. Elena Elsa Bricio Barrios",
+               "nombre": "Dra. Elena Elsa Bricio Barrios",
                "foto": "BricioE.jpg",
                "reseña": "Química Metalúrgica, Maestra en Ciencias en Ingeniería Química y doctorante en Ingeniería Química. Actualmente es profesora del Tecnológico Nacional de México Campus Colima. Cuenta con el perfil deseable, es miembro del cuerpo académico Tecnologías Emergentes y Desarrollo Web y ha codirigido tesis de la Maestría en Sistemas Computacionales.",
                "CV": "https://scholar.google.com.mx/citations?hl=es&user=TGZGewEAAAAJ", "contacto": "elena.bricio@colima.tecnm.mx"},
@@ -2525,12 +2423,7 @@ elif opcion == "Equipo de trabajo":
                "nombre": "Dra. Mónica Ríos Silva",
                "foto": "rios.jpg",
                "reseña": "Médica cirujana y partera con especialidad en Medicina Interna y Doctorado en Ciencias Médicas por la Universidad de Colima, médica especialista del Hospital Materno Infantil de Colima y PTC de la Facultad de Medicina de la Universidad de Colima. Es profesora de los posgrados en Ciencias Médicas, Ciencias Fisiológicas, Nutrición clínica y Ciencia ambiental global.",
-               "CV": "https://scholar.google.com.mx/scholar?hl=en&as_sdt=0%2C5&q=Monica+Rios+silva&btnG=", "contacto": "mrios@ucol.mx"},
-               {
-               "nombre": "Dra. Rosa Yolitzy Cárdenas María",  
-               "foto": "cardenas.jpg",
-               "reseña": "Ha realizado los estudios de Química Farmacéutica Bióloga, Maestría en Ciencias Médicas y Doctorado en Ciencias Médicas, todos otorgados por la Universidad de Colima. Actualmente, se desempeña como Técnica Académica Titular C en el Centro Universitario de Investigaciones Biomédicas de la Universidad de Colima, enfocándose en la investigación básica y clínica de enfermedades crónico-degenerativas no transmisibles en investigación. También es profesora en la Maestría y Doctorado en Ciencias Médicas, así como en la Maestría en Nutrición Clínica de la misma universidad. Es miembro del Sistema Nacional de Investigadores nivel I y miembro fundador activo de la asociación civil DAYIN (https://www.dayinac.org/)",
-               "CV": "https://scholar.google.com.mx/scholar?hl=en&as_sdt=0%2C5&q=rosa+yolitzy+c%C3%A1rdenas-mar%C3%ADa&btnG=&oq=rosa+yoli", "contacto": "rosa_cardenas@ucol.mx"}
+               "CV": "https://scholar.google.com.mx/scholar?hl=en&as_sdt=0%2C5&q=Monica+Rios+silva&btnG=", "contacto": "mrios@ucol.mx"}
                ]
 
     # Establecer la altura deseada para las imágenes
