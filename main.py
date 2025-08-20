@@ -847,7 +847,8 @@ Además, el <strong>color</strong> de cada red indica el grupo de pacientes al q
             nodes_women -= nodes_both
 
             # Layout Kamada-Kawai
-            pos = nx.kamada_kawai_layout(G)
+            #pos = nx.kamada_kawai_layout(G)
+            pos = nx.kamada_kawai_layout(G, weight=None)
 
             # Colores de nodos
             node_colors = []
