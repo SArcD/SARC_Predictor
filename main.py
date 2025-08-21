@@ -764,7 +764,7 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
  #               left_index=True,
  #               right_index=True,
  #               how='inner'
-            )
+ #           )
 
  #           # --- 7. Ordenar por promedio de varianza        
  #           merged_df['Mean Variance'] = merged_df[['Men', 'Women']].mean(axis=1)
