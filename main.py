@@ -391,7 +391,7 @@ Si separamos la muestra de acuerdo al sexo de los pacientes podemos observar la 
             st.markdown("""
             <div style='text-align: justify'>
             <strong>
-            Actualmente se trabaja en modelos predictivos que tomen en cuenta las comorbilidades y los cambios que esto implicaría en los modelos predictivos de sarcopenia.  Si desea obtener más información, comuníquese al correo <a href='mailto:rosio@ucol.mx'>rosio@ucol.mx</a> y <a href='mailto:santiagoarceodiaz@gmail.com'>santiagoarceodiaz@gmail.com</a>. </strong>
+            Actualmente se trabaja en modelos predictivos que tomen en cuenta las comorbilidades y los cambios que esto implicaría en los modelos predictivos de sarcopenia. </strong>
 </div>
 """, unsafe_allow_html=True)
 
