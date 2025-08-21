@@ -47,10 +47,7 @@ if opcion == "Introducción":
        
     Esta aplicación es resultado del proyecto de estancia posdoctoral **"Identificación 
     de las etapas y tipos de sarcopenia mediante modelos predictivos como herramienta 
-    de apoyo en el diagnóstico a partir de parámetros antropométricos"**, desarrollado 
-    por el Doctor en Ciencias (Astrofísica) Santiago Arceo Díaz, bajo la dirección de 
-    la Doctora Xóchitl Rosío Angélica Trujillo Trujillo, y con la ayuda de los colaboradores mencionados en esta sección. Esta estancia es gracias a la 
-    colaboración entre el entre la **Secretaría de Ciencia Humanidades Tecnología e Innovación** ([**SECIHTI**, antes **CONAHCYT**](https://secihti.mx/)) y la **Universidad de Colima ([**UCOL**](https://portal.ucol.mx/cuib/))**
+    de apoyo en el diagnóstico a partir de parámetros antropométricos"**. Esta estancia es gracias al financiamiento de la **Secretaría de Ciencia Humanidades Tecnología e Innovación** ([**SECIHTI**, antes **CONAHCYT**](https://secihti.mx/)).
     </div>
     """, unsafe_allow_html=True)
 
@@ -58,7 +55,7 @@ if opcion == "Introducción":
     st.markdown("""
     <div style="text-align: justify">
                    
-    Los datos utilizados para los modelos fueron proveidos por el **Dr. Sergio Sánchez García** y personal del **Instituto Mexicano del Seguro Social**, a partir de las respuestas recolectadas del **"Cuadernillo de Obesidad, Sarcopenia y Fragilidad en Adultos Mayores Derechohabientes del Instituto Mexicano del Seguro Social de las Delegaciones Sur y Norte de la Ciudad de México"** (en sus ediciones de 2019 y 2022). A partir de las medidas antropométricas registradas, se crean modelos para predecir la incidencia de sarcopenia en los usuarios registrados (tanto en personas adultas mayores sanas como en aquellas que padecen de comorbilidades como hipertensión arterial, diabetes mellitus o artritis).  
+    Los datos utilizados para los modelos fueron proveidos por personal del **Instituto Mexicano del Seguro Social**, a partir de las respuestas recolectadas del **"Cuadernillo de Obesidad, Sarcopenia y Fragilidad en Adultos Mayores Derechohabientes del Instituto Mexicano del Seguro Social de las Delegaciones Sur y Norte de la Ciudad de México"** (en sus ediciones de 2019 y 2022). A partir de las medidas antropométricas registradas, se crean modelos para predecir la incidencia de sarcopenia en los usuarios registrados (tanto en personas adultas mayores sanas como en aquellas que padecen de comorbilidades como hipertensión arterial, diabetes mellitus o artritis).  
             
     </div>
     """, unsafe_allow_html=True)
