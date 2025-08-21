@@ -572,7 +572,7 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
                 'P119': 'Circunferencia de pecho',
                 'P129': 'Circunferencia de cuello',
                 'P130': 'Circunferencia de muñeca',
-                'P118': 'Estatura (cm)'       # 👈 corregido
+                'P118': 'Estatura'       # 👈 corregido
             }
 
             # --- NUEVO BLOQUE: CV escalado a [0,1] para la Figura 4 ---
@@ -673,7 +673,7 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
                 'P119': 'Circunferencia de pecho',
                 'P129': 'Circunferencia de cuello',
                 'P130': 'Circunferencia de muñeca',
-                'P118': 'Estatura (cm)'  # ← corregido
+                'P118': 'Estatura'  # ← corregido
             }
 
             # --- 5. Traducir nombres (igual que tu código) ---
