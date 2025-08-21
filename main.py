@@ -586,7 +586,7 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             cv_rel = cv / cv.max()  # [0,1]
 
             variances_df = (pd.DataFrame({'Variable': cv_rel.index,'Normalized Variance': cv_rel.values}).sort_values('Normalized Variance', ascending=True))
-            variances_df['Variable_English'] = variances_df['Variable'].map(column_labels_en)\.fillna(variances_df['Variable'])
+            variances_df['Variable_English'] = variances_df['Variable'].map(column_labels_en).fillna(variances_df['Variable'])
 
             fig_4, ax = plt.subplots(figsize=(10, 6), dpi=150)
             ax.barh(variances_df['Variable_English'], variances_df['Normalized Variance'])
