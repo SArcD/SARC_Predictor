@@ -36,7 +36,8 @@ st.image("SarcPred.PNG", use_column_width=True)
 # Menú en barra lateral
 opcion = st.sidebar.radio(
     "Selecciona una pestaña:",
-    ["Introducción", "Proceso", "Formularios", "Equipo de trabajo"])
+    #["Introducción", "Proceso", "Formularios", "Equipo de trabajo"])
+    ["Introducción", "Proceso", "Formularios"])
 
 # Contenido condicional
 if opcion == "Introducción":
