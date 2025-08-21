@@ -641,9 +641,16 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
             cv_pair = pd.concat([cv_h.rename('Men'), cv_m.rename('Women')], axis=1).dropna()
 
             # Escalado a [0,1] usando el máximo entre sexos y recorte duro
-            cv_max = cv_pair.max(axis=1).replace(0, np.nan)
-            cv_scaled = cv_pair.div(cv_max, axis=0).fillna(0).clip(0, 1)
-    
+            #cv_max = cv_pair.max(axis=1).replace(0, np.nan)
+            #cv_scaled = cv_pair.div(cv_max, axis=0).fillna(0).clip(0, 1)
+
+            # NUEVO: normalización por máximo global
+            denom = np.nanmax(cv_pair.values)
+            if not np.isfinite(denom) or denom == 0:
+                denom = 1.0
+            cv_scaled = (cv_pair / denom).fillna(0).clip(0, 1)
+
+            
             # Mantener exactamente tus nombres (ordenados desc.)
             variances_hombres = cv_scaled['Men'].sort_values(ascending=False)
             variances_mujeres = cv_scaled['Women'].sort_values(ascending=False)
