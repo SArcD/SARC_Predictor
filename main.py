@@ -606,44 +606,49 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
             
             # --- Figura 5: CV por sexo, escalado a [0,1] con máximo conjunto ---
 
-
-
-            
-            # --- 1) Separar hombres y mujeres (aseguramos etiquetas de texto) ---
+            # --- 1. Separar hombres y mujeres (manteniendo tu estilo) ---
+            # (Normalizamos 'sexo' si viene numérico)
             if df_combined['sexo'].dtype != 'O':
-                df_combined['sexo'] = df_combined['sexo'].map({1.0: 'Hombre', 0.0: 'Mujer', 1: 'Hombre', 0: 'Mujer'})
+                df_combined['sexo'] = df_combined['sexo'].replace({
+                    1: 'Hombre', 1.0: 'Hombre', '1': 'Hombre',
+                    2: 'Mujer',  2.0: 'Mujer',  '2': 'Mujer',
+                    0: 'Mujer',  0.0: 'Mujer',  '0': 'Mujer'
+                })
+    
             df_hombres = df_combined[df_combined['sexo'] == 'Hombre'].copy()
             df_mujeres = df_combined[df_combined['sexo'] == 'Mujer'].copy()
 
-            # --- 2) Columnas a estandarizar (compatibilidad con tu código) ---
+            # --- 2. Columnas a estandarizar (puedes dejar tu versión dinámica si lo prefieres) ---
             columns_to_standardize = ['P112_vel','P113','P117','P118','P119','P120','P121','P122',
                                       'P123','P124','P125','P126','P127','P128','P129','P130','IMC']
 
-            # --- utilidad: CV robusto por subconjunto ---
-            def _cv_series(df, cols):
-                F = df[cols].apply(pd.to_numeric, errors='coerce')
-                F = F.replace(0, np.nan)                  # 0 => faltante
-                lo = F.quantile(0.01); hi = F.quantile(0.99)  # winsorización 1–99%
-                F = F.clip(lower=lo, upper=hi, axis=1)
-                s = (F.std(ddof=0) / F.mean())            # coeficiente de variación
-                return s.replace([np.inf, -np.inf], np.nan).dropna()
+            # --- 3. Calcular "varianzas normalizadas" por sexo (mismo nombre de variables de salida) ---
+            #     Usamos CV = std/mean, robusto (ceros -> NaN, winsorización 1-99%), luego escalamos a [0,1] y recortamos.
+            features_hombres = df_hombres[columns_to_standardize].apply(pd.to_numeric, errors='coerce').replace(0, np.nan)
+            features_mujeres = df_mujeres[columns_to_standardize].apply(pd.to_numeric, errors='coerce').replace(0, np.nan)
 
-            # --- 3) Calcular "varianzas normalizadas" (CV en [0,1]) por sexo ---
-            cv_h = _cv_series(df_hombres, columns_to_standardize)
-            cv_m = _cv_series(df_mujeres, columns_to_standardize)
+            # Winsorización 1–99% por sexo
+            lo_h, hi_h = features_hombres.quantile(0.01), features_hombres.quantile(0.99)
+            lo_m, hi_m = features_mujeres.quantile(0.01), features_mujeres.quantile(0.99)
+            features_hombres = features_hombres.clip(lower=lo_h, upper=hi_h, axis=1)
+            features_mujeres = features_mujeres.clip(lower=lo_m, upper=hi_m, axis=1)
 
-            # Alinear y quedarnos con variables presentes en ambos (como tu merge "inner")
+            # CV por sexo
+            cv_h = (features_hombres.std(ddof=0) / features_hombres.mean()).replace([np.inf, -np.inf], np.nan).dropna()
+            cv_m = (features_mujeres.std(ddof=0) / features_mujeres.mean()).replace([np.inf, -np.inf], np.nan).dropna()
+
+            # Alinear variables presentes en ambos (equivalente a tu merge inner)
             cv_pair = pd.concat([cv_h.rename('Men'), cv_m.rename('Women')], axis=1).dropna()
 
-            # Escalado a [0,1] por variable usando el máximo entre sexos
+            # Escalado a [0,1] usando el máximo entre sexos y recorte duro
             cv_max = cv_pair.max(axis=1).replace(0, np.nan)
-            cv_scaled = cv_pair.div(cv_max, axis=0).fillna(0)   # columnas: Men, Women
-
-            # Para mantener los mismos nombres de variables que usas después:    
+            cv_scaled = cv_pair.div(cv_max, axis=0).fillna(0).clip(0, 1)
+    
+            # Mantener exactamente tus nombres (ordenados desc.)
             variances_hombres = cv_scaled['Men'].sort_values(ascending=False)
             variances_mujeres = cv_scaled['Women'].sort_values(ascending=False)
 
-            # --- 4) Diccionario de etiquetas (corrigiendo P118) ---
+            # --- 4. Diccionario de nombres (corrige P118) ---
             column_labels_en = {
                 'P112_vel': 'Velocidad de marcha',
                 'P113': 'Fuerza de agarre',
@@ -660,15 +665,15 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
                 'P122': 'Circunferencia de abdomen',
                 'P119': 'Circunferencia de pecho',
                 'P129': 'Circunferencia de cuello',
-                'P130': 'Circunferencia de muñeca',            
+                'P130': 'Circunferencia de muñeca',
                 'P118': 'Estatura (cm)'  # ← corregido
             }
 
-            # --- 5) Traducir nombres (tal como hacías) ---
+            # --- 5. Traducir nombres (igual que tu código) ---
             variances_hombres.index = variances_hombres.index.map(lambda x: column_labels_en.get(x, x))
             variances_mujeres.index = variances_mujeres.index.map(lambda x: column_labels_en.get(x, x))
 
-            # --- 6) Crear DataFrame combinado (mismo nombre y estructura) ---
+            # --- 6. Crear DataFrame combinado (mismo nombre y estructura) ---
             merged_df = pd.merge(
                 variances_hombres.rename('Men'),
                 variances_mujeres.rename('Women'),
@@ -677,16 +682,16 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
                 how='inner'
             )
 
-            # --- 7) Ordenar por promedio (igual que antes) ---
+            # --- 7. Ordenar por promedio de varianza (mismo criterio) ---
             merged_df['Mean Variance'] = merged_df[['Men', 'Women']].mean(axis=1)
             merged_df = merged_df.sort_values('Mean Variance', ascending=False)
 
-            # --- 8) Gráfica comparativa (mismo estilo y colores) ---
+            # --- 8. Gráfica comparativa (mismo estilo y session_state) ---
             if 'fig_varianza' not in st.session_state:
                 fig_5, ax = plt.subplots(figsize=(10, 8), dpi=150)
                 bar_width = 0.4
                 y_pos = np.arange(len(merged_df))
-
+        
                 ax.barh(y_pos - bar_width/2, merged_df['Men'], height=bar_width,
                         label='Hombres', color='steelblue', edgecolor='black')
                 ax.barh(y_pos + bar_width/2, merged_df['Women'], height=bar_width,
@@ -694,7 +699,7 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
 
                 ax.set_yticks(y_pos)
                 ax.set_yticklabels(merged_df.index)
-                ax.set_xlim(0, 1)  # ahora todo está en [0,1]
+                ax.set_xlim(0, 1)  # todo en [0,1]
                 ax.set_xlabel('Varianza normalizada (0–1)')
                 ax.set_title('Comparación de las varianzas normalizadas, de acuerdo al sexo')
                 ax.invert_yaxis()
@@ -704,6 +709,7 @@ La <strong>Figura 5</strong> muestra las varianzas normalizadas de cada parámet
                 st.session_state.fig_varianza = fig_5
 
             st.pyplot(st.session_state.fig_varianza)
+
  
             
 
