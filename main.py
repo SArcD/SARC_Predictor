@@ -146,8 +146,7 @@ elif opcion == "Proceso":
             st.markdown("""
 <div style='text-align: justify'>
 A continuación, se muestra un <strong>resumen gráfico</strong> de los datos que se utilizaron para el <strong>entrenamiento de los modelos</strong>. 
-Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS 
-(escribir al correo de contacto <a href='mailto:sergio.sanchezga@imss.gob.mx'>sergio.sanchezga@imss.gob.mx</a>.
+Debido a la sensibilidad de los datos, estos no se pueden mostrar directamente sin autorización por parte del IMSS.
 </div>
 """, unsafe_allow_html=True)
 
