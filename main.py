@@ -127,6 +127,41 @@ elif opcion == "Proceso":
     **En el siguiente menú puede elegir entre las bases de datos disponibles para el entrenamiento de los modelos predictivos**""")
     # Seleccionar el año de la base de datos
     selected_year = st.selectbox("Por favor, seleccione la base de datos:", ["2019", "2022"])
+    
+    # --- Reset de estado cuando cambia el año ---
+    if st.session_state.get("year_loaded") != selected_year:
+        for k in [
+            "fig_comorbilidades",
+            "fig_comorbilidades_sexo",
+            "fig_varianza_men",
+            "fig_varianza",
+            "fig_histogramas",
+            "fig_mapas",
+            "fig_red_correlacion",
+            "errores_combinaciones",
+            "mejor_combinacion",
+            "mejor_error",
+            "mejor_combinacion_n",
+            "modelo_global",
+            "modelo_manual",
+            "variables_manual",
+            "prediccion_valor",
+            "df_filtered",
+        ]:
+            st.session_state.pop(k, None)
+        st.session_state["year_loaded"] = selected_year
+    # st.cache_data.clear()
+
+
+
+
+
+
+    ############################################################################################################################################
+
+
+
+    
     st.markdown("""**Nota:** En su versión actual el entrenamiento de los modelos debe hacerse con la base de datos de 2019, ya que es la mas amplia de las dos que están disponibles (actualizado al 20-06-2025)""")
     # Definir la ruta del archivo en función de la selección
     if selected_year == "2022":
