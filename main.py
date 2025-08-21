@@ -506,52 +506,99 @@ Antes de hacer ese análisis, normalizamos los valores para que las unidades (po
             #varianzas
             variances_df = pd.DataFrame({'Variable': variances.index, 'Normalized Variance': variances.values})
         
-            # Diccionario de traducción
+            ## Diccionario de traducción
+            #column_labels_en = {
+            #    'P112_vel': 'Velocidad de marcha',
+            #    'P113': 'Fuerza de agarre',
+            #    'P125': 'Pliege cutáneo de triceps',
+            #    'P126': 'Pliegue subescapular',
+            #    'P128': 'Circunferencia de pantorrilla',
+            #    'P127': 'Pliegue cutáneo de biceps',
+            #    'P117': 'Peso',
+            #    'IMC': 'Índice de masa corporal',
+            #    'P123': 'Circunferencia de muslo',
+            #    'P121': 'Circunferencia de cintura',
+            #    'P120': 'Circunferencia de brazo',
+            #    'P124': 'Pliegue cutáneo de pantorrilla',
+            #    'P122': 'Circunferencia de abdomen',
+            #    'P119': 'Circunferencia de pecho',
+            #    'P129': 'Circunferencia de cuello',
+            #    'P130': 'Circunferencia de muñeca',
+            #    'P118': 'Estatura'
+            #}
+
+            ## --- 1. Traducir nombres de variable en variances_df ---
+            #variances_df['Variable_English'] = variances_df['Variable'].map(column_labels_en)
+
+            ## Si alguna variable no está en el diccionario, deja el nombre original
+            #variances_df['Variable_English'] = variances_df['Variable_English'].fillna(variances_df['Variable'])
+
+            ## --- 2. Aplicar umbral 0.02 ---
+            #variances_filtered = variances_df[variances_df['Normalized Variance'] >= 0.02]
+
+            ## --- 3. Graficar ---
+            #if 'fig_varianza_men' not in st.session_state:
+
+            #    fig_4, ax = plt.subplots(figsize=(10, 6), dpi=150)
+            #    ax.barh(
+            #        variances_filtered['Variable_English'],
+            #        variances_filtered['Normalized Variance'],
+            #        color='skyblue', edgecolor='black'
+            #    )
+            #    ax.set_xlabel('Varianza normalizada')
+            #    ax.set_title('Varianzas normalizadas para cada variable')
+            #    ax.invert_yaxis()
+            #    ax.grid(axis='x', linestyle='--', alpha=0.7)
+        
+            #    fig_4.tight_layout()
+            #    st.session_state.fig_varianza_men = fig_4
+
+
+
             column_labels_en = {
                 'P112_vel': 'Velocidad de marcha',
                 'P113': 'Fuerza de agarre',
-                'P125': 'Pliege cutáneo de triceps',
+                'P125': 'Pliegue cutáneo de triceps',
                 'P126': 'Pliegue subescapular',
                 'P128': 'Circunferencia de pantorrilla',
                 'P127': 'Pliegue cutáneo de biceps',
                 'P117': 'Peso',
                 'IMC': 'Índice de masa corporal',
                 'P123': 'Circunferencia de muslo',
-                'P121': 'Circunferencia de cintura',
+                'P121':  'Circunferencia de cintura',
                 'P120': 'Circunferencia de brazo',
                 'P124': 'Pliegue cutáneo de pantorrilla',
                 'P122': 'Circunferencia de abdomen',
                 'P119': 'Circunferencia de pecho',
                 'P129': 'Circunferencia de cuello',
                 'P130': 'Circunferencia de muñeca',
-                'P118': 'Circunferencia de cadera'
+                'P118': 'Estatura (cm)'       # 👈 corregido
             }
 
-            # --- 1. Traducir nombres de variable en variances_df ---
-            variances_df['Variable_English'] = variances_df['Variable'].map(column_labels_en)
+            # --- NUEVO BLOQUE: CV escalado a [0,1] para la Figura 4 ---
+            feat_cols = ['P112_vel','P113','P117','P118','P119','P120','P121','P122','P123','P124','P125','P126','P127','P128','P129','P130','IMC']
+            F = df_combined[feat_cols].apply(pd.to_numeric, errors='coerce')
+            F = F.replace(0, np.nan)  # ceros como faltantes
+            lo = F.quantile(0.01); hi = F.quantile(0.99)
+            F = F.clip(lower=lo, upper=hi, axis=1)
 
-            # Si alguna variable no está en el diccionario, deja el nombre original
-            variances_df['Variable_English'] = variances_df['Variable_English'].fillna(variances_df['Variable'])
+            cv = (F.std(ddof=0) / F.mean()).replace([np.inf, -np.inf], np.nan).dropna()
+            cv_rel = cv / cv.max()  # [0,1]
 
-            # --- 2. Aplicar umbral 0.02 ---
-            variances_filtered = variances_df[variances_df['Normalized Variance'] >= 0.02]
+            variances_df = (pd.DataFrame({'Variable': cv_rel.index,'Normalized Variance': cv_rel.values}).sort_values('Normalized Variance', ascending=True))
+            variances_df['Variable_English'] = variances_df['Variable'].map(column_labels_en)\.fillna(variances_df['Variable'])
 
-            # --- 3. Graficar ---
-            if 'fig_varianza_men' not in st.session_state:
+            fig_4, ax = plt.subplots(figsize=(10, 6), dpi=150)
+            ax.barh(variances_df['Variable_English'], variances_df['Normalized Variance'])
+            ax.set_xlim(0, 1)
+            ax.set_xlabel('Varianza normalizada (0–1)')
+            ax.set_title('Importancia relativa por variabilidad')
+            ax.grid(axis='x', linestyle='--', alpha=0.7)
+            st.pyplot(fig_4)
 
-                fig_4, ax = plt.subplots(figsize=(10, 6), dpi=150)
-                ax.barh(
-                    variances_filtered['Variable_English'],
-                    variances_filtered['Normalized Variance'],
-                    color='skyblue', edgecolor='black'
-                )
-                ax.set_xlabel('Varianza normalizada')
-                ax.set_title('Varianzas normalizadas para cada variable')
-                ax.invert_yaxis()
-                ax.grid(axis='x', linestyle='--', alpha=0.7)
-        
-                fig_4.tight_layout()
-                st.session_state.fig_varianza_men = fig_4
+            
+
+            #################################################################################
 
             # --- 1. Separar hombres y mujeres
             df_hombres = df_combined[df_combined['sexo'] == 'Hombre']
